@@ -1,0 +1,11 @@
+package PersonPhases
+
+kind Person
+
+phase Child specializes Person
+phase Teenager specializes Person
+phase YoungAdult specializes Person
+
+role UniversityStudent specializes Person
+role FormerStudent specializes UniversityStudent
+role ActiveStudent specializes UniversityStudent

@@ -9,3 +9,9 @@ sudo apt install python3-pip
 
 pip install requests
 ```
+
+### instalação do lark para analisador léxico
+
+```
+pip install lark
+```
