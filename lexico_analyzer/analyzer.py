@@ -1,38 +1,147 @@
-import json
+import ply.lex as lex
 from pathlib import Path
-from lark import Lark
+from tabulate import tabulate
 
-def execute_lexico_analyzer(number_example):
+reserved = {
+    'event': 'event',
+    'situation': 'situation',
+    'process': 'process',
+    'category': 'category',
+    'mixin': 'mixin',
+    'phaseMixin': 'phaseMixin',
+    'roleMixin': 'roleMixin',
+    'historicalRoleMixin': 'historicalRoleMixin',
+    'kind': 'kind',
+    'collective': 'collective',
+    'quantity': 'quantity',
+    'quality': 'quality',
+    'mode': 'mode',
+    'intrisicMode': 'intrisicMode',
+    'extrinsicMode': 'extrinsicMode',
+    'subkind': 'subkind',
+    'phase': 'phase',
+    'role': 'role',
+    'historicalRole': 'historicalRole',
+    'material': 'material',
+    'derivation': 'derivation',
+    'comparative': 'comparative',
+    'mediation': 'mediation',
+    'characterization': 'characterization',
+    'externalDependence': 'externalDependence',
+    'componentOf': 'componentOf',
+    'memberOf': 'memberOf',
+    'subCollectionOf': 'subCollectionOf',
+    'subQualityOf': 'subQualityOf',
+    'instantiation': 'instantiation',
+    'termination': 'termination',
+    'participational': 'participational',
+    'participation': 'participation',
+    'historicalDependence': 'historicalDependence',
+    'creation': 'creation',
+    'manifestation': 'manifestation',
+    'bringsAbout': 'bringsAbout',
+    'triggers': 'triggers',
+    'composition': 'composition',
+    'aggregation': 'aggregation',
+    'inherence': 'inherence',
+    'value': 'value',
+    'formal': 'formal',
+    'constitution': 'constitution',
+    'genset': 'genset',
+    'disjoint': 'disjoint',
+    'complete': 'complete',
+    'general': 'general',
+    'specifics': 'specifics',
+    'where': 'where',
+    'package': 'package',
+    'number': 'number',
+    'string': 'string',
+    'boolean': 'boolean',
+    'date': 'date',
+    'time': 'time',
+    'datetime': 'datetime',
+    'ordered': 'ordered',
+    'const': 'const',
+    'derived': 'derived',
+    'subsets': 'subsets',
+    'redefines': 'redefines',
+}
+
+tokens = [
+    'LBRACE', 'RBRACE', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'DOTDOT', 'AGGREGATION_L',
+    'AGGREGATION_R', 'ASTERISK', 'AT', 'COLON', 'CLASS_NAME', 'RELATION_NAME',
+    'INSTANCE_NAME', 'NEW_TYPE', 'ID'
+] + list(reserved.values())
+
+t_LBRACE = r'\{'
+t_RBRACE = r'\}'
+t_LPAREN = r'\('
+t_RPAREN = r'\)'
+t_LBRACK = r'\['
+t_RBRACK = r'\]'
+t_DOTDOT = r'\.\.'
+t_AGGREGATION_L = r'<>--'
+t_AGGREGATION_R = r'--<>'
+t_ASTERISK = r'\*'
+t_AT = r'@'
+t_COLON = r':'
+t_ignore = ' \t'
+t_ignore_COMMENT = r'\#.*'
+
+def t_NEW_TYPE(t):
+    r'[a-zA-Z]+DataType'
+    return t
+
+def t_INSTANCE_NAME(t):
+    r'[a-zA-Z][a-zA-Z_]*\d+'
+    return t
+
+def t_CLASS_NAME(t):
+    r'[A-Z][a-zA-Z_]*'
+    t.type = reserved.get(t.value, 'CLASS_NAME')
+    return t
+
+def t_RELATION_NAME(t):
+    r'[a-z][a-zA-Z_]*'
+    t.type = reserved.get(t.value, 'RELATION_NAME')
+    return t
+    
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    t.type = reserved.get(t.value, 'ID')
+    return t
+
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
+
+def t_error(t):
+    # print(f"Não leu caractere: '{t.value[0]}' na linha {t.lexer.lineno}")
+    t.lexer.skip(1)
+
+lexer = lex.lex()
+
+def main_analyser(caminho_codigo_fonte: Path):
     try:
-        script_dir = Path(__file__).parent
-        grammar_path = script_dir / 'grammar.lark'
-        example_path = script_dir.parent / 'tonto_examples' / f'{number_example}.tonto'
-        tokens_output_path = script_dir / 'tokens.json'
-        
-        with open(grammar_path, 'r', encoding='utf-8') as i:
-            tonto_grammar = i.read()
+        with open(caminho_codigo_fonte, 'r', encoding='utf-8') as f:
+            code_example = f.read()
+    except FileNotFoundError:
+        print(f"ERRO: Arquivo de exemplo não encontrado em: {caminho_codigo_fonte}")
+        return None
 
-        with open(example_path, 'r', encoding='utf-8') as j:
-            code_example = j.read()
-
-        parser_tonto = Lark(tonto_grammar, start='start')
-        tokens = parser_tonto.lex(code_example)
-
-        token_list = []
-
-        for token in tokens:
-            token_list.append({
-                'type': token.type,
-                'value': token.value,
-                'line': token.line
-            })
-
-        with open(tokens_output_path, 'w', encoding='utf-8') as k:
-            json.dump(token_list, k, indent=4, ensure_ascii=False)
-
-        print(f"Resultado salvo em '{tokens_output_path.name}'")
-
-    except FileNotFoundError as e:
-        print(f"Arquivo não encontrado: {e.filename}")
-    except Exception as e:
-        print(f"Ocorreu um erro inesperado: {e}")
+    lexer.input(code_example)
+    token_list = []
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        token_list.append({
+            'type': tok.type,
+            'value': tok.value,
+            'line': tok.lineno
+        })
+    
+    print("Análise Léxica concluída")
+    print("\n--- Tabela de Tokens ---")
+    print(tabulate(token_list, headers="keys", tablefmt="grid"))
+    return token_list

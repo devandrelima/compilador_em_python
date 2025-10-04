@@ -10,8 +10,15 @@ sudo apt install python3-pip
 pip install requests
 ```
 
-### instalação do lark para analisador léxico
+
+### instalação do PLY para analisador léxico
 
 ```
-pip install lark
+pip install ply
+```
+
+### instalação do tabulate para mostrar tabela
+
+```
+pip install tabulate
 ```
