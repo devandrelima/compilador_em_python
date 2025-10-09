@@ -115,8 +115,13 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
+def t_number(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+
 def t_error(t):
-    print(f"Caractere ilegal encontrado: '{t.value[0]}' na linha {t.lexer.lineno}")
+    print(f"Erro na leitura do caractere: '{t.value[0]}' na linha {t.lexer.lineno}")
     t.lexer.skip(1)
 
 lexer = lex.lex()
@@ -131,15 +136,18 @@ def main_analyser(caminho_codigo_fonte: Path):
 
     lexer.input(code_example)
     token_list = []
+    count = 1
     while True:
         tok = lexer.token()
         if not tok:
             break
         token_list.append({
-            'type': tok.type,
+            'id': count,
             'value': tok.value,
+            'type': tok.type,
             'line': tok.lineno
         })
+        count += 1
     
     print("Análise Léxica concluída")
     print("\n--- Tabela de Tokens ---")
