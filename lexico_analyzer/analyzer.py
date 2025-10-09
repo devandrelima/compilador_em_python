@@ -3,6 +3,8 @@ from pathlib import Path
 from tabulate import tabulate
 
 reserved = {
+    'relator': 'relator',
+    'specializes': 'specializes',
     'event': 'event',
     'situation': 'situation',
     'process': 'process',
@@ -68,70 +70,90 @@ reserved = {
 }
 
 tokens = [
-    'LBRACE', 'RBRACE', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'DOTDOT', 'AGGREGATION_L',
-    'AGGREGATION_R', 'ASTERISK', 'AT', 'COLON', 'CLASS_NAME', 'RELATION_NAME',
-    'INSTANCE_NAME', 'NEW_TYPE', 'ID'
+    'AGGREGATION_L', 'AGGREGATION_R', 'DOTDOT', 'CLASS_NAME',
+    'INSTANCE_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID', 'RELATION_ID'
 ] + list(reserved.values())
 
-t_LBRACE = r'\{'
-t_RBRACE = r'\}'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-t_LBRACK = r'\['
-t_RBRACK = r'\]'
+literals = ['(', ')', '{', '}', '[', ']', '.', ',', '+', '-', '<', '>', '@',
+            '*', ':']
+
 t_DOTDOT = r'\.\.'
 t_AGGREGATION_L = r'<>--'
 t_AGGREGATION_R = r'--<>'
-t_ASTERISK = r'\*'
-t_AT = r'@'
-t_COLON = r':'
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
+
 
 def t_NEW_TYPE(t):
     r'[a-zA-Z]+DataType'
     return t
 
+
 def t_INSTANCE_NAME(t):
     r'[a-zA-Z][a-zA-Z_]*\d+'
     return t
 
-def t_CLASS_NAME(t):
-    r'[A-Z][a-zA-Z_]*'
-    t.type = reserved.get(t.value, 'CLASS_NAME')
+
+def t_CLASS_ID(t):
+    r'[A-Z_][a-zA-Z_]*'
+    t.type = reserved.get(t.value, 'CLASS_ID')
+    if (t.type == 'CLASS_ID'):
+        t.lexer.class_count += 1
     return t
 
-def t_RELATION_NAME(t):
-    r'[a-z][a-zA-Z_]*'
-    t.type = reserved.get(t.value, 'RELATION_NAME')
+
+def t_RELATION_ID(t):
+    r'[a-z_][a-zA-Z_]*'
+    t.type = reserved.get(t.value, 'RELATION_ID')
+    if (t.type == 'RELATION_ID'):
+        t.lexer.relation_count += 1
     return t
-    
+
+
+def t_INSTANCE_ID(t):
+    r'[a-zA-Z_][a-zA-Z_]*[0-9]*'
+    t.type = reserved.get(t.value, 'INSTANCE_ID')
+    if (t.type == 'INSTANCE_ID'):
+        t.lexer.instance_count += 1
+    return t
+
+
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value, 'ID')
     return t
 
+
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
+
 
 def t_number(t):
     r'\d+'
     t.value = int(t.value)
     return t
 
+
 def t_error(t):
-    print(f"Erro na leitura do caractere: '{t.value[0]}' na linha {t.lexer.lineno}")
+    print(f"Erro na leitura do caractere: '{
+          t.value[0]}' na linha {t.lexer.lineno}")
     t.lexer.skip(1)
 
+
 lexer = lex.lex()
+lexer.relation_count = 0
+lexer.instance_count = 0
+lexer.class_count = 0
+
 
 def main_analyser(caminho_codigo_fonte: Path):
     try:
         with open(caminho_codigo_fonte, 'r', encoding='utf-8') as f:
             code_example = f.read()
     except FileNotFoundError:
-        print(f"ERRO: Arquivo de exemplo não encontrado em: {caminho_codigo_fonte}")
+        print(f"ERRO: Arquivo de exemplo não encontrado em: {
+              caminho_codigo_fonte}")
         return None
 
     lexer.input(code_example)
@@ -145,11 +167,14 @@ def main_analyser(caminho_codigo_fonte: Path):
             'id': count,
             'value': tok.value,
             'type': tok.type,
-            'line': tok.lineno
+            'line': tok.lineno,
         })
         count += 1
-    
+
     print("Análise Léxica concluída")
     print("\n--- Tabela de Tokens ---")
     print(tabulate(token_list, headers="keys", tablefmt="grid"))
+    print("QUANTIDADE DE CLASSES: " + str(lexer.class_count))
+    print("QUANTIDADE DE RELACOES: " + str(lexer.relation_count))
+    print("QUANTIDADE DE INSTANCIAS: " + str(lexer.instance_count))
     return token_list
