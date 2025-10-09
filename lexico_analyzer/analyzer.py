@@ -136,8 +136,8 @@ def main_analyser(caminho_codigo_fonte: Path):
         if not tok:
             break
         token_list.append({
-            'type': tok.type,
             'value': tok.value,
+            'type': tok.type,
             'line': tok.lineno
         })
     
