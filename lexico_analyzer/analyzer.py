@@ -69,9 +69,9 @@ reserved = {
 
 tokens = [
     'LBRACE', 'RBRACE', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'DOTDOT', 'AGGREGATION_L',
-    'AGGREGATION_R', 'ASTERISK', 'AT', 'COLON', 'CLASS_NAME', 'RELATION_NAME',
-    'INSTANCE_NAME', 'NEW_TYPE', 'ID'
-] + list(reserved.values())
+    'AGGREGATION_R', 'ASTERISK', 'AT', 'COLON', 'COMMA', 'HYPHEN', 'CLASS_NAME', 'RELATION_NAME',
+    'INSTANCE_NAME', 'NEW_TYPE', 'number', 'ID'
+] + list(set(reserved.values()) - {'number'})
 
 t_LBRACE = r'\{'
 t_RBRACE = r'\}'
@@ -87,6 +87,8 @@ t_AT = r'@'
 t_COLON = r':'
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
+t_COMMA = r','
+t_HYPHEN = r'-'
 
 def t_NEW_TYPE(t):
     r'[a-zA-Z]+DataType'
