@@ -2,91 +2,76 @@ import ply.lex as lex
 from pathlib import Path
 from tabulate import tabulate
 
-# role, phase e relator são esteriótipos de classe
-# specializes...são esteriótipos de relação
-# as outras palavras precisam ser chamadas de palavras reservadas
-# nome de classe e de pacote não se diferem, então tem que criar algo que diferencie, ideia: 
-# colocar sempre o nome 'Package' quando criar o pacore
-
 reserved = {
-    # Estereótipos de classe
-    'event': 'CLASS_STEREOTYPE',
-    'situation': 'CLASS_STEREOTYPE',
-    'process': 'CLASS_STEREOTYPE',
-    'category': 'CLASS_STEREOTYPE',
-    'mixin': 'CLASS_STEREOTYPE',
-    'phaseMixin': 'CLASS_STEREOTYPE',
-    'roleMixin': 'CLASS_STEREOTYPE',
-    'historicalRoleMixin': 'CLASS_STEREOTYPE',
-    'kind': 'CLASS_STEREOTYPE',
-    'collective': 'CLASS_STEREOTYPE',
-    'quantity': 'CLASS_STEREOTYPE',
-    'quality': 'CLASS_STEREOTYPE',
-    'mode': 'CLASS_STEREOTYPE',
-    'intrisicMode': 'CLASS_STEREOTYPE',
-    'extrinsicMode': 'CLASS_STEREOTYPE',
-    'subkind': 'CLASS_STEREOTYPE',
-    'phase': 'CLASS_STEREOTYPE',
-    'role': 'CLASS_STEREOTYPE',
-    'historicalRole': 'CLASS_STEREOTYPE',
-
-    # Estereótipos de relações
-    'material': 'RELATION_STEREOTYPE',
-    'derivation': 'RELATION_STEREOTYPE',
-    'comparative': 'RELATION_STEREOTYPE',
-    'mediation': 'RELATION_STEREOTYPE',
-    'characterization': 'RELATION_STEREOTYPE',
-    'externalDependence': 'RELATION_STEREOTYPE',
-    'componentOf': 'RELATION_STEREOTYPE',
-    'memberOf': 'RELATION_STEREOTYPE',
-    'subCollectionOf': 'RELATION_STEREOTYPE',
-    'subQualityOf': 'RELATION_STEREOTYPE',
-    'instantiation': 'RELATION_STEREOTYPE',
-    'termination': 'RELATION_STEREOTYPE',
-    'participational': 'RELATION_STEREOTYPE',
-    'participation': 'RELATION_STEREOTYPE',
-    'historicalDependence': 'RELATION_STEREOTYPE',
-    'creation': 'RELATION_STEREOTYPE',
-    'manifestation': 'RELATION_STEREOTYPE',
-    'bringsAbout': 'RELATION_STEREOTYPE',
-    'triggers': 'RELATION_STEREOTYPE',
-    'composition': 'RELATION_STEREOTYPE',
-    'aggregation': 'RELATION_STEREOTYPE',
-    'inherence': 'RELATION_STEREOTYPE',
-    'value': 'RELATION_STEREOTYPE',
-    'formal': 'RELATION_STEREOTYPE',
-    'constitution': 'RELATION_STEREOTYPE',
-
-    # Palavras reservadas
-    'genset': 'RESERVED_WORD',
-    'disjoint': 'RESERVED_WORD',
-    'complete': 'RESERVED_WORD',
-    'general': 'RESERVED_WORD',
-    'specifics': 'RESERVED_WORD',
-    'where': 'RESERVED_WORD',
-    'package': 'RESERVED_WORD',
-
-    # Tipos de dados nativos
-    'number': 'NATIVE_TYPE',
-    'string': 'NATIVE_TYPE',
-    'boolean': 'NATIVE_TYPE',
-    'date': 'NATIVE_TYPE',
-    'time': 'NATIVE_TYPE',
-    'datetime': 'NATIVE_TYPE',
-
-    # Meta-atributos
-    'ordered': 'META_ATTRIBUTE',
-    'const': 'META_ATTRIBUTE',
-    'derived': 'META_ATTRIBUTE',
-    'subsets': 'META_ATTRIBUTE',
-    'redefines': 'META_ATTRIBUTE',
+    'event': 'event',
+    'situation': 'situation',
+    'process': 'process',
+    'category': 'category',
+    'mixin': 'mixin',
+    'phaseMixin': 'phaseMixin',
+    'roleMixin': 'roleMixin',
+    'historicalRoleMixin': 'historicalRoleMixin',
+    'kind': 'kind',
+    'collective': 'collective',
+    'quantity': 'quantity',
+    'quality': 'quality',
+    'mode': 'mode',
+    'intrisicMode': 'intrisicMode',
+    'extrinsicMode': 'extrinsicMode',
+    'subkind': 'subkind',
+    'phase': 'phase',
+    'role': 'role',
+    'historicalRole': 'historicalRole',
+    'material': 'material',
+    'derivation': 'derivation',
+    'comparative': 'comparative',
+    'mediation': 'mediation',
+    'characterization': 'characterization',
+    'externalDependence': 'externalDependence',
+    'componentOf': 'componentOf',
+    'memberOf': 'memberOf',
+    'subCollectionOf': 'subCollectionOf',
+    'subQualityOf': 'subQualityOf',
+    'instantiation': 'instantiation',
+    'termination': 'termination',
+    'participational': 'participational',
+    'participation': 'participation',
+    'historicalDependence': 'historicalDependence',
+    'creation': 'creation',
+    'manifestation': 'manifestation',
+    'bringsAbout': 'bringsAbout',
+    'triggers': 'triggers',
+    'composition': 'composition',
+    'aggregation': 'aggregation',
+    'inherence': 'inherence',
+    'value': 'value',
+    'formal': 'formal',
+    'constitution': 'constitution',
+    'genset': 'genset',
+    'disjoint': 'disjoint',
+    'complete': 'complete',
+    'general': 'general',
+    'specifics': 'specifics',
+    'where': 'where',
+    'package': 'package',
+    'number': 'number',
+    'string': 'string',
+    'boolean': 'boolean',
+    'date': 'date',
+    'time': 'time',
+    'datetime': 'datetime',
+    'ordered': 'ordered',
+    'const': 'const',
+    'derived': 'derived',
+    'subsets': 'subsets',
+    'redefines': 'redefines',
 }
 
 tokens = [
     'LBRACE', 'RBRACE', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'DOTDOT', 'AGGREGATION_L',
     'AGGREGATION_R', 'ASTERISK', 'AT', 'COLON', 'CLASS_NAME', 'RELATION_NAME',
     'INSTANCE_NAME', 'NEW_TYPE', 'ID'
-] + list(set(reserved.values()))
+] + list(reserved.values())
 
 t_LBRACE = r'\{'
 t_RBRACE = r'\}'
@@ -131,7 +116,7 @@ def t_newline(t):
     t.lexer.lineno += len(t.value)
 
 def t_error(t):
-    # print(f"Não leu caractere: '{t.value[0]}' na linha {t.lexer.lineno}")
+    print(f"Caractere ilegal encontrado: '{t.value[0]}' na linha {t.lexer.lineno}")
     t.lexer.skip(1)
 
 lexer = lex.lex()
@@ -151,8 +136,8 @@ def main_analyser(caminho_codigo_fonte: Path):
         if not tok:
             break
         token_list.append({
-            'value': tok.value,
             'type': tok.type,
+            'value': tok.value,
             'line': tok.lineno
         })
     
