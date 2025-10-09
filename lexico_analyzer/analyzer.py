@@ -108,11 +108,6 @@ def t_RELATION_NAME(t):
     t.type = reserved.get(t.value, 'RELATION_NAME')
     return t
     
-def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value, 'ID')
-    return t
-
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
