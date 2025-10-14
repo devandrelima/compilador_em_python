@@ -71,8 +71,9 @@ reserved = {
 }
 
 tokens = [
-    'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO', 'ASSOCIATION', 'DOTDOT', 'CLASS_NAME',
-    'INSTANCE_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID', 'RELATION_ID', 'CARDINALITY'
+    'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO', 
+    'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID', 
+    'RELATION_ID', 'CARDINALITY'
 ] + list(reserved.values())
 
 literals = ['(', ')', '{', '}', '.', ',', '+', '-', '<', '>', '@',
@@ -96,16 +97,11 @@ def t_NEW_TYPE(t):
     return t
 
 
-def t_INSTANCE_NAME(t):
-    r'[a-zA-Z][a-zA-Z_]*\d+'
-    return t
-
-
 def t_CLASS_ID(t):
     r'[A-Z_][a-zA-Z_]*'
     t.type = reserved.get(t.value, 'CLASS_ID')
     if (t.type == 'CLASS_ID'):
-        t.lexer.class_count += 1
+        t.lexer.class_set.add(t.value)
     return t
 
 
@@ -118,7 +114,7 @@ def t_RELATION_ID(t):
 
 
 def t_INSTANCE_ID(t):
-    r'[a-zA-Z_][a-zA-Z_]*[0-9]*'
+    r'[a-zA-Z_][a-zA-Z0-9_]*[0-9]*'
     t.type = reserved.get(t.value, 'INSTANCE_ID')
     if (t.type == 'INSTANCE_ID'):
         t.lexer.instance_count += 1
@@ -126,7 +122,7 @@ def t_INSTANCE_ID(t):
 
 
 def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    r'[a-zA-Z_][a-zA-Z0-9_]*'
     t.type = reserved.get(t.value, 'ID')
     return t
 
@@ -151,7 +147,7 @@ def t_error(t):
 lexer = lex.lex()
 lexer.relation_count = 0
 lexer.instance_count = 0
-lexer.class_count = 0
+lexer.class_set = set()
 
 
 def main_analyser(caminho_codigo_fonte: Path):
@@ -181,7 +177,7 @@ def main_analyser(caminho_codigo_fonte: Path):
     print("Análise Léxica concluída")
     print("\n--- Tabela de Tokens ---")
     print(tabulate(token_list, headers="keys", tablefmt="grid"))
-    print("QUANTIDADE DE CLASSES: " + str(lexer.class_count))
+    print("QUANTIDADE DE CLASSES: " + str(len(lexer.class_set)))
     print("QUANTIDADE DE RELACOES: " + str(lexer.relation_count))
     print("QUANTIDADE DE INSTANCIAS: " + str(lexer.instance_count))
     return token_list
