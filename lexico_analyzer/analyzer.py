@@ -3,6 +3,7 @@ from pathlib import Path
 from tabulate import tabulate
 
 reserved = {
+    'import':'import',
     'relator': 'relator',
     'specializes': 'specializes',
     'event': 'event',
@@ -70,19 +71,25 @@ reserved = {
 }
 
 tokens = [
-    'AGGREGATION_L', 'AGGREGATION_R', 'DOTDOT', 'CLASS_NAME',
-    'INSTANCE_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID', 'RELATION_ID'
+    'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO', 'ASSOCIATION', 'DOTDOT', 'CLASS_NAME',
+    'INSTANCE_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID', 'RELATION_ID', 'CARDINALITY'
 ] + list(reserved.values())
 
-literals = ['(', ')', '{', '}', '[', ']', '.', ',', '+', '-', '<', '>', '@',
+literals = ['(', ')', '{', '}', '.', ',', '+', '-', '<', '>', '@',
             '*', ':']
 
 t_DOTDOT = r'\.\.'
-t_AGGREGATION_L = r'<>--'
-t_AGGREGATION_R = r'--<>'
+t_COMPOSITION_L = r'<>--'
+t_COMPOSITION_R = r'--<>'
+t_COMPOSITION_LO = r'<o>--'
+t_COMPOSITION_RO = r'--<o>'
+t_ASSOCIATION = r'--'
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
 
+def t_CARDINALITY(t):
+    r'\[[\d\*\.]+\]'
+    return t
 
 def t_NEW_TYPE(t):
     r'[a-zA-Z]+DataType'
