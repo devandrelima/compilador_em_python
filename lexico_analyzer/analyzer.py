@@ -109,7 +109,7 @@ def t_RELATION_ID(t):
     r'[a-z_][a-zA-Z_]*'
     t.type = reserved.get(t.value, 'RELATION_ID')
     if (t.type == 'RELATION_ID'):
-        t.lexer.relation_count += 1
+        t.lexer.relation_set.add(t.value)
     return t
 
 
@@ -117,7 +117,7 @@ def t_INSTANCE_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*[0-9]*'
     t.type = reserved.get(t.value, 'INSTANCE_ID')
     if (t.type == 'INSTANCE_ID'):
-        t.lexer.instance_count += 1
+        t.lexer.instance_set.add(t.value)
     return t
 
 
@@ -145,9 +145,9 @@ def t_error(t):
 
 
 lexer = lex.lex()
-lexer.relation_count = 0
-lexer.instance_count = 0
 lexer.class_set = set()
+lexer.relation_set = set()
+lexer.instance_set = set()
 
 
 def main_analyser(caminho_codigo_fonte: Path):
@@ -178,6 +178,6 @@ def main_analyser(caminho_codigo_fonte: Path):
     print("\n--- Tabela de Tokens ---")
     print(tabulate(token_list, headers="keys", tablefmt="grid"))
     print("QUANTIDADE DE CLASSES: " + str(len(lexer.class_set)))
-    print("QUANTIDADE DE RELACOES: " + str(lexer.relation_count))
-    print("QUANTIDADE DE INSTANCIAS: " + str(lexer.instance_count))
+    print("QUANTIDADE DE RELACOES: " + str(len(lexer.relation_set)))
+    print("QUANTIDADE DE INSTANCIAS: " + str(len(lexer.instance_set)))
     return token_list
