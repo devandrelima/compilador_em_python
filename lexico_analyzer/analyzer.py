@@ -2,8 +2,78 @@ import ply.lex as lex
 from pathlib import Path
 from tabulate import tabulate
 
+tipos = {
+    'event': 'estereotipo_classe',
+    'situation': 'estereotipo_classe',
+    'process': 'estereotipo_classe',
+    'category': 'estereotipo_classe',
+    'mixin': 'estereotipo_classe',
+    'phaseMixin': 'estereotipo_classe',
+    'roleMixin': 'estereotipo_classe',
+    'historicalRoleMixin': 'estereotipo_classe',
+    'kind': 'estereotipo_classe',
+    'collective': 'estereotipo_classe',
+    'quantity': 'estereotipo_classe',
+    'quality': 'estereotipo_classe',
+    'mode': 'estereotipo_classe',
+    'intrisicMode': 'estereotipo_classe',
+    'extrinsicMode': 'estereotipo_classe',
+    'subkind': 'estereotipo_classe',
+    'phase': 'estereotipo_classe',
+    'role': 'estereotipo_classe',
+    'historicalRole': 'estereotipo_classe',
+
+    'material': 'estereotipo_relacao',
+    'derivation': 'estereotipo_relacao',
+    'comparative': 'estereotipo_relacao',
+    'mediation': 'estereotipo_relacao',
+    'characterization': 'estereotipo_relacao',
+    'externalDependence': 'estereotipo_relacao',
+    'componentOf': 'estereotipo_relacao',
+    'memberOf': 'estereotipo_relacao',
+    'subCollectionOf': 'estereotipo_relacao',
+    'subQualityOf': 'estereotipo_relacao',
+    'instantiation': 'estereotipo_relacao',
+    'termination': 'estereotipo_relacao',
+    'participational': 'estereotipo_relacao',
+    'participation': 'estereotipo_relacao',
+    'historicalDependence': 'estereotipo_relacao',
+    'creation': 'estereotipo_relacao',
+    'manifestation': 'estereotipo_relacao',
+    'bringsAbout': 'estereotipo_relacao',
+    'triggers': 'estereotipo_relacao',
+    'composition': 'estereotipo_relacao',
+    'aggregation': 'estereotipo_relacao',
+    'inherence': 'estereotipo_relacao',
+    'value': 'estereotipo_relacao',
+    'formal': 'estereotipo_relacao',
+    'constitution': 'estereotipo_relacao',
+    'genset': 'palavra_reservada',
+    'disjoint': 'palavra_reservada',
+    'complete': 'palavra_reservada',
+    'general': 'palavra_reservada',
+    'specifics': 'palavra_reservada',
+    'where': 'palavra_reservada',
+    'package': 'palavra_reservada',
+    'import': 'palavra_reservada',
+    'functional-complexes': 'palavra_reservada',
+
+    'number': 'dado_nativo',
+    'string': 'dado_nativo',
+    'boolean': 'dado_nativo',
+    'date': 'dado_nativo',
+    'time': 'dado_nativo',
+    'datetime': 'dado_nativo',
+
+    'ordered': 'meta_atributo',
+    'const': 'meta_atributo',
+    'derived': 'meta_atributo',
+    'subsets': 'meta_atributo',
+    'redefines': 'meta_atributo'
+}
+
 reserved = {
-    'import':'import',
+    'import': 'import',
     'relator': 'relator',
     'specializes': 'specializes',
     'event': 'event',
@@ -71,8 +141,8 @@ reserved = {
 }
 
 tokens = [
-    'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO', 
-    'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID', 
+    'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
+    'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID',
     'RELATION_ID', 'CARDINALITY'
 ] + list(reserved.values())
 
@@ -88,42 +158,49 @@ t_ASSOCIATION = r'--'
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
 
+
 def t_CARDINALITY(t):
     r'\[[\d\*\.]+\]'
     return t
 
+
 def t_NEW_TYPE(t):
     r'[a-zA-Z]+DataType'
+    t.value = {'value': t.value, 'type': tipos.get(t.value, 'new_type')}
     return t
 
 
 def t_CLASS_ID(t):
     r'[A-Z_][a-zA-Z_]*'
     t.type = reserved.get(t.value, 'CLASS_ID')
+    t.value = {'value': t.value, 'type': tipos.get(t.value, 'classe')}
     if (t.type == 'CLASS_ID'):
-        t.lexer.class_set.add(t.value)
+        t.lexer.class_set.add(t.value['value'])
     return t
 
 
 def t_RELATION_ID(t):
     r'[a-z_][a-zA-Z_]*'
     t.type = reserved.get(t.value, 'RELATION_ID')
+    t.value = {'value': t.value, 'type': tipos.get(t.value, 'relacao')}
     if (t.type == 'RELATION_ID'):
-        t.lexer.relation_set.add(t.value)
+        t.lexer.relation_set.add(t.value['value'])
     return t
 
 
 def t_INSTANCE_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*[0-9]*'
     t.type = reserved.get(t.value, 'INSTANCE_ID')
+    t.value = {'value': t.value, 'type': tipos.get(t.value, 'instancia')}
     if (t.type == 'INSTANCE_ID'):
-        t.lexer.instance_set.add(t.value)
+        t.lexer.instance_set.add(t.value['value'])
     return t
 
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     t.type = reserved.get(t.value, 'ID')
+    t.value = {'value': t.value, 'type': tipos.get(t.value, 'id')}
     return t
 
 
@@ -134,7 +211,7 @@ def t_newline(t):
 
 def t_number(t):
     r'\d+'
-    t.value = int(t.value)
+    t.value = {'value': int(t.value), 'type': tipos.get(t.value, 'number')}
     return t
 
 
@@ -148,6 +225,8 @@ lexer = lex.lex()
 lexer.class_set = set()
 lexer.relation_set = set()
 lexer.instance_set = set()
+
+type_count = {}
 
 
 def main_analyser(caminho_codigo_fonte: Path):
@@ -166,18 +245,30 @@ def main_analyser(caminho_codigo_fonte: Path):
         tok = lexer.token()
         if not tok:
             break
+        val = tok.value
+        tipo = ''
+        if isinstance(tok.value, dict):
+            val = tok.value['value']
+            tipo = tok.value['type']
+            if type_count.get(tipo) and val not in type_count.get(tipo):
+                type_count[tipo]['contador'] += 1
+                type_count[tipo]['lista'].append(val)
+            else:
+                type_count[tipo] = {'lista': [val], 'contador': 1}
         token_list.append({
             'id': count,
-            'value': tok.value,
+            'value': val,
             'type': tok.type,
             'line': tok.lineno,
+            'tipo': tipo
         })
         count += 1
 
     print("Análise Léxica concluída")
     print("\n--- Tabela de Tokens ---")
     print(tabulate(token_list, headers="keys", tablefmt="grid"))
-    print("QUANTIDADE DE CLASSES: " + str(len(lexer.class_set)))
-    print("QUANTIDADE DE RELACOES: " + str(len(lexer.relation_set)))
-    print("QUANTIDADE DE INSTANCIAS: " + str(len(lexer.instance_set)))
+    type_count_list = []
+    for key, value in type_count.items():
+        type_count_list.append({'tipo': key, 'quantidade': value['contador']})
+    print(tabulate(type_count_list, headers="keys", tablefmt="grid"))
     return token_list
