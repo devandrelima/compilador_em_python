@@ -216,7 +216,7 @@ def t_NUMBER(t):
     t.value = {'value': int(t.value), 'type': tipos.get(t.value, 'number')}
     return t
 
-def t_ERROR(t):
+def t_error(t):
     illegal_char = t.value[0]
     print(f"Erro Léxico: Caractere '{illegal_char}' não reconhecido na linha {t.lexer.lineno}")
 
