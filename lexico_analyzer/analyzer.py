@@ -145,7 +145,7 @@ reserved = {
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
     'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID',
-    'RELATION_ID', 'CARDINALITY', 'ERROR'
+    'RELATION_ID', 'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER'
 ] + list(reserved.values())
 
 literals = ['(', ')', '{', '}', '.', ',', '+', '-', '<', '>', '@',
@@ -255,23 +255,23 @@ def main_analyser(caminho_codigo_fonte: Path):
         if not tok:
             break
         val = tok.value
-        tipo = ''
+        classification = ''
         if isinstance(tok.value, dict):
             val = tok.value['value']
-            tipo = tok.value['type']
+            classification = tok.value['type']
 
-            if type_count.get(tipo) and val not in type_count.get(tipo):
-                type_count[tipo]['contador'] += 1
-                type_count[tipo]['lista'].append(val)
+            if type_count.get(classification) and val not in type_count.get(classification):
+                type_count[classification]['contador'] += 1
+                type_count[classification]['lista'].append(val)
             else:
-                type_count[tipo] = {'lista': [val], 'contador': 1}
+                type_count[classification] = {'lista': [val], 'contador': 1}
 
         token_list.append({
             'id': count,
             'value': val,
             'type': tok.type,
             'line': tok.lineno,
-            'tipo': tipo
+            'classification': classification
         })
         count += 1
 
@@ -280,6 +280,6 @@ def main_analyser(caminho_codigo_fonte: Path):
     print(tabulate(token_list, headers="keys", tablefmt="grid"))
     type_count_list = []
     for key, value in type_count.items():
-        type_count_list.append({'tipo': key, 'quantidade': value['contador']})
+        type_count_list.append({'classification': key, 'quantidade': value['contador']})
     print(tabulate(type_count_list, headers="keys", tablefmt="grid"))
     return token_list
