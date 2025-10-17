@@ -9,6 +9,11 @@ COMPILADOR_EM_PYTHON/
 ├── main.py
 ├── README.md
 │
+├── images_documentation/
+│   ├── exemplos_enumerados.png
+│   ├── exercutando_codigo_ide_vs_code.png
+│   └──...todas as imagens utilizadas na documentação
+│
 ├── lexico_analyzer/
 │   ├── __init__.py
 │   ├── analyzer.py
@@ -37,6 +42,10 @@ COMPILADOR_EM_PYTHON/
 
       * É um arquivo de configuração do Git. Ele especifica quais arquivos e pastas devem ser ignorados pelo sistema de controle de versão (Git). É fundamental para manter o repositório limpo, excluindo arquivos temporários e gerados automaticamente, como a pasta `__pycache__`.
 
+  * `images_documentation/` (Diretório)
+
+      * Pasta que contém todas as fotos utilizadas no README da documentação do sistema.
+      
   * `lexico_analyzer/` (Diretório)
 
       * Este é um pacote Python que encapsula toda a lógica do **Analisador Léxico**.
