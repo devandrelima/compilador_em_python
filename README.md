@@ -79,10 +79,49 @@ pip install tabulate
 
 Após as instalações necessárias, para executar o projeto de forma concisa basta rodar o arquivo `main.py`.
 
-- Usando uma IDE: Basta selecionar o arquivo `main.py` e clicar no botão 'run'
+#### Usando prompt de comando **(recomendado)**: 
 
-- Usando prompt de comando (recomendado): Basta estar no diretório principal 'compilador_em_python/' e digitar o comando no terminal:
+Basta estar no diretório principal 'compilador_em_python/' e digitar o comando no terminal:
 
 ```
 python main.py
 ```
+
+Exemplo:
+
+![executando_ide](./images_documentation/exercutando_codigo_prompt_comando.png)
+
+#### Usando uma IDE:
+
+Basta selecionar o arquivo `main.py` e clicar no botão 'run' da IDE.
+
+Exemplo com o VS Code (clicar onde estão as setas vermelhas):
+
+![executando_ide](./images_documentation/exercutando_codigo_ide_vs_code.png)
+
+#### Entrada do sistema 
+
+Seja em prompt ou em IDE, aparecerá um catálogo com todos exemplos da pasta `tonto_examples` enumerados.
+
+![exemplos_enumerados](./images_documentation/exemplos_enumerados.png)
+
+Para executar o compilador no exemplo escolhido basta digitar o respectivo número, por exemplo, se quiser executar o `car.tonto`, digite 01 e tecle 'enter' no seu teclado.
+
+#### Saída do sistema 
+
+- Confirmação do arquivo escolhido;
+- Breve log de executando e concluído;
+- Tabela de tokens:
+
+    - Id do Token,
+    - Valor encontrado,
+    - Tipo do valor (classe, relação, instância ou o próprio valor (caso seja palavra-chave ou terminal))
+    - Linha que o token está,
+    - Classificação conforme o que foi dado no arquivo (classes, relações, palavras-chave, indivíduos (instâncias, se houver), 
+palavras reservadas e meta-atributos)
+
+- Tabela de contagem das classificações.
+
+![exemplos_tabela_tokens](./images_documentation/saida_tabela_tokens.png)
+
+![exemplos_contagem_classificacao](./images_documentation/tabela_contagem_classificacao.png)
