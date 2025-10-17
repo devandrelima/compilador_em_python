@@ -79,7 +79,7 @@ pip install tabulate
 
 Após as instalações necessárias, para executar o projeto de forma concisa basta rodar o arquivo `main.py`.
 
-#### Usando prompt de comando **(recomendado)**: 
+### Usando prompt de comando **(recomendado)**: 
 
 Basta estar no diretório principal 'compilador_em_python/' e digitar o comando no terminal:
 
@@ -91,7 +91,7 @@ Exemplo:
 
 ![executando_ide](./images_documentation/exercutando_codigo_prompt_comando.png)
 
-#### Usando uma IDE:
+### Usando uma IDE:
 
 Basta selecionar o arquivo `main.py` e clicar no botão 'run' da IDE.
 
@@ -99,7 +99,7 @@ Exemplo com o VS Code (clicar onde estão as setas vermelhas):
 
 ![executando_ide](./images_documentation/exercutando_codigo_ide_vs_code.png)
 
-#### Entrada do sistema 
+### Entrada do sistema 
 
 Seja em prompt ou em IDE, aparecerá um catálogo com todos exemplos da pasta `tonto_examples` enumerados.
 
@@ -107,7 +107,7 @@ Seja em prompt ou em IDE, aparecerá um catálogo com todos exemplos da pasta `t
 
 Para executar o compilador no exemplo escolhido basta digitar o respectivo número, por exemplo, se quiser executar o `car.tonto`, digite 01 e tecle 'enter' no seu teclado.
 
-#### Saída do sistema 
+### Saída do sistema 
 
 - Confirmação do arquivo escolhido;
 - Breve log de executando e concluído;
