@@ -117,6 +117,7 @@ Para executar o compilador no exemplo escolhido basta digitar o respectivo núme
     - Valor encontrado,
     - Tipo do valor (classe, relação, instância ou o próprio valor (caso seja palavra-chave ou terminal))
     - Linha que o token está,
+    - Coluna que o token inicia,
     - Classificação conforme o que foi dado no arquivo (classes, relações, palavras-chave, indivíduos (instâncias, se houver), 
 palavras reservadas e meta-atributos)
 

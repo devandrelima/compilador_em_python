@@ -266,11 +266,15 @@ def main_analyser(caminho_codigo_fonte: Path):
             else:
                 type_count[classification] = {'lista': [val], 'contador': 1}
 
+        last_newline = code_example.rfind('\n', 0, tok.lexpos)
+        column = (tok.lexpos - last_newline)
+
         token_list.append({
             'id': count,
             'value': val,
             'type': tok.type,
             'line': tok.lineno,
+            'column': column,
             'classification': classification
         })
         count += 1
