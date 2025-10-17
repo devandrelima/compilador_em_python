@@ -1,6 +1,7 @@
 import ply.lex as lex
 from pathlib import Path
 from tabulate import tabulate
+import re
 
 tipos = {
     'event': 'estereotipo_classe',
@@ -48,6 +49,7 @@ tipos = {
     'value': 'estereotipo_relacao',
     'formal': 'estereotipo_relacao',
     'constitution': 'estereotipo_relacao',
+
     'genset': 'palavra_reservada',
     'disjoint': 'palavra_reservada',
     'complete': 'palavra_reservada',
@@ -143,7 +145,7 @@ reserved = {
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
     'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID',
-    'RELATION_ID', 'CARDINALITY'
+    'RELATION_ID', 'CARDINALITY', 'ERROR'
 ] + list(reserved.values())
 
 literals = ['(', ')', '{', '}', '.', ',', '+', '-', '<', '>', '@',
@@ -204,24 +206,30 @@ def t_ID(t):
     return t
 
 
-def t_newline(t):
+def t_NEWLINE(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
 
-def t_number(t):
+def t_NUMBER(t):
     r'\d+'
     t.value = {'value': int(t.value), 'type': tipos.get(t.value, 'number')}
     return t
 
+def t_ERROR(t):
+    illegal_char = t.value[0]
+    print(f"Erro Léxico: Caractere '{illegal_char}' não reconhecido na linha {t.lexer.lineno}")
 
-def t_error(t):
-    print(f"Erro na leitura do caractere: '{
-          t.value[0]}' na linha {t.lexer.lineno}")
-    t.lexer.skip(1)
+    tok = lex.LexToken()
+    tok.type = 'ERROR'
+    tok.value = {'value': illegal_char, 'type': 'error'}
+    tok.lineno = t.lexer.lineno
+    tok.lexpos = t.lexer.lexpos
+    
+    t.lexer.skip(1)  
+    return tok       
 
-
-lexer = lex.lex()
+lexer = lex.lex(reflags=re.UNICODE)
 lexer.class_set = set()
 lexer.relation_set = set()
 lexer.instance_set = set()
@@ -241,6 +249,7 @@ def main_analyser(caminho_codigo_fonte: Path):
     lexer.input(code_example)
     token_list = []
     count = 1
+
     while True:
         tok = lexer.token()
         if not tok:
@@ -250,11 +259,13 @@ def main_analyser(caminho_codigo_fonte: Path):
         if isinstance(tok.value, dict):
             val = tok.value['value']
             tipo = tok.value['type']
+
             if type_count.get(tipo) and val not in type_count.get(tipo):
                 type_count[tipo]['contador'] += 1
                 type_count[tipo]['lista'].append(val)
             else:
                 type_count[tipo] = {'lista': [val], 'contador': 1}
+
         token_list.append({
             'id': count,
             'value': val,

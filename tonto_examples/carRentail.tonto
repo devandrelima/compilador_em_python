@@ -17,7 +17,7 @@ disjoint complete genset AgePhase {
     specifics Child, Teenager, Adult
 }
 
-disjoint complete genset LifeStatus {
+disjoint complete genset LifeCicle {
     general Person
     specifics DeceasedPerson, LivingPerson
 }
