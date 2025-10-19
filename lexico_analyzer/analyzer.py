@@ -323,7 +323,7 @@ def main_analyser(caminho_codigo_fonte: Path):
 
     for key, value in classification_count.items():
         type_count_list.append(
-            {'classification': key, 'quantidade': value['contador']})
+            {'classification': key, 'quantity': value['contador']})
     print(tabulate(type_count_list, headers="keys", tablefmt="grid"))
 
     # Nome do arquivo antigo, trocando a extensao por .json

@@ -34,14 +34,11 @@ kind Car
 
 phase AvailableCar specializes Car
 phase UnderMaintenanceCar specializes Car
-<>--
---<>
---<o>
-<o>--
+
 role RentalCar specializes AvailableCar
 relator CarRental {
     @mediation
-    -- involvesRental --- [1] RentalCar
+    -- involvesRental -- [1] RentalCar
     
     -- involvesMediator -- [1] ResponsibleEmployee
     
