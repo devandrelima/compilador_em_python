@@ -9,3 +9,4 @@ phase YoungAdult specializes Person
 role UniversityStudent specializes Person
 role FormerStudent specializes UniversityStudent
 role ActiveStudent specializes UniversityStudent
+role Admin specializes pizza

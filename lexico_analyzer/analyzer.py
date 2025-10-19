@@ -146,7 +146,7 @@ reserved = {
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
     'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID',
-    'RELATION_ID', 'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER'
+    'RELATION_ID','INSTANCE_ID' ,'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER'
 ] + list(reserved.values())
 
 literals = ['(', ')', '{', '}', '.', ',', '+', '-', '<', '>', '@',
@@ -182,21 +182,20 @@ def t_CLASS_ID(t):
     return t
 
 
+def t_INSTANCE_ID(t):
+    r'[a-zA-Z_][a-zA-Z0-9_]*[0-9]'
+    t.type = reserved.get(t.value, 'INSTANCE_ID')
+    t.value = {'value': t.value, 'type': tipos.get(t.value, 'instancia')}
+    if (t.type == 'INSTANCE_ID'):
+        t.lexer.instance_set.add(t.value['value'])
+    return t
+
 def t_RELATION_ID(t):
     r'[a-z_][a-zA-Z_]*'
     t.type = reserved.get(t.value, 'RELATION_ID')
     t.value = {'value': t.value, 'type': tipos.get(t.value, 'relacao')}
     if (t.type == 'RELATION_ID'):
         t.lexer.relation_set.add(t.value['value'])
-    return t
-
-
-def t_INSTANCE_ID(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*[0-9]*'
-    t.type = reserved.get(t.value, 'INSTANCE_ID')
-    t.value = {'value': t.value, 'type': tipos.get(t.value, 'instancia')}
-    if (t.type == 'INSTANCE_ID'):
-        t.lexer.instance_set.add(t.value['value'])
     return t
 
 
