@@ -261,7 +261,7 @@ def main_analyser(caminho_codigo_fonte: Path):
 
         val = tok.value
         classification = ''
-        
+
         if isinstance(tok.value, dict):
             val = tok.value['value']
             classification = tok.value['type']
@@ -292,7 +292,7 @@ def main_analyser(caminho_codigo_fonte: Path):
     type_count_list = []
 
     for key, value in type_count.items():
-        type_count_list.append({'classification': key, 'quantidade': value['contador']})
+        type_count_list.append({'classification': key, 'quantity': value['contador']})
 
     print(tabulate(type_count_list, headers="keys", tablefmt="grid"))
 
