@@ -60,7 +60,6 @@ tipos = {
     'import': 'palavra_reservada',
     'functional-complexes': 'palavra_reservada',
     'specializes': 'palavra_reservada',
-    'functional-complexes': 'palavra_reservada',
 
     'number': 'dado_nativo',
     'string': 'dado_nativo',
