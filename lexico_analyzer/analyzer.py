@@ -1,9 +1,13 @@
 import ply.lex as lex
 from pathlib import Path
 from tabulate import tabulate
+import json
 import re
 
-tipos = {
+# Classificatios sao as classificacoes das palavras chaves a depender do seu
+# proposito na analise sintatica. Como temos as informacoes suficientes para
+# inferir no analisador lexico, passamos para o sintatico.
+classifications = {
     'event': 'estereotipo_classe',
     'situation': 'estereotipo_classe',
     'process': 'estereotipo_classe',
@@ -75,6 +79,7 @@ tipos = {
     'redefines': 'meta_atributo'
 }
 
+# palavras chave da linguagem, cujo valor dos tokens sao elas mesmas
 reserved = {
     'import': 'import',
     'relator': 'relator',
@@ -146,9 +151,11 @@ reserved = {
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
     'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID',
-    'RELATION_ID','INSTANCE_ID' ,'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER'
+    'RELATION_ID', 'INSTANCE_ID', 'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER'
 ] + list(reserved.values())
 
+# caracteres cujo valor sao eles mesmos e nao ha nenhum significado especial
+# como os tokens
 literals = ['(', ')', '{', '}', '.', ',', '+', '-', '<', '>', '@',
             '*', ':']
 
@@ -169,14 +176,20 @@ def t_CARDINALITY(t):
 
 def t_NEW_TYPE(t):
     r'[a-zA-Z]+DataType'
-    t.value = {'value': t.value, 'type': tipos.get(t.value, 'new_type')}
+    # trocamos o valor de t.value para carregar tambem a classificacao, pois
+    # apenas o t.value guarda valores customizados que serao lidos pelo
+    # analisador sintatico
+    t.value = {'value': t.value,
+               'type': classifications.get(t.value, 'new_type')}
     return t
 
 
 def t_CLASS_ID(t):
     r'[A-Z_][a-zA-Z_]*'
+    # para nao classificar palavras reservadas como class_id
     t.type = reserved.get(t.value, 'CLASS_ID')
-    t.value = {'value': t.value, 'type': tipos.get(t.value, 'classe')}
+    t.value = {'value': t.value,
+               'type': classifications.get(t.value, 'classe')}
     if (t.type == 'CLASS_ID'):
         t.lexer.class_set.add(t.value['value'])
     return t
@@ -185,7 +198,8 @@ def t_CLASS_ID(t):
 def t_INSTANCE_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*[0-9]'
     t.type = reserved.get(t.value, 'INSTANCE_ID')
-    t.value = {'value': t.value, 'type': tipos.get(t.value, 'instancia')}
+    t.value = {'value': t.value,
+               'type': classifications.get(t.value, 'instancia')}
     if (t.type == 'INSTANCE_ID'):
         t.lexer.instance_set.add(t.value['value'])
     return t
@@ -194,7 +208,8 @@ def t_INSTANCE_ID(t):
 def t_RELATION_ID(t):
     r'[a-z_][a-zA-Z_]*'
     t.type = reserved.get(t.value, 'RELATION_ID')
-    t.value = {'value': t.value, 'type': tipos.get(t.value, 'relacao')}
+    t.value = {'value': t.value,
+               'type': classifications.get(t.value, 'relacao')}
     if (t.type == 'RELATION_ID'):
         t.lexer.relation_set.add(t.value['value'])
     return t
@@ -203,7 +218,7 @@ def t_RELATION_ID(t):
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     t.type = reserved.get(t.value, 'ID')
-    t.value = {'value': t.value, 'type': tipos.get(t.value, 'id')}
+    t.value = {'value': t.value, 'type': classifications.get(t.value, 'id')}
     return t
 
 
@@ -214,30 +229,32 @@ def t_NEWLINE(t):
 
 def t_NUMBER(t):
     r'\d+'
-    t.value = {'value': int(t.value), 'type': tipos.get(t.value, 'number')}
+    t.value = {'value': int(
+        t.value), 'type': classifications.get(t.value, 'number')}
     return t
 
 
 def t_error(t):
     illegal_char = t.value[0]
-    print(f"Erro Léxico: Caractere '{illegal_char}' não reconhecido na linha {t.lexer.lineno}")
-
+    print(f"Erro Léxico: Caractere '{
+          illegal_char}' não reconhecido na linha {t.lexer.lineno}")
 
     tok = lex.LexToken()
     tok.type = 'ERROR'
     tok.value = {'value': illegal_char, 'type': 'error'}
     tok.lineno = t.lexer.lineno
     tok.lexpos = t.lexer.lexpos
-    
-    t.lexer.skip(1)  
-    return tok       
+
+    t.lexer.skip(1)
+    return tok
+
 
 lexer = lex.lex(reflags=re.UNICODE)
 lexer.class_set = set()
 lexer.relation_set = set()
 lexer.instance_set = set()
 
-type_count = {}
+classification_count = {}
 
 
 def main_analyser(caminho_codigo_fonte: Path):
@@ -258,19 +275,7 @@ def main_analyser(caminho_codigo_fonte: Path):
 
         if not tok:
             break
-
-        val = tok.value
-        classification = ''
-
-        if isinstance(tok.value, dict):
-            val = tok.value['value']
-            classification = tok.value['type']
-
-            if type_count.get(classification) and val not in type_count.get(classification):
-                type_count[classification]['contador'] += 1
-                type_count[classification]['lista'].append(val)
-            else:
-                type_count[classification] = {'lista': [val], 'contador': 1}
+        val, classification = count_classifications(tok)
 
         last_newline = code_example.rfind('\n', 0, tok.lexpos)
         column = (tok.lexpos - last_newline)
@@ -291,9 +296,43 @@ def main_analyser(caminho_codigo_fonte: Path):
 
     type_count_list = []
 
-    for key, value in type_count.items():
-        type_count_list.append({'classification': key, 'quantity': value['contador']})
-
+    for key, value in classification_count.items():
+        type_count_list.append(
+            {'classification': key, 'quantidade': value['contador']})
     print(tabulate(type_count_list, headers="keys", tablefmt="grid"))
 
+    # Nome do arquivo antigo, trocando a extensao por .json
+    output_filename = ".".join(
+        caminho_codigo_fonte.name.split(".")[:-1]) + ".json"
+    try:
+        with open(output_filename, 'w', encoding='utf-8') as json_file:
+            # json.dump() escreve a lista de dicionários diretamente no arquivo
+            # indent=4 formata o JSON para ficar legível (pretty-print)
+            # ensure_ascii=False garante que caracteres como 'ç' ou 'ã' sejam
+            # salvos corretamente
+            json.dump(token_list, json_file, indent=4, ensure_ascii=False)
+
+        print(f"\nTabela de tokens salva com sucesso em: {output_filename}")
+
+    except IOError as e:
+        print(f"\nERRO ao salvar o arquivo JSON: {e}")
+
     return token_list
+
+
+# conta classificacoes, removendo duplicatas
+def count_classifications(tok):
+    val = tok.value
+    classification = ''
+    if isinstance(tok.value, dict):
+        val = tok.value['value']
+        classification = tok.value['type']
+
+        if classification_count.get(classification) and val not in classification_count.get(classification):
+            classification_count[classification]['contador'] += 1
+            classification_count[classification]['lista'].append(val)
+        else:
+            classification_count[classification] = {
+                'lista': [val], 'contador': 1}
+
+    return val, classification
