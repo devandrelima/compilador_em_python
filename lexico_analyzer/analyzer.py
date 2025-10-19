@@ -79,6 +79,7 @@ reserved = {
     'import': 'import',
     'relator': 'relator',
     'specializes': 'specializes',
+    'functional-complexes': 'functional_complexes',
     'event': 'event',
     'situation': 'situation',
     'process': 'process',
@@ -146,21 +147,21 @@ reserved = {
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
     'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID',
-    'RELATION_ID','INSTANCE_ID' ,'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER'
+    'RELATION_ID','INSTANCE_ID' ,'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER','functional_complexes' 
 ] + list(reserved.values())
 
-literals = ['(', ')', '{', '}', '.', ',', '+', '-', '<', '>', '@',
+literals = ['(', ')', '{', '}', '.', ',', '+', '<', '>', '@', '-',
             '*', ':']
 
 t_DOTDOT = r'\.\.'
-t_COMPOSITION_L = r'<>--'
-t_COMPOSITION_R = r'--<>'
-t_COMPOSITION_LO = r'<o>--'
-t_COMPOSITION_RO = r'--<o>'
-t_ASSOCIATION = r'--'
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
 
+def t_FUNCTIONAL_COMPLEXES(t):
+    r'functional-complexes'
+    t.type = 'functional_complexes'
+    t.value = {'value': t.value, 'type': tipos.get(t.value, 'palavra_reservada')}
+    return t
 
 def t_CARDINALITY(t):
     r'\[[\d\*\.]+\]'
@@ -217,6 +218,30 @@ def t_NUMBER(t):
     t.value = {'value': int(t.value), 'type': tipos.get(t.value, 'number')}
     return t
 
+
+def t_COMPOSITION_L(t):
+    r'<>--'
+    return t
+
+
+def t_COMPOSITION_R(t):
+    r'--<>'
+    return t
+
+
+def t_COMPOSITION_LO(t):
+    r'<o>--'
+    return t
+
+
+def t_COMPOSITION_RO(t):
+    r'--<o>'
+    return t
+
+
+def t_ASSOCIATION(t):
+    r'--'
+    return t
 
 def t_error(t):
     illegal_char = t.value[0]

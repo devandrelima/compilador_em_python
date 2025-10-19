@@ -7,7 +7,7 @@ kind Paciente
 kind Alimento
 
 subkind Proteina of functional-complexes  specializes Componente_Alimentar 
-
+                 
 phase Crianca of functional-complexes  specializes Paciente 
 
 phase Adulto of functional-complexes  specializes Paciente 
