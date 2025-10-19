@@ -190,6 +190,7 @@ def t_INSTANCE_ID(t):
         t.lexer.instance_set.add(t.value['value'])
     return t
 
+
 def t_RELATION_ID(t):
     r'[a-z_][a-zA-Z_]*'
     t.type = reserved.get(t.value, 'RELATION_ID')
@@ -216,9 +217,11 @@ def t_NUMBER(t):
     t.value = {'value': int(t.value), 'type': tipos.get(t.value, 'number')}
     return t
 
+
 def t_error(t):
     illegal_char = t.value[0]
     print(f"Erro Léxico: Caractere '{illegal_char}' não reconhecido na linha {t.lexer.lineno}")
+
 
     tok = lex.LexToken()
     tok.type = 'ERROR'
@@ -252,10 +255,13 @@ def main_analyser(caminho_codigo_fonte: Path):
 
     while True:
         tok = lexer.token()
+
         if not tok:
             break
+
         val = tok.value
         classification = ''
+        
         if isinstance(tok.value, dict):
             val = tok.value['value']
             classification = tok.value['type']
@@ -282,8 +288,12 @@ def main_analyser(caminho_codigo_fonte: Path):
     print("Análise Léxica concluída")
     print("\n--- Tabela de Tokens ---")
     print(tabulate(token_list, headers="keys", tablefmt="grid"))
+
     type_count_list = []
+
     for key, value in type_count.items():
         type_count_list.append({'classification': key, 'quantidade': value['contador']})
+
     print(tabulate(type_count_list, headers="keys", tablefmt="grid"))
+
     return token_list
