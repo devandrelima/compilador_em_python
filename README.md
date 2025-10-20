@@ -12,7 +12,7 @@
     * [Usando uma IDE](#executar-ide)
     * [Entrada do sistema](#entrada-sistema)
     * [Saída do sistema](#saida-sistema)
-4. [Apresentação 1 (Analizador Léxico)](#apresentacao)
+4. [Apresentação 1 no youtube (Analizador Léxico)](#apresentacao)
 5. [Criadores](#criadores)
 
 
@@ -92,7 +92,7 @@ sudo apt install python3-pip
 sudo apt install python3.12-venv
 ```
 
-### Criação do ambiente virtual python
+### <a name="criacao-ambiente-virtual"></a> Criação e Ativação do ambiente virtual python
 
 É de suma recomentação que rode esses comandos dentro do diretório principal do projeto compilador_em_python/
 
@@ -102,7 +102,7 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-### instalação do PLY para analisador léxico
+### <a name="instalacao-ply"></a> instalação do PLY para analisador léxico
 
 Observação: Esse comando só irá baixar normalmente se o venv estiver ativo
 
@@ -110,7 +110,7 @@ Observação: Esse comando só irá baixar normalmente se o venv estiver ativo
 pip install ply
 ```
 
-### instalação do tabulate para mostrar tabela
+### <a name="instalacao-tabulate"></a> instalação do tabulate para mostrar tabela
 
 Observação: Esse comando só irá baixar normalmente se o venv estiver ativo
 
@@ -118,11 +118,11 @@ Observação: Esse comando só irá baixar normalmente se o venv estiver ativo
 pip install tabulate
 ```
 
-# **Como executar o projeto**:
+# <a name="como-executar"></a> **Como executar o projeto**:
 
 Após as instalações necessárias, para executar o projeto de forma concisa basta rodar o arquivo `main.py`.
 
-### Usando prompt de comando **(recomendado)**: 
+### <a name="executar-prompt"></a> Usando prompt de comando **(recomendado)**: 
 
 Basta estar no diretório principal 'compilador_em_python/' e digitar o comando no terminal:
 
@@ -134,7 +134,7 @@ Exemplo:
 
 ![executando_ide](./images_documentation/exercutando_codigo_prompt_comando.png)
 
-### Usando uma IDE:
+### <a name="executar-ide"></a> Usando uma IDE:
 
 Basta selecionar o arquivo `main.py` e clicar no botão 'run' da IDE.
 
@@ -142,7 +142,7 @@ Exemplo com o VS Code (clicar onde estão as setas vermelhas):
 
 ![executando_ide](./images_documentation/exercutando_codigo_ide_vs_code.png)
 
-### Entrada do sistema 
+### <a name="entrada-sistema"></a> Entrada do sistema 
 
 Seja em prompt ou em IDE, aparecerá um catálogo com todos exemplos da pasta `tonto_examples` enumerados.
 
@@ -150,7 +150,7 @@ Seja em prompt ou em IDE, aparecerá um catálogo com todos exemplos da pasta `t
 
 Para executar o compilador no exemplo escolhido basta digitar o respectivo número, por exemplo, se quiser executar o `car.tonto`, digite 01 e tecle 'enter' no seu teclado.
 
-### Saída do sistema 
+### <a name="saida-sistema"></a> Saída do sistema 
 
 - Confirmação do arquivo escolhido;
 - Breve log de executando e concluído;
@@ -177,11 +177,11 @@ palavras reservadas e meta-atributos)
 
 ![exemplos_contagem_classificacao_json](./images_documentation/json_parte_das_contagens.png)
 
-# Apresentação 1 (Analizador Léxico)
+# <a name="apresentacao"></a> Apresentação 1 no youtube (Analizador Léxico)
 
 https://www.youtube.com/watch?v=cwgRQqRoW5M
 
-# Criadores:
+# <a name="criadores"></a> Criadores:
 
 - André de Lima Alves,
 - Lucas Gabriel de Melo Rodrigues.
