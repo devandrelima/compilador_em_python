@@ -152,7 +152,7 @@ reserved = {
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
     'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID',
-    'RELATION_ID','INSTANCE_ID' ,'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER','functional_complexes' 
+    'RELATION_ID', 'INSTANCE_ID', 'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER', 'functional_complexes'
 ] + list(reserved.values())
 
 # caracteres cujo valor sao eles mesmos e nao ha nenhum significado especial
@@ -164,11 +164,14 @@ t_DOTDOT = r'\.\.'
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
 
+
 def t_FUNCTIONAL_COMPLEXES(t):
     r'functional-complexes'
     t.type = 'functional_complexes'
-    t.value = {'value': t.value, 'type': tipos.get(t.value, 'palavra_reservada')}
+    t.value = {'value': t.value, 'type': tipos.get(
+        t.value, 'palavra_reservada')}
     return t
+
 
 def t_CARDINALITY(t):
     r'\[[\d\*\.]+\]'
@@ -259,6 +262,7 @@ def t_ASSOCIATION(t):
     r'--'
     return t
 
+
 def t_error(t):
     illegal_char = t.value[0]
     print(f"Erro Léxico: Caractere '{
@@ -335,7 +339,10 @@ def main_analyser(caminho_codigo_fonte: Path):
             # indent=4 formata o JSON para ficar legível (pretty-print)
             # ensure_ascii=False garante que caracteres como 'ç' ou 'ã' sejam
             # salvos corretamente
-            json.dump(token_list, json_file, indent=4, ensure_ascii=False)
+            json.dump({
+                "tokens": token_list,
+                "count": type_count_list,
+            }, json_file, indent=4, ensure_ascii=False)
 
         print(f"\nTabela de tokens salva com sucesso em: {output_filename}")
 
