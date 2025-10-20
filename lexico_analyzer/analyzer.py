@@ -168,7 +168,7 @@ t_ignore_COMMENT = r'\#.*'
 def t_FUNCTIONAL_COMPLEXES(t):
     r'functional-complexes'
     t.type = 'functional_complexes'
-    t.value = {'value': t.value, 'type': tipos.get(
+    t.value = {'value': t.value, 'type': classifications.get(
         t.value, 'palavra_reservada')}
     return t
 
@@ -334,7 +334,7 @@ def main_analyser(caminho_codigo_fonte: Path):
     output_filename = ".".join(
         caminho_codigo_fonte.name.split(".")[:-1]) + ".json"
     try:
-        with open(output_filename, 'w', encoding='utf-8') as json_file:
+        with open("lexico_analyzer/exports/" + output_filename, 'w', encoding='utf-8') as json_file:
             # json.dump() escreve a lista de dicionários diretamente no arquivo
             # indent=4 formata o JSON para ficar legível (pretty-print)
             # ensure_ascii=False garante que caracteres como 'ç' ou 'ã' sejam
@@ -361,7 +361,7 @@ def count_classifications(tok):
         classification = tok.value['type']
 
         if classification_count.get(classification):
-            if val not in classification_count.get(classification)['lista']:
+            if classification == "palavra_reservada" or val not in classification_count.get(classification)['lista']:
                 classification_count[classification]['contador'] += 1
                 classification_count[classification]['lista'].append(val)
         else:
