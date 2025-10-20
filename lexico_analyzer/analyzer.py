@@ -3,6 +3,7 @@ from pathlib import Path
 from tabulate import tabulate
 import json
 import re
+import os
 
 # Classificatios sao as classificacoes das palavras chaves a depender do seu
 # proposito na analise sintatica. Como temos as informacoes suficientes para
@@ -295,6 +296,18 @@ def main_analyser(caminho_codigo_fonte: Path):
               caminho_codigo_fonte}")
         return None
 
+    token_list = get_token_list(code_example)
+    print_token_list(token_list)
+
+    classification_count_list = get_classification_count()
+    print(tabulate(classification_count_list, headers="keys", tablefmt="grid"))
+
+    export_to_json(caminho_codigo_fonte, token_list, classification_count_list)
+
+    return token_list
+
+
+def get_token_list(code_example):
     lexer.input(code_example)
     token_list = []
     count = 1
@@ -319,41 +332,30 @@ def main_analyser(caminho_codigo_fonte: Path):
         })
         count += 1
 
+    return token_list
+
+
+def print_token_list(token_list):
     print("Análise Léxica concluída")
     print("\n--- Tabela de Tokens ---")
     print(tabulate(token_list, headers="keys", tablefmt="grid"))
 
-    type_count_list = []
+
+def get_classification_count():
+    classification_count_list = []
 
     for key, value in classification_count.items():
-        type_count_list.append(
+        classification_count_list.append(
             {'classification': key, 'quantity': value['contador']})
-    print(tabulate(type_count_list, headers="keys", tablefmt="grid"))
 
-    # Nome do arquivo antigo, trocando a extensao por .json
-    output_filename = ".".join(
-        caminho_codigo_fonte.name.split(".")[:-1]) + ".json"
-    try:
-        with open("lexico_analyzer/exports/" + output_filename, 'w', encoding='utf-8') as json_file:
-            # json.dump() escreve a lista de dicionários diretamente no arquivo
-            # indent=4 formata o JSON para ficar legível (pretty-print)
-            # ensure_ascii=False garante que caracteres como 'ç' ou 'ã' sejam
-            # salvos corretamente
-            json.dump({
-                "tokens": token_list,
-                "count": type_count_list,
-            }, json_file, indent=4, ensure_ascii=False)
-
-        print(f"\nTabela de tokens salva com sucesso em: {output_filename}")
-
-    except IOError as e:
-        print(f"\nERRO ao salvar o arquivo JSON: {e}")
-
-    return token_list
+    return classification_count_list
 
 
-# conta classificacoes, removendo duplicatas
 def count_classifications(tok):
+    """
+    Conta classificacoes e desconsidera duplicatas, exceto no caso palavras
+    reservadas, pois elas nao representam uma unidade
+    """
     val = tok.value
     classification = ''
     if isinstance(tok.value, dict):
@@ -369,3 +371,35 @@ def count_classifications(tok):
                 'lista': [val], 'contador': 1}
 
     return val, classification
+
+
+def export_to_json(caminho_codigo_fonte, token_list, type_count_list):
+    """
+    Exporta tokens e contagem de classificacoes para json no diretorio
+    lexico_analyzer/exports com arquivo com nome do exemplo escolhido
+    """
+    # Nome do arquivo antigo, trocando a extensao por .json
+    output_filename = ".".join(
+        caminho_codigo_fonte.name.split(".")[:-1]) + ".json"
+    output_dir = "lexico_analyzer/exports"
+    output_filepath = os.path.join(output_dir, output_filename)
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    try:
+        with open(output_filepath, 'w', encoding='utf-8') as json_file:
+            """
+            json.dump() escreve a lista de dicionários diretamente no arquivo
+            indent=4 formata o JSON para ficar legível (pretty-print)
+            ensure_ascii=False garante que caracteres como 'ç' ou 'ã' sejam
+            salvos corretamente
+            """
+            json.dump({
+                "tokens": token_list,
+                "count": type_count_list,
+            }, json_file, indent=4, ensure_ascii=False)
+
+        print(f"\nTabela de tokens salva com sucesso em: {output_filename}")
+
+    except IOError as e:
+        print(f"\nERRO ao salvar o arquivo JSON: {e}")
