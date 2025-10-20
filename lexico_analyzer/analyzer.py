@@ -350,26 +350,25 @@ def get_classification_count():
 
     return classification_count_list
 
-
 def count_classifications(tok):
     """
-    Conta classificacoes e desconsidera duplicatas, exceto no caso palavras
-    reservadas, pois elas nao representam uma unidade
+    Conta todas as ocorrências de cada classificaçãO
     """
     val = tok.value
     classification = ''
+    
     if isinstance(tok.value, dict):
         val = tok.value['value']
         classification = tok.value['type']
+        
+        if classification in classification_count:
+            classification_count[classification]['contador'] += 1
 
-        if classification_count.get(classification):
-            if classification == "palavra_reservada" or val not in classification_count.get(classification)['lista']:
-                classification_count[classification]['contador'] += 1
-                classification_count[classification]['lista'].append(val)
         else:
             classification_count[classification] = {
-                'lista': [val], 'contador': 1}
-
+                'contador': 1
+            }
+            
     return val, classification
 
 

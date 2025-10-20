@@ -17,12 +17,13 @@ COMPILADOR_EM_PYTHON/
 ├── lexico_analyzer/
 │   ├── __init__.py
 │   ├── analyzer.py
-│   └── __pycache__/ (arquivos de cache, por favor, desconsiderar)
+│   ├── exports/ (arquivos json exportados)
+│   └── pycache/ (arquivos de cache, por favor, desconsiderar)
 │
 └── tonto_examples/
     ├── alergiaalimentar.tonto
     ├── car.tonto
-    ├── ...todos os exemplos utilizados no código
+    └── ...todos os exemplos utilizados no código
 
 ```
 
@@ -51,7 +52,8 @@ COMPILADOR_EM_PYTHON/
       * Este é um pacote Python que encapsula toda a lógica do **Analisador Léxico**.
       * `__init__.py`: Este arquivo, mesmo que vazio, sinaliza ao Python que o diretório 'lexico_analyzer' pode ser importado como um módulo. É o que permite que o 'main.py' execute 'from lexico_analyzer.analyzer import main_analyser'.
       * `analyzer.py`: Contém todo o código-fonte do analisador léxico, construído com a biblioteca PLY. Ele define os tokens, as regras de reconhecimento e a função principal que processa um arquivo '.tonto'.
-      * `__pycache__/`: Uma pasta gerada automaticamente pelo Python. Ela armazena versões compiladas (bytecode) do código '.pyc' para acelerar a inicialização do programa. Esta pasta pode ser ignorada e excluída com segurança.
+      * `exports/`: Uma pasta que irá conter os arquivos json exportados para quando um arquivo .tonto é analisado pelo analisador léxico.
+      * `pycache/`: Uma pasta gerada automaticamente pelo Python. Ela armazena versões compiladas (bytecode) do código '.pyc' para acelerar a inicialização do programa. Esta pasta pode ser ignorada e excluída com segurança.
 
   * `tonto_examples/` (Diretório)
 
@@ -135,3 +137,10 @@ palavras reservadas e meta-atributos)
 ![exemplos_tabela_tokens](./images_documentation/saida_tabela_tokens.png)
 
 ![exemplos_contagem_classificacao](./images_documentation/tabela_contagem_classificacao.png)
+
+- Arquivo json no diretório lexico_analyzer/exports/
+
+
+![exemplos_tabela_tokens_json](./images_documentation/json_tabela_tokens.png)
+
+![exemplos_contagem_classificacao_json](./images_documentation/json_parte_das_contagens.png)

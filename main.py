@@ -2,6 +2,10 @@ from pathlib import Path
 from lexico_analyzer.analyzer import main_analyser
 
 def listar_e_mapear_exemplos(caminho_da_pasta: str):
+    """
+    Busca arquivos .tonto na pasta especificada, imprime um menu numerado
+    e retorna um dicionário mapeando o índice
+    """
 
     pasta = Path(caminho_da_pasta)
     mapa_de_arquivos = {}
@@ -16,7 +20,7 @@ def listar_e_mapear_exemplos(caminho_da_pasta: str):
         print(f"Nenhum arquivo .tonto encontrado na pasta '{caminho_da_pasta}'.")
         return None
 
-    print("--- Arquivos de Exemplo Tonto Disponíveis ---")
+    print("\n\n--- Arquivos de Exemplo Tonto Disponíveis ---\n")
     
     for i, arquivo in enumerate(arquivos_tonto):
         chave_id = f'{i:02}'
