@@ -1,6 +1,24 @@
-# **Estrutura do Projeto**
+# Sumário
+1. [Estrutura do Projeto](#estrutura-do-projeto)
+    * [Organização das pastas](#organizacao-das-pastas)
+    * [Descrição dos Componentes](#descricao-dos-componentes)
+2. [Instalações necessárias para executar o projeto](#instalacoes-necessarias)
+    * [Comandos executados para instalação do python do zero no Linux/WSL](#comandos-python)
+    * [Criação do ambiente virtual python](#criacao-ambiente-virtual)
+    * [instalação do PLY para analisador léxico](#instalacao-ply)
+    * [instalação do tabulate para mostrar tabela](#instalacao-tabulate)
+3. [Como executar o projeto](#como-executar)
+    * [Usando prompt de comando (recomendado)](#executar-prompt)
+    * [Usando uma IDE](#executar-ide)
+    * [Entrada do sistema](#entrada-sistema)
+    * [Saída do sistema](#saida-sistema)
+4. [Apresentação 1 (Analizador Léxico)](#apresentacao)
+5. [Criadores](#criadores)
 
-### Organização das pastas
+
+# <a name="estrutura-do-projeto"></a> Estrutura do Projeto
+
+### <a name="organizacao-das-pastas"></a> Organização das pastas
 
 ```
 COMPILADOR_EM_PYTHON/
@@ -29,7 +47,7 @@ COMPILADOR_EM_PYTHON/
 
 -----
 
-### **Descrição dos Componentes**
+### <a name="descricao-dos-componentes"></a> **Descrição dos Componentes**
 
   * `main.py`
 
@@ -60,9 +78,9 @@ COMPILADOR_EM_PYTHON/
       * Este diretório armazena todos os arquivos de código-fonte na linguagem **Tonto** que servem como exemplos e casos de teste para o compilador.
       * `alergiaalimentar.tonto`, `car.tonto`, `carRentail.tonto`, entre outros arquivos '.tonto': Cada um desses arquivos pode ser lido pelo `main.py` para testar o funcionamento do analisador léxico.
 
-# **Instalações necessárias para executar o projeto**:
+# <a name="instalacoes-necessarias"></a> **Instalações necessárias para executar o projeto**:
 
-### Comandos executados para instalação do python do zero:
+### <a name="comandos-python"></a> Comandos executados para instalação do python do zero no Linux/WSL:
 
 ```
 sudo apt update
@@ -70,10 +88,23 @@ sudo apt update
 sudo apt install python3
 
 sudo apt install python3-pip
+
+sudo apt install python3.12-venv
 ```
 
+### Criação do ambiente virtual python
+
+É de suma recomentação que rode esses comandos dentro do diretório principal do projeto compilador_em_python/
+
+```
+python3 -m venv venv
+
+source venv/bin/activate
+```
 
 ### instalação do PLY para analisador léxico
+
+Observação: Esse comando só irá baixar normalmente se o venv estiver ativo
 
 ```
 pip install ply
@@ -81,10 +112,11 @@ pip install ply
 
 ### instalação do tabulate para mostrar tabela
 
+Observação: Esse comando só irá baixar normalmente se o venv estiver ativo
+
 ```
 pip install tabulate
 ```
-
 
 # **Como executar o projeto**:
 
