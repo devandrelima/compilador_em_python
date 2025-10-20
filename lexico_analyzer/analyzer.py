@@ -353,9 +353,10 @@ def count_classifications(tok):
         val = tok.value['value']
         classification = tok.value['type']
 
-        if classification_count.get(classification) and val not in classification_count.get(classification):
-            classification_count[classification]['contador'] += 1
-            classification_count[classification]['lista'].append(val)
+        if classification_count.get(classification):
+            if val not in classification_count.get(classification)['lista']:
+                classification_count[classification]['contador'] += 1
+                classification_count[classification]['lista'].append(val)
         else:
             classification_count[classification] = {
                 'lista': [val], 'contador': 1}
