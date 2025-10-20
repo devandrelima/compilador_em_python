@@ -189,6 +189,16 @@ def t_NEW_TYPE(t):
     return t
 
 
+def t_INSTANCE_ID(t):
+    r'[a-zA-Z_][a-zA-Z0-9_]*[0-9]'
+    t.type = reserved.get(t.value, 'INSTANCE_ID')
+    t.value = {'value': t.value,
+               'type': classifications.get(t.value, 'instancia')}
+    if (t.type == 'INSTANCE_ID'):
+        t.lexer.instance_set.add(t.value['value'])
+    return t
+
+
 def t_CLASS_ID(t):
     r'[A-Z_][a-zA-Z_]*'
     # para nao classificar palavras reservadas como class_id
@@ -197,16 +207,6 @@ def t_CLASS_ID(t):
                'type': classifications.get(t.value, 'classe')}
     if (t.type == 'CLASS_ID'):
         t.lexer.class_set.add(t.value['value'])
-    return t
-
-
-def t_INSTANCE_ID(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*[0-9]'
-    t.type = reserved.get(t.value, 'INSTANCE_ID')
-    t.value = {'value': t.value,
-               'type': classifications.get(t.value, 'instancia')}
-    if (t.type == 'INSTANCE_ID'):
-        t.lexer.instance_set.add(t.value['value'])
     return t
 
 
