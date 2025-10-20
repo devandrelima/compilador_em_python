@@ -144,3 +144,12 @@ palavras reservadas e meta-atributos)
 ![exemplos_tabela_tokens_json](./images_documentation/json_tabela_tokens.png)
 
 ![exemplos_contagem_classificacao_json](./images_documentation/json_parte_das_contagens.png)
+
+# Apresentação 1 (Analizador Léxico)
+
+https://www.youtube.com/watch?v=cwgRQqRoW5M
+
+# Criadores:
+
+- André de Lima Alves,
+- Lucas Gabriel de Melo Rodrigues.
