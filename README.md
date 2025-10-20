@@ -4,7 +4,7 @@
     * [Descrição dos Componentes](#descricao-dos-componentes)
 2. [Instalações necessárias para executar o projeto](#instalacoes-necessarias)
     * [Comandos executados para instalação do python do zero no Linux/WSL](#comandos-python)
-    * [Criação do ambiente virtual python](#criacao-ambiente-virtual)
+    * [Criação do ambiente virtual python (venv)](#criacao-ambiente-virtual)
     * [instalação do PLY para analisador léxico](#instalacao-ply)
     * [instalação do tabulate para mostrar tabela](#instalacao-tabulate)
 3. [Como executar o projeto](#como-executar)
@@ -92,7 +92,7 @@ sudo apt install python3-pip
 sudo apt install python3.12-venv
 ```
 
-### <a name="criacao-ambiente-virtual"></a> Criação e Ativação do ambiente virtual python
+### <a name="criacao-ambiente-virtual"></a> Criação e Ativação do ambiente virtual python (venv)
 
 É de suma recomentação que rode esses comandos dentro do diretório principal do projeto compilador_em_python/
 
