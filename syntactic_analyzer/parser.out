@@ -1,0 +1,221 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    ASSOCIATION
+    CARDINALITY
+    CLASS_NAME
+    COMPOSITION_L
+    COMPOSITION_LO
+    COMPOSITION_R
+    COMPOSITION_RO
+    DOTDOT
+    ERROR
+    ID
+    INSTANCE_ID
+    NEWLINE
+    NEW_TYPE
+    NUMBER
+    RELATION_ID
+    aggregation
+    boolean
+    bringsAbout
+    category
+    characterization
+    collective
+    comparative
+    complete
+    componentOf
+    composition
+    const
+    constitution
+    creation
+    date
+    datetime
+    derivation
+    derived
+    disjoint
+    event
+    externalDependence
+    extrinsicMode
+    formal
+    functional_complexes
+    general
+    genset
+    historicalDependence
+    historicalRole
+    historicalRoleMixin
+    import
+    inherence
+    instantiation
+    intrisicMode
+    kind
+    manifestation
+    material
+    mediation
+    memberOf
+    mixin
+    mode
+    number
+    ordered
+    participation
+    participational
+    phase
+    phaseMixin
+    process
+    quality
+    quantity
+    redefines
+    relator
+    role
+    roleMixin
+    situation
+    specializes
+    specifics
+    string
+    subCollectionOf
+    subQualityOf
+    subkind
+    subsets
+    termination
+    time
+    triggers
+    value
+    where
+
+Grammar
+
+Rule 0     S' -> programa
+Rule 1     programa -> declaracao_pacote
+Rule 2     declaracao_pacote -> package CLASS_ID
+
+Terminals, with rules where they appear
+
+ASSOCIATION          : 
+CARDINALITY          : 
+CLASS_ID             : 2
+CLASS_NAME           : 
+COMPOSITION_L        : 
+COMPOSITION_LO       : 
+COMPOSITION_R        : 
+COMPOSITION_RO       : 
+DOTDOT               : 
+ERROR                : 
+ID                   : 
+INSTANCE_ID          : 
+NEWLINE              : 
+NEW_TYPE             : 
+NUMBER               : 
+RELATION_ID          : 
+aggregation          : 
+boolean              : 
+bringsAbout          : 
+category             : 
+characterization     : 
+collective           : 
+comparative          : 
+complete             : 
+componentOf          : 
+composition          : 
+const                : 
+constitution         : 
+creation             : 
+date                 : 
+datetime             : 
+derivation           : 
+derived              : 
+disjoint             : 
+error                : 
+event                : 
+externalDependence   : 
+extrinsicMode        : 
+formal               : 
+functional_complexes : 
+general              : 
+genset               : 
+historicalDependence : 
+historicalRole       : 
+historicalRoleMixin  : 
+import               : 
+inherence            : 
+instantiation        : 
+intrisicMode         : 
+kind                 : 
+manifestation        : 
+material             : 
+mediation            : 
+memberOf             : 
+mixin                : 
+mode                 : 
+number               : 
+ordered              : 
+package              : 2
+participation        : 
+participational      : 
+phase                : 
+phaseMixin           : 
+process              : 
+quality              : 
+quantity             : 
+redefines            : 
+relator              : 
+role                 : 
+roleMixin            : 
+situation            : 
+specializes          : 
+specifics            : 
+string               : 
+subCollectionOf      : 
+subQualityOf         : 
+subkind              : 
+subsets              : 
+termination          : 
+time                 : 
+triggers             : 
+value                : 
+where                : 
+
+Nonterminals, with rules where they appear
+
+declaracao_pacote    : 1
+programa             : 0
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . programa
+    (1) programa -> . declaracao_pacote
+    (2) declaracao_pacote -> . package CLASS_ID
+
+    package         shift and go to state 3
+
+    programa                       shift and go to state 1
+    declaracao_pacote              shift and go to state 2
+
+state 1
+
+    (0) S' -> programa .
+
+
+
+state 2
+
+    (1) programa -> declaracao_pacote .
+
+    $end            reduce using rule 1 (programa -> declaracao_pacote .)
+
+
+state 3
+
+    (2) declaracao_pacote -> package . CLASS_ID
+
+    CLASS_ID        shift and go to state 4
+
+
+state 4
+
+    (2) declaracao_pacote -> package CLASS_ID .
+
+    $end            reduce using rule 2 (declaracao_pacote -> package CLASS_ID .)
+
