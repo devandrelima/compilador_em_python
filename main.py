@@ -1,6 +1,19 @@
 from pathlib import Path
 from lexico_analyzer.analyzer import main_analyser
 
+def importar_codigo(caminho_codigo_fonte):
+    try:
+        with open(caminho_codigo_fonte, 'r', encoding='utf-8') as f:
+            code_example = f.read()
+
+        return code_example
+    
+    except FileNotFoundError:
+        print(f"ERRO: Arquivo de exemplo não encontrado em: {
+              caminho_codigo_fonte}")
+        return None
+
+
 def listar_e_mapear_exemplos(caminho_da_pasta: str):
     """
     Busca arquivos .tonto na pasta especificada, imprime um menu numerado
@@ -45,6 +58,9 @@ if __name__ == "__main__":
         print(f'Path do exemplo selecionado: {caminho_do_arquivo_escolhido}')
         print('\nExecutando a análise léxica...')
         
-        main_analyser(caminho_do_arquivo_escolhido)
+        codigo_fonte = importar_codigo(caminho_do_arquivo_escolhido)
+
+        main_analyser(caminho_do_arquivo_escolhido, codigo_fonte)
+        
     else:
         print(f"ERRO: Opção '{escolha}' inválida.")

@@ -287,15 +287,7 @@ lexer.instance_set = set()
 classification_count = {}
 
 
-def main_analyser(caminho_codigo_fonte: Path):
-    try:
-        with open(caminho_codigo_fonte, 'r', encoding='utf-8') as f:
-            code_example = f.read()
-    except FileNotFoundError:
-        print(f"ERRO: Arquivo de exemplo não encontrado em: {
-              caminho_codigo_fonte}")
-        return None
-
+def main_analyser(caminho_codigo_fonte: Path, code_example: str):
     token_list = get_token_list(code_example)
     print_token_list(token_list)
 
