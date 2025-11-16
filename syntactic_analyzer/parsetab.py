@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'ASSOCIATION CARDINALITY CLASS_ID CLASS_NAME COMPOSITION_L COMPOSITION_LO COMPOSITION_R COMPOSITION_RO DOTDOT ERROR ID INSTANCE_ID NEWLINE NEW_TYPE NUMBER RELATION_ID aggregation boolean bringsAbout category characterization collective comparative complete componentOf composition const constitution creation date datetime derivation derived disjoint event externalDependence extrinsicMode formal functional_complexes functional_complexes general genset historicalDependence historicalRole historicalRoleMixin import inherence instantiation intrisicMode kind manifestation material mediation memberOf mixin mode number ordered package participation participational phase phaseMixin process quality quantity redefines relator role roleMixin situation specializes specifics string subCollectionOf subQualityOf subkind subsets termination time triggers value whereprograma : declaracao_pacotedeclaracao_pacote : package CLASS_ID'
+_lr_signature = "ASSOCIATION CARDINALITY CLASS_ID COMPOSITION_L COMPOSITION_LO COMPOSITION_R COMPOSITION_RO ERROR FUNCTIONAL_COMPLEXES NEWLINE NEW_TYPE RELATION_ID aggregation boolean bringsAbout category characterization collective comparative complete componentOf composition const constitution creation datatype date datetime derivation derived disjoint enum event externalDependence extrinsicMode formal general genset historicalDependence historicalRole historicalRoleMixin import inherence instantiation intrisicMode kind manifestation material mediation memberOf mixin mode number ordered package participation participational phase phaseMixin process quality quantity redefines relation relator role roleMixin situation specializes specifics string subCollectionOf subQualityOf subkind subsets termination time triggers value whereprograma : declaracao_pacote lista_declaracoes_optlista_declaracoes_opt : lista_declaracoes\n                             | emptylista_declaracoes : declaracao lista_declaracoes\n                         | declaracaodeclaracao : declaracao_classe\n                  | declaracao_tipo_dado\n                  | declaracao_enum\n                  | declaracao_genset\n                  | declaracao_relacao_externadeclaracao_pacote : package CLASS_IDdeclaracao_classe : estereotipo_classe CLASS_ID '{' corpo_classe '}'\n                         | estereotipo_classe CLASS_ID specializes CLASS_IDcorpo_classe : lista_membros_classe\n                    | emptylista_membros_classe : membro_classe lista_membros_classe\n                            | membro_classemembro_classe : declaracao_atributo\n                     | declaracao_relacao_internadeclaracao_atributo : RELATION_ID ':' tipo meta_atributos_opttipo : dado_nativo\n            | NEW_TYPE\n            | CLASS_IDmeta_atributos_opt : '{' lista_meta_atributos '}'\n                          | emptylista_meta_atributos : const\n                            | ordered\n                            | derived\n                            | subsets\n                            | redefinesdeclaracao_tipo_dado : datatype CLASS_ID '{' corpo_classe '}'declaracao_enum : enum CLASS_ID '{' lista_instancias_enum '}'lista_instancias_enum : CLASS_ID ',' lista_instancias_enum\n                             | CLASS_IDdeclaracao_genset : genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID\n                         | genset CLASS_ID '{' genset_corpo '}'genset_modifiers_opt : disjoint complete\n                            | disjoint\n                            | complete\n                            | emptylista_classes_genset : CLASS_ID ',' lista_classes_genset\n                            | CLASS_IDgenset_corpo : general CLASS_ID specifics lista_classes_gensetdeclaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_IDdeclaracao_relacao_externa : '@' estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_IDsimbolo_associacao : ASSOCIATION\n                          | COMPOSITION_L\n                          | COMPOSITION_R\n                          | COMPOSITION_LO\n                          | COMPOSITION_ROestereotipo_classe : event\n                          | situation\n                          | process\n                          | category\n                          | mixin\n                          | phaseMixin\n                          | roleMixin\n                          | historicalRoleMixin\n                          | kind\n                          | collective\n                          | quantity\n                          | quality\n                          | mode\n                          | intrisicMode\n                          | extrinsicMode\n                          | subkind\n                          | phase\n                          | role\n                          | historicalRoleestereotipo_relacao : material\n                           | derivation\n                           | comparative\n                           | mediation\n                           | characterization\n                           | externalDependence\n                           | componentOf\n                           | memberOf\n                           | subCollectionOf\n                           | subQualityOf\n                           | instantiation\n                           | termination\n                           | participational\n                           | participation\n                           | historicalDependence\n                           | creation\n                           | manifestation\n                           | bringsAbout\n                           | triggers\n                           | composition\n                           | aggregation\n                           | inherence\n                           | value\n                           | formal\n                           | constitutiondado_nativo : number\n                   | string\n                   | boolean\n                   | date\n                   | time\n                   | datetimeempty :"
     
-_lr_action_items = {'package':([0,],[3,]),'$end':([1,2,4,],[0,-1,-2,]),'CLASS_ID':([3,],[4,]),}
+_lr_action_items = {'package':([0,],[3,]),'$end':([1,2,4,5,6,7,8,9,10,11,12,40,41,90,98,102,104,107,136,146,],[0,-101,-1,-2,-3,-5,-6,-7,-8,-9,-10,-11,-4,-13,-12,-31,-32,-36,-35,-45,]),'genset':([2,6,7,8,9,10,11,12,16,38,39,40,42,74,90,98,102,104,107,136,146,],[17,-40,17,-6,-7,-8,-9,-10,46,-38,-39,-11,-40,-37,-13,-12,-31,-32,-36,-35,-45,]),'datatype':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[14,14,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'enum':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[15,15,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'@':([2,7,8,9,10,11,12,40,75,77,85,86,87,90,98,102,104,107,110,111,112,113,114,115,116,117,118,119,131,133,136,146,147,148,],[18,18,-6,-7,-8,-9,-10,-11,89,89,89,-18,-19,-13,-12,-31,-32,-36,-101,-21,-22,-23,-95,-96,-97,-98,-99,-100,-20,-25,-35,-45,-24,-44,]),'event':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[19,19,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'situation':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[20,20,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'process':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[21,21,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'category':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[22,22,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'mixin':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[23,23,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'phaseMixin':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[24,24,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'roleMixin':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[25,25,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'historicalRoleMixin':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[26,26,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'kind':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[27,27,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'collective':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[28,28,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'quantity':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[29,29,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'quality':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[30,30,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'mode':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[31,31,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'intrisicMode':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[32,32,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'extrinsicMode':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[33,33,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'subkind':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[34,34,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'phase':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[35,35,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'role':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[36,36,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'historicalRole':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[37,37,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'disjoint':([2,7,8,9,10,11,12,40,90,98,102,104,107,136,146,],[38,38,-6,-7,-8,-9,-10,-11,-13,-12,-31,-32,-36,-35,-45,]),'complete':([2,7,8,9,10,11,12,38,40,90,98,102,104,107,136,146,],[39,39,-6,-7,-8,-9,-10,74,-11,-13,-12,-31,-32,-36,-35,-45,]),'CLASS_ID':([3,13,14,15,17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,46,76,78,81,94,96,100,103,122,123,124,138,145,],[40,43,44,45,47,-51,-52,-53,-54,-55,-56,-57,-58,-59,-60,-61,-62,-63,-64,-65,-66,-67,-68,-69,79,90,92,97,105,108,113,92,105,136,105,146,148,]),'material':([18,89,],[49,49,]),'derivation':([18,89,],[50,50,]),'comparative':([18,89,],[51,51,]),'mediation':([18,89,],[52,52,]),'characterization':([18,89,],[53,53,]),'externalDependence':([18,89,],[54,54,]),'componentOf':([18,89,],[55,55,]),'memberOf':([18,89,],[56,56,]),'subCollectionOf':([18,89,],[57,57,]),'subQualityOf':([18,89,],[58,58,]),'instantiation':([18,89,],[59,59,]),'termination':([18,89,],[60,60,]),'participational':([18,89,],[61,61,]),'participation':([18,89,],[62,62,]),'historicalDependence':([18,89,],[63,63,]),'creation':([18,89,],[64,64,]),'manifestation':([18,89,],[65,65,]),'bringsAbout':([18,89,],[66,66,]),'triggers':([18,89,],[67,67,]),'composition':([18,89,],[68,68,]),'aggregation':([18,89,],[69,69,]),'inherence':([18,89,],[70,70,]),'value':([18,89,],[71,71,]),'formal':([18,89,],[72,72,]),'constitution':([18,89,],[73,73,]),'{':([43,44,45,47,110,111,112,113,114,115,116,117,118,119,],[75,77,78,80,132,-21,-22,-23,-95,-96,-97,-98,-99,-100,]),'specializes':([43,105,106,135,],[76,-42,123,-41,]),'relation':([48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,],[81,-70,-71,-72,-73,-74,-75,-76,-77,-78,-79,-80,-81,-82,-83,-84,-85,-86,-87,-88,-89,-90,-91,-92,-93,-94,]),'CARDINALITY':([49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,97,101,125,126,127,128,129,130,134,],[-70,-71,-72,-73,-74,-75,-76,-77,-78,-79,-80,-81,-82,-83,-84,-85,-86,-87,-88,-89,-90,-91,-92,-93,-94,109,120,138,-46,-47,-48,-49,-50,145,]),'}':([75,77,82,83,84,85,86,87,91,92,93,95,99,105,110,111,112,113,114,115,116,117,118,119,121,131,133,135,137,139,140,141,142,143,144,147,148,],[-101,-101,98,-14,-15,-17,-18,-19,102,-34,104,107,-16,-42,-101,-21,-22,-23,-95,-96,-97,-98,-99,-100,-33,-20,-25,-41,-43,147,-26,-27,-28,-29,-30,-24,-44,]),'RELATION_ID':([75,77,85,86,87,110,111,112,113,114,115,116,117,118,119,131,133,147,148,],[88,88,88,-18,-19,-101,-21,-22,-23,-95,-96,-97,-98,-99,-100,-20,-25,-24,-44,]),'where':([79,],[94,]),'general':([80,],[96,]),':':([88,],[100,]),',':([92,105,],[103,122,]),'NEW_TYPE':([100,],[112,]),'number':([100,],[114,]),'string':([100,],[115,]),'boolean':([100,],[116,]),'date':([100,],[117,]),'time':([100,],[118,]),'datetime':([100,],[119,]),'specifics':([108,],[124,]),'ASSOCIATION':([109,120,],[126,126,]),'COMPOSITION_L':([109,120,],[127,127,]),'COMPOSITION_R':([109,120,],[128,128,]),'COMPOSITION_LO':([109,120,],[129,129,]),'COMPOSITION_RO':([109,120,],[130,130,]),'const':([132,],[140,]),'ordered':([132,],[141,]),'derived':([132,],[142,]),'subsets':([132,],[143,]),'redefines':([132,],[144,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'programa':([0,],[1,]),'declaracao_pacote':([0,],[2,]),}
+_lr_goto_items = {'programa':([0,],[1,]),'declaracao_pacote':([0,],[2,]),'lista_declaracoes_opt':([2,],[4,]),'lista_declaracoes':([2,7,],[5,41,]),'empty':([2,7,75,77,110,],[6,42,84,84,133,]),'declaracao':([2,7,],[7,7,]),'declaracao_classe':([2,7,],[8,8,]),'declaracao_tipo_dado':([2,7,],[9,9,]),'declaracao_enum':([2,7,],[10,10,]),'declaracao_genset':([2,7,],[11,11,]),'declaracao_relacao_externa':([2,7,],[12,12,]),'estereotipo_classe':([2,7,],[13,13,]),'genset_modifiers_opt':([2,7,],[16,16,]),'estereotipo_relacao':([18,89,],[48,101,]),'corpo_classe':([75,77,],[82,91,]),'lista_membros_classe':([75,77,85,],[83,83,99,]),'membro_classe':([75,77,85,],[85,85,85,]),'declaracao_atributo':([75,77,85,],[86,86,86,]),'declaracao_relacao_interna':([75,77,85,],[87,87,87,]),'lista_instancias_enum':([78,103,],[93,121,]),'genset_corpo':([80,],[95,]),'lista_classes_genset':([94,122,124,],[106,135,137,]),'tipo':([100,],[110,]),'dado_nativo':([100,],[111,]),'simbolo_associacao':([109,120,],[125,134,]),'meta_atributos_opt':([110,],[131,]),'lista_meta_atributos':([132,],[139,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,6 +27,105 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> programa","S'",1,None,None,None),
-  ('programa -> declaracao_pacote','programa',1,'p_programa','analyser.py',5),
-  ('declaracao_pacote -> package CLASS_ID','declaracao_pacote',2,'p_declaracao_pacote','analyser.py',10),
+  ('programa -> declaracao_pacote lista_declaracoes_opt','programa',2,'p_programa','analyser.py',8),
+  ('lista_declaracoes_opt -> lista_declaracoes','lista_declaracoes_opt',1,'p_lista_declaracoes_opt','analyser.py',13),
+  ('lista_declaracoes_opt -> empty','lista_declaracoes_opt',1,'p_lista_declaracoes_opt','analyser.py',14),
+  ('lista_declaracoes -> declaracao lista_declaracoes','lista_declaracoes',2,'p_lista_declaracoes','analyser.py',18),
+  ('lista_declaracoes -> declaracao','lista_declaracoes',1,'p_lista_declaracoes','analyser.py',19),
+  ('declaracao -> declaracao_classe','declaracao',1,'p_declaracao','analyser.py',26),
+  ('declaracao -> declaracao_tipo_dado','declaracao',1,'p_declaracao','analyser.py',27),
+  ('declaracao -> declaracao_enum','declaracao',1,'p_declaracao','analyser.py',28),
+  ('declaracao -> declaracao_genset','declaracao',1,'p_declaracao','analyser.py',29),
+  ('declaracao -> declaracao_relacao_externa','declaracao',1,'p_declaracao','analyser.py',30),
+  ('declaracao_pacote -> package CLASS_ID','declaracao_pacote',2,'p_declaracao_pacote','analyser.py',34),
+  ('declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe }','declaracao_classe',5,'p_declaracao_classe','analyser.py',39),
+  ('declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID','declaracao_classe',4,'p_declaracao_classe','analyser.py',40),
+  ('corpo_classe -> lista_membros_classe','corpo_classe',1,'p_corpo_classe','analyser.py',49),
+  ('corpo_classe -> empty','corpo_classe',1,'p_corpo_classe','analyser.py',50),
+  ('lista_membros_classe -> membro_classe lista_membros_classe','lista_membros_classe',2,'p_lista_membros_classe','analyser.py',54),
+  ('lista_membros_classe -> membro_classe','lista_membros_classe',1,'p_lista_membros_classe','analyser.py',55),
+  ('membro_classe -> declaracao_atributo','membro_classe',1,'p_membro_classe','analyser.py',62),
+  ('membro_classe -> declaracao_relacao_interna','membro_classe',1,'p_membro_classe','analyser.py',63),
+  ('declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt','declaracao_atributo',4,'p_declaracao_atributo','analyser.py',67),
+  ('tipo -> dado_nativo','tipo',1,'p_tipo','analyser.py',72),
+  ('tipo -> NEW_TYPE','tipo',1,'p_tipo','analyser.py',73),
+  ('tipo -> CLASS_ID','tipo',1,'p_tipo','analyser.py',74),
+  ('meta_atributos_opt -> { lista_meta_atributos }','meta_atributos_opt',3,'p_meta_atributos_opt','analyser.py',78),
+  ('meta_atributos_opt -> empty','meta_atributos_opt',1,'p_meta_atributos_opt','analyser.py',79),
+  ('lista_meta_atributos -> const','lista_meta_atributos',1,'p_lista_meta_atributos','analyser.py',83),
+  ('lista_meta_atributos -> ordered','lista_meta_atributos',1,'p_lista_meta_atributos','analyser.py',84),
+  ('lista_meta_atributos -> derived','lista_meta_atributos',1,'p_lista_meta_atributos','analyser.py',85),
+  ('lista_meta_atributos -> subsets','lista_meta_atributos',1,'p_lista_meta_atributos','analyser.py',86),
+  ('lista_meta_atributos -> redefines','lista_meta_atributos',1,'p_lista_meta_atributos','analyser.py',87),
+  ('declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe }','declaracao_tipo_dado',5,'p_declaracao_tipo_dado','analyser.py',91),
+  ('declaracao_enum -> enum CLASS_ID { lista_instancias_enum }','declaracao_enum',5,'p_declaracao_enum','analyser.py',96),
+  ('lista_instancias_enum -> CLASS_ID , lista_instancias_enum','lista_instancias_enum',3,'p_lista_instancias_enum','analyser.py',101),
+  ('lista_instancias_enum -> CLASS_ID','lista_instancias_enum',1,'p_lista_instancias_enum','analyser.py',102),
+  ('declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID','declaracao_genset',7,'p_declaracao_genset','analyser.py',109),
+  ('declaracao_genset -> genset CLASS_ID { genset_corpo }','declaracao_genset',5,'p_declaracao_genset','analyser.py',110),
+  ('genset_modifiers_opt -> disjoint complete','genset_modifiers_opt',2,'p_genset_modifiers_opt','analyser.py',119),
+  ('genset_modifiers_opt -> disjoint','genset_modifiers_opt',1,'p_genset_modifiers_opt','analyser.py',120),
+  ('genset_modifiers_opt -> complete','genset_modifiers_opt',1,'p_genset_modifiers_opt','analyser.py',121),
+  ('genset_modifiers_opt -> empty','genset_modifiers_opt',1,'p_genset_modifiers_opt','analyser.py',122),
+  ('lista_classes_genset -> CLASS_ID , lista_classes_genset','lista_classes_genset',3,'p_lista_classes_genset','analyser.py',126),
+  ('lista_classes_genset -> CLASS_ID','lista_classes_genset',1,'p_lista_classes_genset','analyser.py',127),
+  ('genset_corpo -> general CLASS_ID specifics lista_classes_genset','genset_corpo',4,'p_genset_corpo','analyser.py',134),
+  ('declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID','declaracao_relacao_interna',6,'p_declaracao_relacao_interna','analyser.py',138),
+  ('declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID','declaracao_relacao_externa',8,'p_declaracao_relacao_externa','analyser.py',144),
+  ('simbolo_associacao -> ASSOCIATION','simbolo_associacao',1,'p_simbolo_associacao','analyser.py',149),
+  ('simbolo_associacao -> COMPOSITION_L','simbolo_associacao',1,'p_simbolo_associacao','analyser.py',150),
+  ('simbolo_associacao -> COMPOSITION_R','simbolo_associacao',1,'p_simbolo_associacao','analyser.py',151),
+  ('simbolo_associacao -> COMPOSITION_LO','simbolo_associacao',1,'p_simbolo_associacao','analyser.py',152),
+  ('simbolo_associacao -> COMPOSITION_RO','simbolo_associacao',1,'p_simbolo_associacao','analyser.py',153),
+  ('estereotipo_classe -> event','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',157),
+  ('estereotipo_classe -> situation','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',158),
+  ('estereotipo_classe -> process','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',159),
+  ('estereotipo_classe -> category','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',160),
+  ('estereotipo_classe -> mixin','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',161),
+  ('estereotipo_classe -> phaseMixin','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',162),
+  ('estereotipo_classe -> roleMixin','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',163),
+  ('estereotipo_classe -> historicalRoleMixin','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',164),
+  ('estereotipo_classe -> kind','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',165),
+  ('estereotipo_classe -> collective','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',166),
+  ('estereotipo_classe -> quantity','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',167),
+  ('estereotipo_classe -> quality','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',168),
+  ('estereotipo_classe -> mode','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',169),
+  ('estereotipo_classe -> intrisicMode','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',170),
+  ('estereotipo_classe -> extrinsicMode','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',171),
+  ('estereotipo_classe -> subkind','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',172),
+  ('estereotipo_classe -> phase','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',173),
+  ('estereotipo_classe -> role','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',174),
+  ('estereotipo_classe -> historicalRole','estereotipo_classe',1,'p_estereotipo_classe','analyser.py',175),
+  ('estereotipo_relacao -> material','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',179),
+  ('estereotipo_relacao -> derivation','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',180),
+  ('estereotipo_relacao -> comparative','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',181),
+  ('estereotipo_relacao -> mediation','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',182),
+  ('estereotipo_relacao -> characterization','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',183),
+  ('estereotipo_relacao -> externalDependence','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',184),
+  ('estereotipo_relacao -> componentOf','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',185),
+  ('estereotipo_relacao -> memberOf','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',186),
+  ('estereotipo_relacao -> subCollectionOf','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',187),
+  ('estereotipo_relacao -> subQualityOf','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',188),
+  ('estereotipo_relacao -> instantiation','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',189),
+  ('estereotipo_relacao -> termination','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',190),
+  ('estereotipo_relacao -> participational','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',191),
+  ('estereotipo_relacao -> participation','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',192),
+  ('estereotipo_relacao -> historicalDependence','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',193),
+  ('estereotipo_relacao -> creation','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',194),
+  ('estereotipo_relacao -> manifestation','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',195),
+  ('estereotipo_relacao -> bringsAbout','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',196),
+  ('estereotipo_relacao -> triggers','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',197),
+  ('estereotipo_relacao -> composition','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',198),
+  ('estereotipo_relacao -> aggregation','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',199),
+  ('estereotipo_relacao -> inherence','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',200),
+  ('estereotipo_relacao -> value','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',201),
+  ('estereotipo_relacao -> formal','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',202),
+  ('estereotipo_relacao -> constitution','estereotipo_relacao',1,'p_estereotipo_relacao','analyser.py',203),
+  ('dado_nativo -> number','dado_nativo',1,'p_dado_nativo','analyser.py',207),
+  ('dado_nativo -> string','dado_nativo',1,'p_dado_nativo','analyser.py',208),
+  ('dado_nativo -> boolean','dado_nativo',1,'p_dado_nativo','analyser.py',209),
+  ('dado_nativo -> date','dado_nativo',1,'p_dado_nativo','analyser.py',210),
+  ('dado_nativo -> time','dado_nativo',1,'p_dado_nativo','analyser.py',211),
+  ('dado_nativo -> datetime','dado_nativo',1,'p_dado_nativo','analyser.py',212),
+  ('empty -> <empty>','empty',0,'p_empty','analyser.py',216),
 ]

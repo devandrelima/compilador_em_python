@@ -2,22 +2,232 @@ import ply.yacc as yacc
 from lexico_analyzer.lexer_puro import tokens, lexer
 
 def p_programa(p):
-    'programa : declaracao_pacote'
-    print("Análise Sintática: Sucesso! Programa Tonto reconhecido.")
-    p[0] = p[1] 
+    'programa : declaracao_pacote lista_declaracoes_opt'
+    p[0] = ('programa', p[1], p[2])
+    print("Programa Tonto reconhecido.")
+
+def p_lista_declaracoes_opt(p):
+    '''lista_declaracoes_opt : lista_declaracoes
+                             | empty'''
+    p[0] = p[1]
+
+def p_lista_declaracoes(p):
+    '''lista_declaracoes : declaracao lista_declaracoes
+                         | declaracao'''
+    if len(p) == 3:
+        p[0] = [p[1]] + p[2] 
+    else:
+        p[0] = [p[1]] 
+
+def p_declaracao(p):
+    '''declaracao : declaracao_classe
+                  | declaracao_tipo_dado
+                  | declaracao_enum
+                  | declaracao_genset
+                  | declaracao_relacao_externa'''
+    p[0] = p[1]
 
 def p_declaracao_pacote(p):
     'declaracao_pacote : package CLASS_ID'
     p[0] = ('pacote', p[2])
     print(f"Sintático: Encontrada declaração de pacote '{p[2]}'")
 
+def p_declaracao_classe(p):
+    """declaracao_classe : estereotipo_classe CLASS_ID '{' corpo_classe '}'
+                         | estereotipo_classe CLASS_ID specializes CLASS_ID"""
+    if len(p) == 6:
+        p[0] = ('classe', p[1], p[2], p[4])
+        print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) com corpo.")
+    else:
+        p[0] = ('classe_especializada', p[1], p[2], p[4]) 
+        print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) especializando '{p[4]}'")
+
+def p_corpo_classe(p):
+    '''corpo_classe : lista_membros_classe
+                    | empty'''
+    p[0] = p[1]
+
+def p_lista_membros_classe(p):
+    '''lista_membros_classe : membro_classe lista_membros_classe
+                            | membro_classe'''
+    if len(p) == 3:
+        p[0] = [p[1]] + p[2]
+    else:
+        p[0] = [p[1]]
+
+def p_membro_classe(p):
+    '''membro_classe : declaracao_atributo
+                     | declaracao_relacao_interna'''
+    p[0] = p[1]
+
+def p_declaracao_atributo(p):
+    "declaracao_atributo : RELATION_ID ':' tipo meta_atributos_opt"
+    p[0] = ('atributo', p[1], p[3], p[4])
+    print(f"Sintático: Encontrado atributo '{p[1]}'")
+
+def p_tipo(p):
+    '''tipo : dado_nativo
+            | NEW_TYPE
+            | CLASS_ID'''
+    p[0] = p[1] 
+
+def p_meta_atributos_opt(p):
+    """meta_atributos_opt : '{' lista_meta_atributos '}'
+                          | empty"""
+    p[0] = p[2] if len(p) == 4 else None
+
+def p_lista_meta_atributos(p):
+    '''lista_meta_atributos : const
+                            | ordered
+                            | derived
+                            | subsets
+                            | redefines'''
+    p[0] = p[1]
+
+def p_declaracao_tipo_dado(p):
+    "declaracao_tipo_dado : datatype CLASS_ID '{' corpo_classe '}'"
+    p[0] = ('datatype', p[2], p[4]) 
+    print(f"Sintático: Encontrado datatype '{p[2]}'")
+
+def p_declaracao_enum(p):
+    "declaracao_enum : enum CLASS_ID '{' lista_instancias_enum '}'"
+    p[0] = ('enum', p[2], p[4]) 
+    print(f"Sintático: Encontrado enum '{p[2]}'")
+
+def p_lista_instancias_enum(p):
+    """lista_instancias_enum : CLASS_ID ',' lista_instancias_enum
+                             | CLASS_ID"""
+    if len(p) == 4:
+        p[0] = [p[1]] + p[3]
+    else:
+        p[0] = [p[1]]
+
+def p_declaracao_genset(p):
+    """declaracao_genset : genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
+                         | genset CLASS_ID '{' genset_corpo '}'"""
+    if len(p) == 8:
+        p[0] = ('genset_where', p[1], p[3], p[5], p[7])
+        print(f"Sintático: Encontrado genset (where) '{p[3]}'")
+    else:
+        p[0] = ('genset_corpo', p[2], p[4])
+        print(f"Sintático: Encontrado genset (corpo) '{p[2]}'")
+
+def p_genset_modifiers_opt(p):
+    '''genset_modifiers_opt : disjoint complete
+                            | disjoint
+                            | complete
+                            | empty'''
+    p[0] = (p[1], p[2]) if len(p) == 3 else (p[1] if len(p) == 2 else None)
+
+def p_lista_classes_genset(p):
+    """lista_classes_genset : CLASS_ID ',' lista_classes_genset
+                            | CLASS_ID"""
+    if len(p) == 4:
+        p[0] = [p[1]] + p[3]
+    else:
+        p[0] = [p[1]]
+
+def p_genset_corpo(p):
+    'genset_corpo : general CLASS_ID specifics lista_classes_genset'
+    p[0] = ('corpo_genset', p[2], p[4])
+
+def p_declaracao_relacao_interna(p):
+    "declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID"
+    p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], p[6])
+    print(f"Sintático: Encontrada relação interna (Estereótipo: {p[2]})")
+
+def p_declaracao_relacao_externa(p):
+    "declaracao_relacao_externa : '@' estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID"
+    p[0] = ('relacao_externa', p[2], p[4], p[5], p[6], p[7], p[8])
+    print(f"Sintático: Encontrada relação externa (Estereótipo: {p[2]})")
+
+def p_simbolo_associacao(p):
+    '''simbolo_associacao : ASSOCIATION
+                          | COMPOSITION_L
+                          | COMPOSITION_R
+                          | COMPOSITION_LO
+                          | COMPOSITION_RO'''
+    p[0] = p[1]
+
+def p_estereotipo_classe(p):
+    '''estereotipo_classe : event
+                          | situation
+                          | process
+                          | category
+                          | mixin
+                          | phaseMixin
+                          | roleMixin
+                          | historicalRoleMixin
+                          | kind
+                          | collective
+                          | quantity
+                          | quality
+                          | mode
+                          | intrisicMode
+                          | extrinsicMode
+                          | subkind
+                          | phase
+                          | role
+                          | historicalRole'''
+    p[0] = p[1]
+
+def p_estereotipo_relacao(p):
+    '''estereotipo_relacao : material
+                           | derivation
+                           | comparative
+                           | mediation
+                           | characterization
+                           | externalDependence
+                           | componentOf
+                           | memberOf
+                           | subCollectionOf
+                           | subQualityOf
+                           | instantiation
+                           | termination
+                           | participational
+                           | participation
+                           | historicalDependence
+                           | creation
+                           | manifestation
+                           | bringsAbout
+                           | triggers
+                           | composition
+                           | aggregation
+                           | inherence
+                           | value
+                           | formal
+                           | constitution'''
+    p[0] = p[1]
+
+def p_dado_nativo(p):
+    '''dado_nativo : number
+                   | string
+                   | boolean
+                   | date
+                   | time
+                   | datetime'''
+    p[0] = p[1]
+
+def p_empty(p):
+    'empty :'
+    p[0] = None
+    pass
+
 def p_error(p):
+    """
+    Função de erro para erros de sintaxe.
+    """
     if p:
         print(f"Erro de Sintaxe: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}")
+  
     else:
-        print("Erro de Sintaxe: Fim de arquivo inesperado! (Faltando '}'?)")
+        print("Erro de Sintaxe: Fim inesperado do arquivo! (Verifique se fechou todos os '{' '}')")
 
-parser = yacc.yacc()
+parser = yacc.yacc(debug=True) 
 
 def analisar_sintaxe(texto_codigo: str):
+    """
+    Função principal para analisar o código.
+    """
+    lexer.lineno = 1
     return parser.parse(texto_codigo, lexer=lexer)
