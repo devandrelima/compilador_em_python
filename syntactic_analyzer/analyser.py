@@ -4,7 +4,7 @@ from lexico_analyzer.lexer_puro import tokens, lexer
 def p_programa(p):
     'programa : declaracao_pacote lista_declaracoes_opt'
     p[0] = ('programa', p[1], p[2])
-    print("Programa Tonto reconhecido com sucesso.")
+    print("Programa CarRental reconhecido com sucesso.")
 
 def p_lista_declaracoes_opt(p):
     '''lista_declaracoes_opt : lista_declaracoes
@@ -32,9 +32,10 @@ def p_declaracao_pacote(p):
     p[0] = ('pacote', p[2])
     print(f"Sintático: Encontrada declaração de pacote '{p[2]}'")
 
+# --- ALTERAÇÃO: Agora aceita lista_ids no 'specializes' (Herança Múltipla) ---
 def p_declaracao_classe(p):
     """declaracao_classe : estereotipo_classe CLASS_ID '{' corpo_classe '}'
-                         | estereotipo_classe CLASS_ID specializes CLASS_ID
+                         | estereotipo_classe CLASS_ID specializes lista_ids
                          | estereotipo_classe CLASS_ID""" 
     
     if len(p) == 6:
@@ -42,12 +43,22 @@ def p_declaracao_classe(p):
         print(f"Sintático: Encontrada classe/relator '{p[2]}' (Tipo: {p[1]}) com corpo.")
     
     elif len(p) == 5:
+        # p[4] agora é uma lista de classes pais
         p[0] = ('classe_especializada', p[1], p[2], p[4]) 
-        print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) especializando '{p[4]}'")
+        print(f"Sintático: Encontrada classe '{p[2]}' especializando {p[4]}")
         
     else:
         p[0] = ('classe_simples', p[1], p[2])
         print(f"Sintático: Encontrada classe simples '{p[2]}' (Tipo: {p[1]})")
+
+# --- NOVA REGRA: Para suportar múltiplos pais (Customer, Person) ---
+def p_lista_ids(p):
+    """lista_ids : CLASS_ID ',' lista_ids
+                 | CLASS_ID"""
+    if len(p) == 4:
+        p[0] = [p[1]] + p[3]
+    else:
+        p[0] = [p[1]]
 
 def p_corpo_classe(p):
     '''corpo_classe : lista_membros_classe
@@ -109,15 +120,18 @@ def p_lista_instancias_enum(p):
     else:
         p[0] = [p[1]]
 
+# --- ALTERAÇÃO: Genset agora aceita modificadores (disjoint complete) antes do bloco ---
 def p_declaracao_genset(p):
     """declaracao_genset : genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
-                         | genset CLASS_ID '{' genset_corpo '}'"""
-    if len(p) == 8:
+                         | genset_modifiers_opt genset CLASS_ID '{' genset_corpo '}'"""
+    # O genset_modifiers_opt agora é p[1] em ambos os casos
+    
+    if len(p) == 8: # Caso 'where'
         p[0] = ('genset_where', p[1], p[3], p[5], p[7])
         print(f"Sintático: Encontrado genset (where) '{p[3]}'")
-    else:
-        p[0] = ('genset_corpo', p[2], p[4])
-        print(f"Sintático: Encontrado genset (corpo) '{p[2]}'")
+    else: # Caso bloco '{ }'
+        p[0] = ('genset_corpo', p[1], p[3], p[5])
+        print(f"Sintático: Encontrado genset (bloco) '{p[3]}' com modificadores {p[1]}")
 
 def p_genset_modifiers_opt(p):
     '''genset_modifiers_opt : disjoint complete
@@ -138,28 +152,35 @@ def p_genset_corpo(p):
     'genset_corpo : general CLASS_ID specifics lista_classes_genset'
     p[0] = ('corpo_genset', p[2], p[4])
 
-# --- ATUALIZADO: Regra de Relação Interna (Suporta sintaxe nomeada) ---
+# --- ALTERAÇÃO: Relação Interna agora aceita SEM estereótipo (ex: -- name --) ---
 def p_declaracao_relacao_interna(p):
     '''declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-                                  | '@' estereotipo_relacao link_nomeado CARDINALITY CLASS_ID'''
-    # Caso 1: Sintaxe completa antiga (ex: [1] -- [1] Car)
+                                  | '@' estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
+                                  | link_nomeado CARDINALITY CLASS_ID'''
+    
+    # Caso 1: Padrão Completo (@tag [1] -- [1] Class)
     if len(p) == 7:
         p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], p[6])
-        print(f"Sintático: Encontrada relação interna padrão (Estereótipo: {p[2]})")
-    
-    # Caso 2: Sintaxe nomeada (ex: -- involvesOwner -- [1] Car)
-    else:
-        p[0] = ('relacao_interna_nomeada', p[2], p[3], p[4], p[5])
-        print(f"Sintático: Encontrada relação nomeada '{p[3]}' com estereótipo '{p[2]}'")
+        print(f"Sintático: Relação interna padrão '{p[2]}'")
 
-# --- NOVO: Regra auxiliar para capturar nome da relação entre traços ---
+    # Caso 2: Nomeada com Tag (@tag -- nome -- [1] Class)
+    elif len(p) == 6:
+        p[0] = ('relacao_interna_nomeada', p[2], p[3], p[4], p[5])
+        print(f"Sintático: Relação '{p[3]}' (Estereótipo: {p[2]})")
+        
+    # Caso 3: Nomeada SEM Tag (-- nome -- [1] Class)
+    # p[1]=nome, p[2]=card, p[3]=classe
+    else:
+        p[0] = ('relacao_interna_sem_tag', None, p[1], p[2], p[3])
+        print(f"Sintático: Relação '{p[1]}' (Sem estereótipo)")
+
 def p_link_nomeado(p):
     '''link_nomeado : ASSOCIATION RELATION_ID ASSOCIATION
                     | COMPOSITION_L RELATION_ID ASSOCIATION
                     | COMPOSITION_R RELATION_ID ASSOCIATION
                     | COMPOSITION_LO RELATION_ID ASSOCIATION
                     | COMPOSITION_RO RELATION_ID ASSOCIATION'''
-    p[0] = p[2] # Retorna apenas o nome (ID)
+    p[0] = p[2] 
 
 def p_declaracao_relacao_externa(p):
     "declaracao_relacao_externa : '@' estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID"
@@ -174,7 +195,6 @@ def p_simbolo_associacao(p):
                           | COMPOSITION_RO'''
     p[0] = p[1]
 
-# --- ATUALIZADO: Adicionado 'relator' ---
 def p_estereotipo_classe(p):
     '''estereotipo_classe : event
                           | situation

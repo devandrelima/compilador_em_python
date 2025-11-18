@@ -21,222 +21,226 @@ Rule 9     declaracao -> declaracao_genset
 Rule 10    declaracao -> declaracao_relacao_externa
 Rule 11    declaracao_pacote -> package CLASS_ID
 Rule 12    declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe }
-Rule 13    declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID
+Rule 13    declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids
 Rule 14    declaracao_classe -> estereotipo_classe CLASS_ID
-Rule 15    corpo_classe -> lista_membros_classe
-Rule 16    corpo_classe -> empty
-Rule 17    lista_membros_classe -> membro_classe lista_membros_classe
-Rule 18    lista_membros_classe -> membro_classe
-Rule 19    membro_classe -> declaracao_atributo
-Rule 20    membro_classe -> declaracao_relacao_interna
-Rule 21    declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt
-Rule 22    tipo -> dado_nativo
-Rule 23    tipo -> NEW_TYPE
-Rule 24    tipo -> CLASS_ID
-Rule 25    meta_atributos_opt -> { lista_meta_atributos }
-Rule 26    meta_atributos_opt -> empty
-Rule 27    lista_meta_atributos -> const
-Rule 28    lista_meta_atributos -> ordered
-Rule 29    lista_meta_atributos -> derived
-Rule 30    lista_meta_atributos -> subsets
-Rule 31    lista_meta_atributos -> redefines
-Rule 32    declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe }
-Rule 33    declaracao_enum -> enum CLASS_ID { lista_instancias_enum }
-Rule 34    lista_instancias_enum -> CLASS_ID , lista_instancias_enum
-Rule 35    lista_instancias_enum -> CLASS_ID
-Rule 36    declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
-Rule 37    declaracao_genset -> genset CLASS_ID { genset_corpo }
-Rule 38    genset_modifiers_opt -> disjoint complete
-Rule 39    genset_modifiers_opt -> disjoint
-Rule 40    genset_modifiers_opt -> complete
-Rule 41    genset_modifiers_opt -> empty
-Rule 42    lista_classes_genset -> CLASS_ID , lista_classes_genset
-Rule 43    lista_classes_genset -> CLASS_ID
-Rule 44    genset_corpo -> general CLASS_ID specifics lista_classes_genset
-Rule 45    declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-Rule 46    declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
-Rule 47    link_nomeado -> ASSOCIATION RELATION_ID ASSOCIATION
-Rule 48    link_nomeado -> COMPOSITION_L RELATION_ID ASSOCIATION
-Rule 49    link_nomeado -> COMPOSITION_R RELATION_ID ASSOCIATION
-Rule 50    link_nomeado -> COMPOSITION_LO RELATION_ID ASSOCIATION
-Rule 51    link_nomeado -> COMPOSITION_RO RELATION_ID ASSOCIATION
-Rule 52    declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-Rule 53    simbolo_associacao -> ASSOCIATION
-Rule 54    simbolo_associacao -> COMPOSITION_L
-Rule 55    simbolo_associacao -> COMPOSITION_R
-Rule 56    simbolo_associacao -> COMPOSITION_LO
-Rule 57    simbolo_associacao -> COMPOSITION_RO
-Rule 58    estereotipo_classe -> event
-Rule 59    estereotipo_classe -> situation
-Rule 60    estereotipo_classe -> process
-Rule 61    estereotipo_classe -> category
-Rule 62    estereotipo_classe -> mixin
-Rule 63    estereotipo_classe -> phaseMixin
-Rule 64    estereotipo_classe -> roleMixin
-Rule 65    estereotipo_classe -> historicalRoleMixin
-Rule 66    estereotipo_classe -> kind
-Rule 67    estereotipo_classe -> collective
-Rule 68    estereotipo_classe -> quantity
-Rule 69    estereotipo_classe -> quality
-Rule 70    estereotipo_classe -> mode
-Rule 71    estereotipo_classe -> intrisicMode
-Rule 72    estereotipo_classe -> extrinsicMode
-Rule 73    estereotipo_classe -> subkind
-Rule 74    estereotipo_classe -> phase
-Rule 75    estereotipo_classe -> role
-Rule 76    estereotipo_classe -> historicalRole
-Rule 77    estereotipo_classe -> relator
-Rule 78    estereotipo_relacao -> material
-Rule 79    estereotipo_relacao -> derivation
-Rule 80    estereotipo_relacao -> comparative
-Rule 81    estereotipo_relacao -> mediation
-Rule 82    estereotipo_relacao -> characterization
-Rule 83    estereotipo_relacao -> externalDependence
-Rule 84    estereotipo_relacao -> componentOf
-Rule 85    estereotipo_relacao -> memberOf
-Rule 86    estereotipo_relacao -> subCollectionOf
-Rule 87    estereotipo_relacao -> subQualityOf
-Rule 88    estereotipo_relacao -> instantiation
-Rule 89    estereotipo_relacao -> termination
-Rule 90    estereotipo_relacao -> participational
-Rule 91    estereotipo_relacao -> participation
-Rule 92    estereotipo_relacao -> historicalDependence
-Rule 93    estereotipo_relacao -> creation
-Rule 94    estereotipo_relacao -> manifestation
-Rule 95    estereotipo_relacao -> bringsAbout
-Rule 96    estereotipo_relacao -> triggers
-Rule 97    estereotipo_relacao -> composition
-Rule 98    estereotipo_relacao -> aggregation
-Rule 99    estereotipo_relacao -> inherence
-Rule 100   estereotipo_relacao -> value
-Rule 101   estereotipo_relacao -> formal
-Rule 102   estereotipo_relacao -> constitution
-Rule 103   dado_nativo -> number
-Rule 104   dado_nativo -> string
-Rule 105   dado_nativo -> boolean
-Rule 106   dado_nativo -> date
-Rule 107   dado_nativo -> time
-Rule 108   dado_nativo -> datetime
-Rule 109   empty -> <empty>
+Rule 15    lista_ids -> CLASS_ID , lista_ids
+Rule 16    lista_ids -> CLASS_ID
+Rule 17    corpo_classe -> lista_membros_classe
+Rule 18    corpo_classe -> empty
+Rule 19    lista_membros_classe -> membro_classe lista_membros_classe
+Rule 20    lista_membros_classe -> membro_classe
+Rule 21    membro_classe -> declaracao_atributo
+Rule 22    membro_classe -> declaracao_relacao_interna
+Rule 23    declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt
+Rule 24    tipo -> dado_nativo
+Rule 25    tipo -> NEW_TYPE
+Rule 26    tipo -> CLASS_ID
+Rule 27    meta_atributos_opt -> { lista_meta_atributos }
+Rule 28    meta_atributos_opt -> empty
+Rule 29    lista_meta_atributos -> const
+Rule 30    lista_meta_atributos -> ordered
+Rule 31    lista_meta_atributos -> derived
+Rule 32    lista_meta_atributos -> subsets
+Rule 33    lista_meta_atributos -> redefines
+Rule 34    declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe }
+Rule 35    declaracao_enum -> enum CLASS_ID { lista_instancias_enum }
+Rule 36    lista_instancias_enum -> CLASS_ID , lista_instancias_enum
+Rule 37    lista_instancias_enum -> CLASS_ID
+Rule 38    declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
+Rule 39    declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo }
+Rule 40    genset_modifiers_opt -> disjoint complete
+Rule 41    genset_modifiers_opt -> disjoint
+Rule 42    genset_modifiers_opt -> complete
+Rule 43    genset_modifiers_opt -> empty
+Rule 44    lista_classes_genset -> CLASS_ID , lista_classes_genset
+Rule 45    lista_classes_genset -> CLASS_ID
+Rule 46    genset_corpo -> general CLASS_ID specifics lista_classes_genset
+Rule 47    declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+Rule 48    declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
+Rule 49    declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID
+Rule 50    link_nomeado -> ASSOCIATION RELATION_ID ASSOCIATION
+Rule 51    link_nomeado -> COMPOSITION_L RELATION_ID ASSOCIATION
+Rule 52    link_nomeado -> COMPOSITION_R RELATION_ID ASSOCIATION
+Rule 53    link_nomeado -> COMPOSITION_LO RELATION_ID ASSOCIATION
+Rule 54    link_nomeado -> COMPOSITION_RO RELATION_ID ASSOCIATION
+Rule 55    declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+Rule 56    simbolo_associacao -> ASSOCIATION
+Rule 57    simbolo_associacao -> COMPOSITION_L
+Rule 58    simbolo_associacao -> COMPOSITION_R
+Rule 59    simbolo_associacao -> COMPOSITION_LO
+Rule 60    simbolo_associacao -> COMPOSITION_RO
+Rule 61    estereotipo_classe -> event
+Rule 62    estereotipo_classe -> situation
+Rule 63    estereotipo_classe -> process
+Rule 64    estereotipo_classe -> category
+Rule 65    estereotipo_classe -> mixin
+Rule 66    estereotipo_classe -> phaseMixin
+Rule 67    estereotipo_classe -> roleMixin
+Rule 68    estereotipo_classe -> historicalRoleMixin
+Rule 69    estereotipo_classe -> kind
+Rule 70    estereotipo_classe -> collective
+Rule 71    estereotipo_classe -> quantity
+Rule 72    estereotipo_classe -> quality
+Rule 73    estereotipo_classe -> mode
+Rule 74    estereotipo_classe -> intrisicMode
+Rule 75    estereotipo_classe -> extrinsicMode
+Rule 76    estereotipo_classe -> subkind
+Rule 77    estereotipo_classe -> phase
+Rule 78    estereotipo_classe -> role
+Rule 79    estereotipo_classe -> historicalRole
+Rule 80    estereotipo_classe -> relator
+Rule 81    estereotipo_relacao -> material
+Rule 82    estereotipo_relacao -> derivation
+Rule 83    estereotipo_relacao -> comparative
+Rule 84    estereotipo_relacao -> mediation
+Rule 85    estereotipo_relacao -> characterization
+Rule 86    estereotipo_relacao -> externalDependence
+Rule 87    estereotipo_relacao -> componentOf
+Rule 88    estereotipo_relacao -> memberOf
+Rule 89    estereotipo_relacao -> subCollectionOf
+Rule 90    estereotipo_relacao -> subQualityOf
+Rule 91    estereotipo_relacao -> instantiation
+Rule 92    estereotipo_relacao -> termination
+Rule 93    estereotipo_relacao -> participational
+Rule 94    estereotipo_relacao -> participation
+Rule 95    estereotipo_relacao -> historicalDependence
+Rule 96    estereotipo_relacao -> creation
+Rule 97    estereotipo_relacao -> manifestation
+Rule 98    estereotipo_relacao -> bringsAbout
+Rule 99    estereotipo_relacao -> triggers
+Rule 100   estereotipo_relacao -> composition
+Rule 101   estereotipo_relacao -> aggregation
+Rule 102   estereotipo_relacao -> inherence
+Rule 103   estereotipo_relacao -> value
+Rule 104   estereotipo_relacao -> formal
+Rule 105   estereotipo_relacao -> constitution
+Rule 106   dado_nativo -> number
+Rule 107   dado_nativo -> string
+Rule 108   dado_nativo -> boolean
+Rule 109   dado_nativo -> date
+Rule 110   dado_nativo -> time
+Rule 111   dado_nativo -> datetime
+Rule 112   empty -> <empty>
 
 Terminals, with rules where they appear
 
-,                    : 34 42
-:                    : 21
-@                    : 45 46 52
-ASSOCIATION          : 47 47 48 49 50 51 53
-CARDINALITY          : 45 45 46 52 52
-CLASS_ID             : 11 12 13 13 14 24 32 33 34 35 36 36 37 42 43 44 45 46 52 52
-COMPOSITION_L        : 48 54
-COMPOSITION_LO       : 50 56
-COMPOSITION_R        : 49 55
-COMPOSITION_RO       : 51 57
+,                    : 15 36 44
+:                    : 23
+@                    : 47 48 55
+ASSOCIATION          : 50 50 51 52 53 54 56
+CARDINALITY          : 47 47 48 49 55 55
+CLASS_ID             : 11 12 13 14 15 16 26 34 35 36 37 38 38 39 44 45 46 47 48 49 55 55
+COMPOSITION_L        : 51 57
+COMPOSITION_LO       : 53 59
+COMPOSITION_R        : 52 58
+COMPOSITION_RO       : 54 60
 ERROR                : 
 FUNCTIONAL_COMPLEXES : 
-NEW_TYPE             : 23
-RELATION_ID          : 21 47 48 49 50 51
-aggregation          : 98
-boolean              : 105
-bringsAbout          : 95
-category             : 61
-characterization     : 82
-collective           : 67
-comparative          : 80
-complete             : 38 40
-componentOf          : 84
-composition          : 97
-const                : 27
-constitution         : 102
-creation             : 93
-datatype             : 32
-date                 : 106
-datetime             : 108
-derivation           : 79
-derived              : 29
-disjoint             : 38 39
-enum                 : 33
+NEW_TYPE             : 25
+RELATION_ID          : 23 50 51 52 53 54
+aggregation          : 101
+boolean              : 108
+bringsAbout          : 98
+category             : 64
+characterization     : 85
+collective           : 70
+comparative          : 83
+complete             : 40 42
+componentOf          : 87
+composition          : 100
+const                : 29
+constitution         : 105
+creation             : 96
+datatype             : 34
+date                 : 109
+datetime             : 111
+derivation           : 82
+derived              : 31
+disjoint             : 40 41
+enum                 : 35
 error                : 
-event                : 58
-externalDependence   : 83
-extrinsicMode        : 72
-formal               : 101
-general              : 44
-genset               : 36 37
-historicalDependence : 92
-historicalRole       : 76
-historicalRoleMixin  : 65
+event                : 61
+externalDependence   : 86
+extrinsicMode        : 75
+formal               : 104
+general              : 46
+genset               : 38 39
+historicalDependence : 95
+historicalRole       : 79
+historicalRoleMixin  : 68
 import               : 
-inherence            : 99
-instantiation        : 88
-intrisicMode         : 71
-kind                 : 66
-manifestation        : 94
-material             : 78
-mediation            : 81
-memberOf             : 85
-mixin                : 62
-mode                 : 70
-number               : 103
-ordered              : 28
+inherence            : 102
+instantiation        : 91
+intrisicMode         : 74
+kind                 : 69
+manifestation        : 97
+material             : 81
+mediation            : 84
+memberOf             : 88
+mixin                : 65
+mode                 : 73
+number               : 106
+ordered              : 30
 package              : 11
-participation        : 91
-participational      : 90
-phase                : 74
-phaseMixin           : 63
-process              : 60
-quality              : 69
-quantity             : 68
-redefines            : 31
-relation             : 52
-relator              : 77
-role                 : 75
-roleMixin            : 64
-situation            : 59
-specializes          : 13 36
-specifics            : 44
-string               : 104
-subCollectionOf      : 86
-subQualityOf         : 87
-subkind              : 73
-subsets              : 30
-termination          : 89
-time                 : 107
-triggers             : 96
-value                : 100
-where                : 36
-{                    : 12 25 32 33 37
-}                    : 12 25 32 33 37
+participation        : 94
+participational      : 93
+phase                : 77
+phaseMixin           : 66
+process              : 63
+quality              : 72
+quantity             : 71
+redefines            : 33
+relation             : 55
+relator              : 80
+role                 : 78
+roleMixin            : 67
+situation            : 62
+specializes          : 13 38
+specifics            : 46
+string               : 107
+subCollectionOf      : 89
+subQualityOf         : 90
+subkind              : 76
+subsets              : 32
+termination          : 92
+time                 : 110
+triggers             : 99
+value                : 103
+where                : 38
+{                    : 12 27 34 35 39
+}                    : 12 27 34 35 39
 
 Nonterminals, with rules where they appear
 
-corpo_classe         : 12 32
-dado_nativo          : 22
+corpo_classe         : 12 34
+dado_nativo          : 24
 declaracao           : 4 5
-declaracao_atributo  : 19
+declaracao_atributo  : 21
 declaracao_classe    : 6
 declaracao_enum      : 8
 declaracao_genset    : 9
 declaracao_pacote    : 1
 declaracao_relacao_externa : 10
-declaracao_relacao_interna : 20
+declaracao_relacao_interna : 22
 declaracao_tipo_dado : 7
-empty                : 3 16 26 41
+empty                : 3 18 28 43
 estereotipo_classe   : 12 13 14
-estereotipo_relacao  : 45 46 52
-genset_corpo         : 37
-genset_modifiers_opt : 36
-link_nomeado         : 46
-lista_classes_genset : 36 42 44
+estereotipo_relacao  : 47 48 55
+genset_corpo         : 39
+genset_modifiers_opt : 38 39
+link_nomeado         : 48 49
+lista_classes_genset : 38 44 46
 lista_declaracoes    : 2 4
 lista_declaracoes_opt : 1
-lista_instancias_enum : 33 34
-lista_membros_classe : 15 17
-lista_meta_atributos : 25
-membro_classe        : 17 18
-meta_atributos_opt   : 21
+lista_ids            : 13 15
+lista_instancias_enum : 35 36
+lista_membros_classe : 17 19
+lista_meta_atributos : 27
+membro_classe        : 19 20
+meta_atributos_opt   : 23
 programa             : 0
-simbolo_associacao   : 45 52
-tipo                 : 21
+simbolo_associacao   : 47 55
+tipo                 : 23
 
 Parsing method: LALR
 
@@ -264,75 +268,72 @@ state 2
     (3) lista_declaracoes_opt -> . empty
     (4) lista_declaracoes -> . declaracao lista_declaracoes
     (5) lista_declaracoes -> . declaracao
-    (109) empty -> .
+    (112) empty -> .
     (6) declaracao -> . declaracao_classe
     (7) declaracao -> . declaracao_tipo_dado
     (8) declaracao -> . declaracao_enum
     (9) declaracao -> . declaracao_genset
     (10) declaracao -> . declaracao_relacao_externa
     (12) declaracao_classe -> . estereotipo_classe CLASS_ID { corpo_classe }
-    (13) declaracao_classe -> . estereotipo_classe CLASS_ID specializes CLASS_ID
+    (13) declaracao_classe -> . estereotipo_classe CLASS_ID specializes lista_ids
     (14) declaracao_classe -> . estereotipo_classe CLASS_ID
-    (32) declaracao_tipo_dado -> . datatype CLASS_ID { corpo_classe }
-    (33) declaracao_enum -> . enum CLASS_ID { lista_instancias_enum }
-    (36) declaracao_genset -> . genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
-    (37) declaracao_genset -> . genset CLASS_ID { genset_corpo }
-    (52) declaracao_relacao_externa -> . @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-    (58) estereotipo_classe -> . event
-    (59) estereotipo_classe -> . situation
-    (60) estereotipo_classe -> . process
-    (61) estereotipo_classe -> . category
-    (62) estereotipo_classe -> . mixin
-    (63) estereotipo_classe -> . phaseMixin
-    (64) estereotipo_classe -> . roleMixin
-    (65) estereotipo_classe -> . historicalRoleMixin
-    (66) estereotipo_classe -> . kind
-    (67) estereotipo_classe -> . collective
-    (68) estereotipo_classe -> . quantity
-    (69) estereotipo_classe -> . quality
-    (70) estereotipo_classe -> . mode
-    (71) estereotipo_classe -> . intrisicMode
-    (72) estereotipo_classe -> . extrinsicMode
-    (73) estereotipo_classe -> . subkind
-    (74) estereotipo_classe -> . phase
-    (75) estereotipo_classe -> . role
-    (76) estereotipo_classe -> . historicalRole
-    (77) estereotipo_classe -> . relator
-    (38) genset_modifiers_opt -> . disjoint complete
-    (39) genset_modifiers_opt -> . disjoint
-    (40) genset_modifiers_opt -> . complete
-    (41) genset_modifiers_opt -> . empty
+    (34) declaracao_tipo_dado -> . datatype CLASS_ID { corpo_classe }
+    (35) declaracao_enum -> . enum CLASS_ID { lista_instancias_enum }
+    (38) declaracao_genset -> . genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
+    (39) declaracao_genset -> . genset_modifiers_opt genset CLASS_ID { genset_corpo }
+    (55) declaracao_relacao_externa -> . @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (61) estereotipo_classe -> . event
+    (62) estereotipo_classe -> . situation
+    (63) estereotipo_classe -> . process
+    (64) estereotipo_classe -> . category
+    (65) estereotipo_classe -> . mixin
+    (66) estereotipo_classe -> . phaseMixin
+    (67) estereotipo_classe -> . roleMixin
+    (68) estereotipo_classe -> . historicalRoleMixin
+    (69) estereotipo_classe -> . kind
+    (70) estereotipo_classe -> . collective
+    (71) estereotipo_classe -> . quantity
+    (72) estereotipo_classe -> . quality
+    (73) estereotipo_classe -> . mode
+    (74) estereotipo_classe -> . intrisicMode
+    (75) estereotipo_classe -> . extrinsicMode
+    (76) estereotipo_classe -> . subkind
+    (77) estereotipo_classe -> . phase
+    (78) estereotipo_classe -> . role
+    (79) estereotipo_classe -> . historicalRole
+    (80) estereotipo_classe -> . relator
+    (40) genset_modifiers_opt -> . disjoint complete
+    (41) genset_modifiers_opt -> . disjoint
+    (42) genset_modifiers_opt -> . complete
+    (43) genset_modifiers_opt -> . empty
 
-  ! shift/reduce conflict for genset resolved as shift
-    $end            reduce using rule 109 (empty -> .)
+    $end            reduce using rule 112 (empty -> .)
+    genset          reduce using rule 112 (empty -> .)
     datatype        shift and go to state 14
     enum            shift and go to state 15
-    genset          shift and go to state 17
-    @               shift and go to state 18
-    event           shift and go to state 19
-    situation       shift and go to state 20
-    process         shift and go to state 21
-    category        shift and go to state 22
-    mixin           shift and go to state 23
-    phaseMixin      shift and go to state 24
-    roleMixin       shift and go to state 25
-    historicalRoleMixin shift and go to state 26
-    kind            shift and go to state 27
-    collective      shift and go to state 28
-    quantity        shift and go to state 29
-    quality         shift and go to state 30
-    mode            shift and go to state 31
-    intrisicMode    shift and go to state 32
-    extrinsicMode   shift and go to state 33
-    subkind         shift and go to state 34
-    phase           shift and go to state 35
-    role            shift and go to state 36
-    historicalRole  shift and go to state 37
-    relator         shift and go to state 38
-    disjoint        shift and go to state 39
-    complete        shift and go to state 40
-
-  ! genset          [ reduce using rule 109 (empty -> .) ]
+    @               shift and go to state 17
+    event           shift and go to state 18
+    situation       shift and go to state 19
+    process         shift and go to state 20
+    category        shift and go to state 21
+    mixin           shift and go to state 22
+    phaseMixin      shift and go to state 23
+    roleMixin       shift and go to state 24
+    historicalRoleMixin shift and go to state 25
+    kind            shift and go to state 26
+    collective      shift and go to state 27
+    quantity        shift and go to state 28
+    quality         shift and go to state 29
+    mode            shift and go to state 30
+    intrisicMode    shift and go to state 31
+    extrinsicMode   shift and go to state 32
+    subkind         shift and go to state 33
+    phase           shift and go to state 34
+    role            shift and go to state 35
+    historicalRole  shift and go to state 36
+    relator         shift and go to state 37
+    disjoint        shift and go to state 38
+    complete        shift and go to state 39
 
     lista_declaracoes_opt          shift and go to state 4
     lista_declaracoes              shift and go to state 5
@@ -350,7 +351,7 @@ state 3
 
     (11) declaracao_pacote -> package . CLASS_ID
 
-    CLASS_ID        shift and go to state 41
+    CLASS_ID        shift and go to state 40
 
 
 state 4
@@ -370,10 +371,10 @@ state 5
 state 6
 
     (3) lista_declaracoes_opt -> empty .
-    (41) genset_modifiers_opt -> empty .
+    (43) genset_modifiers_opt -> empty .
 
     $end            reduce using rule 3 (lista_declaracoes_opt -> empty .)
-    genset          reduce using rule 41 (genset_modifiers_opt -> empty .)
+    genset          reduce using rule 43 (genset_modifiers_opt -> empty .)
 
 
 state 7
@@ -388,72 +389,69 @@ state 7
     (9) declaracao -> . declaracao_genset
     (10) declaracao -> . declaracao_relacao_externa
     (12) declaracao_classe -> . estereotipo_classe CLASS_ID { corpo_classe }
-    (13) declaracao_classe -> . estereotipo_classe CLASS_ID specializes CLASS_ID
+    (13) declaracao_classe -> . estereotipo_classe CLASS_ID specializes lista_ids
     (14) declaracao_classe -> . estereotipo_classe CLASS_ID
-    (32) declaracao_tipo_dado -> . datatype CLASS_ID { corpo_classe }
-    (33) declaracao_enum -> . enum CLASS_ID { lista_instancias_enum }
-    (36) declaracao_genset -> . genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
-    (37) declaracao_genset -> . genset CLASS_ID { genset_corpo }
-    (52) declaracao_relacao_externa -> . @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-    (58) estereotipo_classe -> . event
-    (59) estereotipo_classe -> . situation
-    (60) estereotipo_classe -> . process
-    (61) estereotipo_classe -> . category
-    (62) estereotipo_classe -> . mixin
-    (63) estereotipo_classe -> . phaseMixin
-    (64) estereotipo_classe -> . roleMixin
-    (65) estereotipo_classe -> . historicalRoleMixin
-    (66) estereotipo_classe -> . kind
-    (67) estereotipo_classe -> . collective
-    (68) estereotipo_classe -> . quantity
-    (69) estereotipo_classe -> . quality
-    (70) estereotipo_classe -> . mode
-    (71) estereotipo_classe -> . intrisicMode
-    (72) estereotipo_classe -> . extrinsicMode
-    (73) estereotipo_classe -> . subkind
-    (74) estereotipo_classe -> . phase
-    (75) estereotipo_classe -> . role
-    (76) estereotipo_classe -> . historicalRole
-    (77) estereotipo_classe -> . relator
-    (38) genset_modifiers_opt -> . disjoint complete
-    (39) genset_modifiers_opt -> . disjoint
-    (40) genset_modifiers_opt -> . complete
-    (41) genset_modifiers_opt -> . empty
-    (109) empty -> .
+    (34) declaracao_tipo_dado -> . datatype CLASS_ID { corpo_classe }
+    (35) declaracao_enum -> . enum CLASS_ID { lista_instancias_enum }
+    (38) declaracao_genset -> . genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
+    (39) declaracao_genset -> . genset_modifiers_opt genset CLASS_ID { genset_corpo }
+    (55) declaracao_relacao_externa -> . @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (61) estereotipo_classe -> . event
+    (62) estereotipo_classe -> . situation
+    (63) estereotipo_classe -> . process
+    (64) estereotipo_classe -> . category
+    (65) estereotipo_classe -> . mixin
+    (66) estereotipo_classe -> . phaseMixin
+    (67) estereotipo_classe -> . roleMixin
+    (68) estereotipo_classe -> . historicalRoleMixin
+    (69) estereotipo_classe -> . kind
+    (70) estereotipo_classe -> . collective
+    (71) estereotipo_classe -> . quantity
+    (72) estereotipo_classe -> . quality
+    (73) estereotipo_classe -> . mode
+    (74) estereotipo_classe -> . intrisicMode
+    (75) estereotipo_classe -> . extrinsicMode
+    (76) estereotipo_classe -> . subkind
+    (77) estereotipo_classe -> . phase
+    (78) estereotipo_classe -> . role
+    (79) estereotipo_classe -> . historicalRole
+    (80) estereotipo_classe -> . relator
+    (40) genset_modifiers_opt -> . disjoint complete
+    (41) genset_modifiers_opt -> . disjoint
+    (42) genset_modifiers_opt -> . complete
+    (43) genset_modifiers_opt -> . empty
+    (112) empty -> .
 
-  ! shift/reduce conflict for genset resolved as shift
     $end            reduce using rule 5 (lista_declaracoes -> declaracao .)
     datatype        shift and go to state 14
     enum            shift and go to state 15
-    genset          shift and go to state 17
-    @               shift and go to state 18
-    event           shift and go to state 19
-    situation       shift and go to state 20
-    process         shift and go to state 21
-    category        shift and go to state 22
-    mixin           shift and go to state 23
-    phaseMixin      shift and go to state 24
-    roleMixin       shift and go to state 25
-    historicalRoleMixin shift and go to state 26
-    kind            shift and go to state 27
-    collective      shift and go to state 28
-    quantity        shift and go to state 29
-    quality         shift and go to state 30
-    mode            shift and go to state 31
-    intrisicMode    shift and go to state 32
-    extrinsicMode   shift and go to state 33
-    subkind         shift and go to state 34
-    phase           shift and go to state 35
-    role            shift and go to state 36
-    historicalRole  shift and go to state 37
-    relator         shift and go to state 38
-    disjoint        shift and go to state 39
-    complete        shift and go to state 40
-
-  ! genset          [ reduce using rule 109 (empty -> .) ]
+    @               shift and go to state 17
+    event           shift and go to state 18
+    situation       shift and go to state 19
+    process         shift and go to state 20
+    category        shift and go to state 21
+    mixin           shift and go to state 22
+    phaseMixin      shift and go to state 23
+    roleMixin       shift and go to state 24
+    historicalRoleMixin shift and go to state 25
+    kind            shift and go to state 26
+    collective      shift and go to state 27
+    quantity        shift and go to state 28
+    quality         shift and go to state 29
+    mode            shift and go to state 30
+    intrisicMode    shift and go to state 31
+    extrinsicMode   shift and go to state 32
+    subkind         shift and go to state 33
+    phase           shift and go to state 34
+    role            shift and go to state 35
+    historicalRole  shift and go to state 36
+    relator         shift and go to state 37
+    disjoint        shift and go to state 38
+    complete        shift and go to state 39
+    genset          reduce using rule 112 (empty -> .)
 
     declaracao                     shift and go to state 7
-    lista_declaracoes              shift and go to state 42
+    lista_declaracoes              shift and go to state 41
     declaracao_classe              shift and go to state 8
     declaracao_tipo_dado           shift and go to state 9
     declaracao_enum                shift and go to state 10
@@ -461,7 +459,7 @@ state 7
     declaracao_relacao_externa     shift and go to state 12
     estereotipo_classe             shift and go to state 13
     genset_modifiers_opt           shift and go to state 16
-    empty                          shift and go to state 43
+    empty                          shift and go to state 42
 
 state 8
 
@@ -469,7 +467,6 @@ state 8
 
     datatype        reduce using rule 6 (declaracao -> declaracao_classe .)
     enum            reduce using rule 6 (declaracao -> declaracao_classe .)
-    genset          reduce using rule 6 (declaracao -> declaracao_classe .)
     @               reduce using rule 6 (declaracao -> declaracao_classe .)
     event           reduce using rule 6 (declaracao -> declaracao_classe .)
     situation       reduce using rule 6 (declaracao -> declaracao_classe .)
@@ -493,6 +490,7 @@ state 8
     relator         reduce using rule 6 (declaracao -> declaracao_classe .)
     disjoint        reduce using rule 6 (declaracao -> declaracao_classe .)
     complete        reduce using rule 6 (declaracao -> declaracao_classe .)
+    genset          reduce using rule 6 (declaracao -> declaracao_classe .)
     $end            reduce using rule 6 (declaracao -> declaracao_classe .)
 
 
@@ -502,7 +500,6 @@ state 9
 
     datatype        reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
     enum            reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
-    genset          reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
     @               reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
     event           reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
     situation       reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
@@ -526,6 +523,7 @@ state 9
     relator         reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
     disjoint        reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
     complete        reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
+    genset          reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
     $end            reduce using rule 7 (declaracao -> declaracao_tipo_dado .)
 
 
@@ -535,7 +533,6 @@ state 10
 
     datatype        reduce using rule 8 (declaracao -> declaracao_enum .)
     enum            reduce using rule 8 (declaracao -> declaracao_enum .)
-    genset          reduce using rule 8 (declaracao -> declaracao_enum .)
     @               reduce using rule 8 (declaracao -> declaracao_enum .)
     event           reduce using rule 8 (declaracao -> declaracao_enum .)
     situation       reduce using rule 8 (declaracao -> declaracao_enum .)
@@ -559,6 +556,7 @@ state 10
     relator         reduce using rule 8 (declaracao -> declaracao_enum .)
     disjoint        reduce using rule 8 (declaracao -> declaracao_enum .)
     complete        reduce using rule 8 (declaracao -> declaracao_enum .)
+    genset          reduce using rule 8 (declaracao -> declaracao_enum .)
     $end            reduce using rule 8 (declaracao -> declaracao_enum .)
 
 
@@ -568,7 +566,6 @@ state 11
 
     datatype        reduce using rule 9 (declaracao -> declaracao_genset .)
     enum            reduce using rule 9 (declaracao -> declaracao_genset .)
-    genset          reduce using rule 9 (declaracao -> declaracao_genset .)
     @               reduce using rule 9 (declaracao -> declaracao_genset .)
     event           reduce using rule 9 (declaracao -> declaracao_genset .)
     situation       reduce using rule 9 (declaracao -> declaracao_genset .)
@@ -592,6 +589,7 @@ state 11
     relator         reduce using rule 9 (declaracao -> declaracao_genset .)
     disjoint        reduce using rule 9 (declaracao -> declaracao_genset .)
     complete        reduce using rule 9 (declaracao -> declaracao_genset .)
+    genset          reduce using rule 9 (declaracao -> declaracao_genset .)
     $end            reduce using rule 9 (declaracao -> declaracao_genset .)
 
 
@@ -601,7 +599,6 @@ state 12
 
     datatype        reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
     enum            reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
-    genset          reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
     @               reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
     event           reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
     situation       reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
@@ -625,266 +622,260 @@ state 12
     relator         reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
     disjoint        reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
     complete        reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
+    genset          reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
     $end            reduce using rule 10 (declaracao -> declaracao_relacao_externa .)
 
 
 state 13
 
     (12) declaracao_classe -> estereotipo_classe . CLASS_ID { corpo_classe }
-    (13) declaracao_classe -> estereotipo_classe . CLASS_ID specializes CLASS_ID
+    (13) declaracao_classe -> estereotipo_classe . CLASS_ID specializes lista_ids
     (14) declaracao_classe -> estereotipo_classe . CLASS_ID
 
-    CLASS_ID        shift and go to state 44
+    CLASS_ID        shift and go to state 43
 
 
 state 14
 
-    (32) declaracao_tipo_dado -> datatype . CLASS_ID { corpo_classe }
+    (34) declaracao_tipo_dado -> datatype . CLASS_ID { corpo_classe }
 
-    CLASS_ID        shift and go to state 45
+    CLASS_ID        shift and go to state 44
 
 
 state 15
 
-    (33) declaracao_enum -> enum . CLASS_ID { lista_instancias_enum }
+    (35) declaracao_enum -> enum . CLASS_ID { lista_instancias_enum }
 
-    CLASS_ID        shift and go to state 46
+    CLASS_ID        shift and go to state 45
 
 
 state 16
 
-    (36) declaracao_genset -> genset_modifiers_opt . genset CLASS_ID where lista_classes_genset specializes CLASS_ID
+    (38) declaracao_genset -> genset_modifiers_opt . genset CLASS_ID where lista_classes_genset specializes CLASS_ID
+    (39) declaracao_genset -> genset_modifiers_opt . genset CLASS_ID { genset_corpo }
 
-    genset          shift and go to state 47
+    genset          shift and go to state 46
 
 
 state 17
 
-    (37) declaracao_genset -> genset . CLASS_ID { genset_corpo }
+    (55) declaracao_relacao_externa -> @ . estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (81) estereotipo_relacao -> . material
+    (82) estereotipo_relacao -> . derivation
+    (83) estereotipo_relacao -> . comparative
+    (84) estereotipo_relacao -> . mediation
+    (85) estereotipo_relacao -> . characterization
+    (86) estereotipo_relacao -> . externalDependence
+    (87) estereotipo_relacao -> . componentOf
+    (88) estereotipo_relacao -> . memberOf
+    (89) estereotipo_relacao -> . subCollectionOf
+    (90) estereotipo_relacao -> . subQualityOf
+    (91) estereotipo_relacao -> . instantiation
+    (92) estereotipo_relacao -> . termination
+    (93) estereotipo_relacao -> . participational
+    (94) estereotipo_relacao -> . participation
+    (95) estereotipo_relacao -> . historicalDependence
+    (96) estereotipo_relacao -> . creation
+    (97) estereotipo_relacao -> . manifestation
+    (98) estereotipo_relacao -> . bringsAbout
+    (99) estereotipo_relacao -> . triggers
+    (100) estereotipo_relacao -> . composition
+    (101) estereotipo_relacao -> . aggregation
+    (102) estereotipo_relacao -> . inherence
+    (103) estereotipo_relacao -> . value
+    (104) estereotipo_relacao -> . formal
+    (105) estereotipo_relacao -> . constitution
 
-    CLASS_ID        shift and go to state 48
+    material        shift and go to state 48
+    derivation      shift and go to state 49
+    comparative     shift and go to state 50
+    mediation       shift and go to state 51
+    characterization shift and go to state 52
+    externalDependence shift and go to state 53
+    componentOf     shift and go to state 54
+    memberOf        shift and go to state 55
+    subCollectionOf shift and go to state 56
+    subQualityOf    shift and go to state 57
+    instantiation   shift and go to state 58
+    termination     shift and go to state 59
+    participational shift and go to state 60
+    participation   shift and go to state 61
+    historicalDependence shift and go to state 62
+    creation        shift and go to state 63
+    manifestation   shift and go to state 64
+    bringsAbout     shift and go to state 65
+    triggers        shift and go to state 66
+    composition     shift and go to state 67
+    aggregation     shift and go to state 68
+    inherence       shift and go to state 69
+    value           shift and go to state 70
+    formal          shift and go to state 71
+    constitution    shift and go to state 72
 
+    estereotipo_relacao            shift and go to state 47
 
 state 18
 
-    (52) declaracao_relacao_externa -> @ . estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-    (78) estereotipo_relacao -> . material
-    (79) estereotipo_relacao -> . derivation
-    (80) estereotipo_relacao -> . comparative
-    (81) estereotipo_relacao -> . mediation
-    (82) estereotipo_relacao -> . characterization
-    (83) estereotipo_relacao -> . externalDependence
-    (84) estereotipo_relacao -> . componentOf
-    (85) estereotipo_relacao -> . memberOf
-    (86) estereotipo_relacao -> . subCollectionOf
-    (87) estereotipo_relacao -> . subQualityOf
-    (88) estereotipo_relacao -> . instantiation
-    (89) estereotipo_relacao -> . termination
-    (90) estereotipo_relacao -> . participational
-    (91) estereotipo_relacao -> . participation
-    (92) estereotipo_relacao -> . historicalDependence
-    (93) estereotipo_relacao -> . creation
-    (94) estereotipo_relacao -> . manifestation
-    (95) estereotipo_relacao -> . bringsAbout
-    (96) estereotipo_relacao -> . triggers
-    (97) estereotipo_relacao -> . composition
-    (98) estereotipo_relacao -> . aggregation
-    (99) estereotipo_relacao -> . inherence
-    (100) estereotipo_relacao -> . value
-    (101) estereotipo_relacao -> . formal
-    (102) estereotipo_relacao -> . constitution
+    (61) estereotipo_classe -> event .
 
-    material        shift and go to state 50
-    derivation      shift and go to state 51
-    comparative     shift and go to state 52
-    mediation       shift and go to state 53
-    characterization shift and go to state 54
-    externalDependence shift and go to state 55
-    componentOf     shift and go to state 56
-    memberOf        shift and go to state 57
-    subCollectionOf shift and go to state 58
-    subQualityOf    shift and go to state 59
-    instantiation   shift and go to state 60
-    termination     shift and go to state 61
-    participational shift and go to state 62
-    participation   shift and go to state 63
-    historicalDependence shift and go to state 64
-    creation        shift and go to state 65
-    manifestation   shift and go to state 66
-    bringsAbout     shift and go to state 67
-    triggers        shift and go to state 68
-    composition     shift and go to state 69
-    aggregation     shift and go to state 70
-    inherence       shift and go to state 71
-    value           shift and go to state 72
-    formal          shift and go to state 73
-    constitution    shift and go to state 74
+    CLASS_ID        reduce using rule 61 (estereotipo_classe -> event .)
 
-    estereotipo_relacao            shift and go to state 49
 
 state 19
 
-    (58) estereotipo_classe -> event .
+    (62) estereotipo_classe -> situation .
 
-    CLASS_ID        reduce using rule 58 (estereotipo_classe -> event .)
+    CLASS_ID        reduce using rule 62 (estereotipo_classe -> situation .)
 
 
 state 20
 
-    (59) estereotipo_classe -> situation .
+    (63) estereotipo_classe -> process .
 
-    CLASS_ID        reduce using rule 59 (estereotipo_classe -> situation .)
+    CLASS_ID        reduce using rule 63 (estereotipo_classe -> process .)
 
 
 state 21
 
-    (60) estereotipo_classe -> process .
+    (64) estereotipo_classe -> category .
 
-    CLASS_ID        reduce using rule 60 (estereotipo_classe -> process .)
+    CLASS_ID        reduce using rule 64 (estereotipo_classe -> category .)
 
 
 state 22
 
-    (61) estereotipo_classe -> category .
+    (65) estereotipo_classe -> mixin .
 
-    CLASS_ID        reduce using rule 61 (estereotipo_classe -> category .)
+    CLASS_ID        reduce using rule 65 (estereotipo_classe -> mixin .)
 
 
 state 23
 
-    (62) estereotipo_classe -> mixin .
+    (66) estereotipo_classe -> phaseMixin .
 
-    CLASS_ID        reduce using rule 62 (estereotipo_classe -> mixin .)
+    CLASS_ID        reduce using rule 66 (estereotipo_classe -> phaseMixin .)
 
 
 state 24
 
-    (63) estereotipo_classe -> phaseMixin .
+    (67) estereotipo_classe -> roleMixin .
 
-    CLASS_ID        reduce using rule 63 (estereotipo_classe -> phaseMixin .)
+    CLASS_ID        reduce using rule 67 (estereotipo_classe -> roleMixin .)
 
 
 state 25
 
-    (64) estereotipo_classe -> roleMixin .
+    (68) estereotipo_classe -> historicalRoleMixin .
 
-    CLASS_ID        reduce using rule 64 (estereotipo_classe -> roleMixin .)
+    CLASS_ID        reduce using rule 68 (estereotipo_classe -> historicalRoleMixin .)
 
 
 state 26
 
-    (65) estereotipo_classe -> historicalRoleMixin .
+    (69) estereotipo_classe -> kind .
 
-    CLASS_ID        reduce using rule 65 (estereotipo_classe -> historicalRoleMixin .)
+    CLASS_ID        reduce using rule 69 (estereotipo_classe -> kind .)
 
 
 state 27
 
-    (66) estereotipo_classe -> kind .
+    (70) estereotipo_classe -> collective .
 
-    CLASS_ID        reduce using rule 66 (estereotipo_classe -> kind .)
+    CLASS_ID        reduce using rule 70 (estereotipo_classe -> collective .)
 
 
 state 28
 
-    (67) estereotipo_classe -> collective .
+    (71) estereotipo_classe -> quantity .
 
-    CLASS_ID        reduce using rule 67 (estereotipo_classe -> collective .)
+    CLASS_ID        reduce using rule 71 (estereotipo_classe -> quantity .)
 
 
 state 29
 
-    (68) estereotipo_classe -> quantity .
+    (72) estereotipo_classe -> quality .
 
-    CLASS_ID        reduce using rule 68 (estereotipo_classe -> quantity .)
+    CLASS_ID        reduce using rule 72 (estereotipo_classe -> quality .)
 
 
 state 30
 
-    (69) estereotipo_classe -> quality .
+    (73) estereotipo_classe -> mode .
 
-    CLASS_ID        reduce using rule 69 (estereotipo_classe -> quality .)
+    CLASS_ID        reduce using rule 73 (estereotipo_classe -> mode .)
 
 
 state 31
 
-    (70) estereotipo_classe -> mode .
+    (74) estereotipo_classe -> intrisicMode .
 
-    CLASS_ID        reduce using rule 70 (estereotipo_classe -> mode .)
+    CLASS_ID        reduce using rule 74 (estereotipo_classe -> intrisicMode .)
 
 
 state 32
 
-    (71) estereotipo_classe -> intrisicMode .
+    (75) estereotipo_classe -> extrinsicMode .
 
-    CLASS_ID        reduce using rule 71 (estereotipo_classe -> intrisicMode .)
+    CLASS_ID        reduce using rule 75 (estereotipo_classe -> extrinsicMode .)
 
 
 state 33
 
-    (72) estereotipo_classe -> extrinsicMode .
+    (76) estereotipo_classe -> subkind .
 
-    CLASS_ID        reduce using rule 72 (estereotipo_classe -> extrinsicMode .)
+    CLASS_ID        reduce using rule 76 (estereotipo_classe -> subkind .)
 
 
 state 34
 
-    (73) estereotipo_classe -> subkind .
+    (77) estereotipo_classe -> phase .
 
-    CLASS_ID        reduce using rule 73 (estereotipo_classe -> subkind .)
+    CLASS_ID        reduce using rule 77 (estereotipo_classe -> phase .)
 
 
 state 35
 
-    (74) estereotipo_classe -> phase .
+    (78) estereotipo_classe -> role .
 
-    CLASS_ID        reduce using rule 74 (estereotipo_classe -> phase .)
+    CLASS_ID        reduce using rule 78 (estereotipo_classe -> role .)
 
 
 state 36
 
-    (75) estereotipo_classe -> role .
+    (79) estereotipo_classe -> historicalRole .
 
-    CLASS_ID        reduce using rule 75 (estereotipo_classe -> role .)
+    CLASS_ID        reduce using rule 79 (estereotipo_classe -> historicalRole .)
 
 
 state 37
 
-    (76) estereotipo_classe -> historicalRole .
+    (80) estereotipo_classe -> relator .
 
-    CLASS_ID        reduce using rule 76 (estereotipo_classe -> historicalRole .)
+    CLASS_ID        reduce using rule 80 (estereotipo_classe -> relator .)
 
 
 state 38
 
-    (77) estereotipo_classe -> relator .
+    (40) genset_modifiers_opt -> disjoint . complete
+    (41) genset_modifiers_opt -> disjoint .
 
-    CLASS_ID        reduce using rule 77 (estereotipo_classe -> relator .)
+    complete        shift and go to state 73
+    genset          reduce using rule 41 (genset_modifiers_opt -> disjoint .)
 
 
 state 39
 
-    (38) genset_modifiers_opt -> disjoint . complete
-    (39) genset_modifiers_opt -> disjoint .
+    (42) genset_modifiers_opt -> complete .
 
-    complete        shift and go to state 75
-    genset          reduce using rule 39 (genset_modifiers_opt -> disjoint .)
+    genset          reduce using rule 42 (genset_modifiers_opt -> complete .)
 
 
 state 40
-
-    (40) genset_modifiers_opt -> complete .
-
-    genset          reduce using rule 40 (genset_modifiers_opt -> complete .)
-
-
-state 41
 
     (11) declaracao_pacote -> package CLASS_ID .
 
     datatype        reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
     enum            reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
-    genset          reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
     @               reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
     event           reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
     situation       reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
@@ -908,34 +899,34 @@ state 41
     relator         reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
     disjoint        reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
     complete        reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
+    genset          reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
     $end            reduce using rule 11 (declaracao_pacote -> package CLASS_ID .)
 
 
-state 42
+state 41
 
     (4) lista_declaracoes -> declaracao lista_declaracoes .
 
     $end            reduce using rule 4 (lista_declaracoes -> declaracao lista_declaracoes .)
 
 
+state 42
+
+    (43) genset_modifiers_opt -> empty .
+
+    genset          reduce using rule 43 (genset_modifiers_opt -> empty .)
+
+
 state 43
 
-    (41) genset_modifiers_opt -> empty .
-
-    genset          reduce using rule 41 (genset_modifiers_opt -> empty .)
-
-
-state 44
-
     (12) declaracao_classe -> estereotipo_classe CLASS_ID . { corpo_classe }
-    (13) declaracao_classe -> estereotipo_classe CLASS_ID . specializes CLASS_ID
+    (13) declaracao_classe -> estereotipo_classe CLASS_ID . specializes lista_ids
     (14) declaracao_classe -> estereotipo_classe CLASS_ID .
 
-    {               shift and go to state 76
-    specializes     shift and go to state 77
+    {               shift and go to state 74
+    specializes     shift and go to state 75
     datatype        reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
     enum            reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
-    genset          reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
     @               reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
     event           reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
     situation       reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
@@ -959,685 +950,793 @@ state 44
     relator         reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
     disjoint        reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
     complete        reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
+    genset          reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
     $end            reduce using rule 14 (declaracao_classe -> estereotipo_classe CLASS_ID .)
+
+
+state 44
+
+    (34) declaracao_tipo_dado -> datatype CLASS_ID . { corpo_classe }
+
+    {               shift and go to state 76
 
 
 state 45
 
-    (32) declaracao_tipo_dado -> datatype CLASS_ID . { corpo_classe }
+    (35) declaracao_enum -> enum CLASS_ID . { lista_instancias_enum }
 
-    {               shift and go to state 78
+    {               shift and go to state 77
 
 
 state 46
 
-    (33) declaracao_enum -> enum CLASS_ID . { lista_instancias_enum }
+    (38) declaracao_genset -> genset_modifiers_opt genset . CLASS_ID where lista_classes_genset specializes CLASS_ID
+    (39) declaracao_genset -> genset_modifiers_opt genset . CLASS_ID { genset_corpo }
 
-    {               shift and go to state 79
+    CLASS_ID        shift and go to state 78
 
 
 state 47
 
-    (36) declaracao_genset -> genset_modifiers_opt genset . CLASS_ID where lista_classes_genset specializes CLASS_ID
+    (55) declaracao_relacao_externa -> @ estereotipo_relacao . relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
 
-    CLASS_ID        shift and go to state 80
+    relation        shift and go to state 79
 
 
 state 48
 
-    (37) declaracao_genset -> genset CLASS_ID . { genset_corpo }
+    (81) estereotipo_relacao -> material .
 
-    {               shift and go to state 81
+    relation        reduce using rule 81 (estereotipo_relacao -> material .)
+    CARDINALITY     reduce using rule 81 (estereotipo_relacao -> material .)
+    ASSOCIATION     reduce using rule 81 (estereotipo_relacao -> material .)
+    COMPOSITION_L   reduce using rule 81 (estereotipo_relacao -> material .)
+    COMPOSITION_R   reduce using rule 81 (estereotipo_relacao -> material .)
+    COMPOSITION_LO  reduce using rule 81 (estereotipo_relacao -> material .)
+    COMPOSITION_RO  reduce using rule 81 (estereotipo_relacao -> material .)
 
 
 state 49
 
-    (52) declaracao_relacao_externa -> @ estereotipo_relacao . relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (82) estereotipo_relacao -> derivation .
 
-    relation        shift and go to state 82
+    relation        reduce using rule 82 (estereotipo_relacao -> derivation .)
+    CARDINALITY     reduce using rule 82 (estereotipo_relacao -> derivation .)
+    ASSOCIATION     reduce using rule 82 (estereotipo_relacao -> derivation .)
+    COMPOSITION_L   reduce using rule 82 (estereotipo_relacao -> derivation .)
+    COMPOSITION_R   reduce using rule 82 (estereotipo_relacao -> derivation .)
+    COMPOSITION_LO  reduce using rule 82 (estereotipo_relacao -> derivation .)
+    COMPOSITION_RO  reduce using rule 82 (estereotipo_relacao -> derivation .)
 
 
 state 50
 
-    (78) estereotipo_relacao -> material .
+    (83) estereotipo_relacao -> comparative .
 
-    relation        reduce using rule 78 (estereotipo_relacao -> material .)
-    CARDINALITY     reduce using rule 78 (estereotipo_relacao -> material .)
-    ASSOCIATION     reduce using rule 78 (estereotipo_relacao -> material .)
-    COMPOSITION_L   reduce using rule 78 (estereotipo_relacao -> material .)
-    COMPOSITION_R   reduce using rule 78 (estereotipo_relacao -> material .)
-    COMPOSITION_LO  reduce using rule 78 (estereotipo_relacao -> material .)
-    COMPOSITION_RO  reduce using rule 78 (estereotipo_relacao -> material .)
+    relation        reduce using rule 83 (estereotipo_relacao -> comparative .)
+    CARDINALITY     reduce using rule 83 (estereotipo_relacao -> comparative .)
+    ASSOCIATION     reduce using rule 83 (estereotipo_relacao -> comparative .)
+    COMPOSITION_L   reduce using rule 83 (estereotipo_relacao -> comparative .)
+    COMPOSITION_R   reduce using rule 83 (estereotipo_relacao -> comparative .)
+    COMPOSITION_LO  reduce using rule 83 (estereotipo_relacao -> comparative .)
+    COMPOSITION_RO  reduce using rule 83 (estereotipo_relacao -> comparative .)
 
 
 state 51
 
-    (79) estereotipo_relacao -> derivation .
+    (84) estereotipo_relacao -> mediation .
 
-    relation        reduce using rule 79 (estereotipo_relacao -> derivation .)
-    CARDINALITY     reduce using rule 79 (estereotipo_relacao -> derivation .)
-    ASSOCIATION     reduce using rule 79 (estereotipo_relacao -> derivation .)
-    COMPOSITION_L   reduce using rule 79 (estereotipo_relacao -> derivation .)
-    COMPOSITION_R   reduce using rule 79 (estereotipo_relacao -> derivation .)
-    COMPOSITION_LO  reduce using rule 79 (estereotipo_relacao -> derivation .)
-    COMPOSITION_RO  reduce using rule 79 (estereotipo_relacao -> derivation .)
+    relation        reduce using rule 84 (estereotipo_relacao -> mediation .)
+    CARDINALITY     reduce using rule 84 (estereotipo_relacao -> mediation .)
+    ASSOCIATION     reduce using rule 84 (estereotipo_relacao -> mediation .)
+    COMPOSITION_L   reduce using rule 84 (estereotipo_relacao -> mediation .)
+    COMPOSITION_R   reduce using rule 84 (estereotipo_relacao -> mediation .)
+    COMPOSITION_LO  reduce using rule 84 (estereotipo_relacao -> mediation .)
+    COMPOSITION_RO  reduce using rule 84 (estereotipo_relacao -> mediation .)
 
 
 state 52
 
-    (80) estereotipo_relacao -> comparative .
+    (85) estereotipo_relacao -> characterization .
 
-    relation        reduce using rule 80 (estereotipo_relacao -> comparative .)
-    CARDINALITY     reduce using rule 80 (estereotipo_relacao -> comparative .)
-    ASSOCIATION     reduce using rule 80 (estereotipo_relacao -> comparative .)
-    COMPOSITION_L   reduce using rule 80 (estereotipo_relacao -> comparative .)
-    COMPOSITION_R   reduce using rule 80 (estereotipo_relacao -> comparative .)
-    COMPOSITION_LO  reduce using rule 80 (estereotipo_relacao -> comparative .)
-    COMPOSITION_RO  reduce using rule 80 (estereotipo_relacao -> comparative .)
+    relation        reduce using rule 85 (estereotipo_relacao -> characterization .)
+    CARDINALITY     reduce using rule 85 (estereotipo_relacao -> characterization .)
+    ASSOCIATION     reduce using rule 85 (estereotipo_relacao -> characterization .)
+    COMPOSITION_L   reduce using rule 85 (estereotipo_relacao -> characterization .)
+    COMPOSITION_R   reduce using rule 85 (estereotipo_relacao -> characterization .)
+    COMPOSITION_LO  reduce using rule 85 (estereotipo_relacao -> characterization .)
+    COMPOSITION_RO  reduce using rule 85 (estereotipo_relacao -> characterization .)
 
 
 state 53
 
-    (81) estereotipo_relacao -> mediation .
+    (86) estereotipo_relacao -> externalDependence .
 
-    relation        reduce using rule 81 (estereotipo_relacao -> mediation .)
-    CARDINALITY     reduce using rule 81 (estereotipo_relacao -> mediation .)
-    ASSOCIATION     reduce using rule 81 (estereotipo_relacao -> mediation .)
-    COMPOSITION_L   reduce using rule 81 (estereotipo_relacao -> mediation .)
-    COMPOSITION_R   reduce using rule 81 (estereotipo_relacao -> mediation .)
-    COMPOSITION_LO  reduce using rule 81 (estereotipo_relacao -> mediation .)
-    COMPOSITION_RO  reduce using rule 81 (estereotipo_relacao -> mediation .)
+    relation        reduce using rule 86 (estereotipo_relacao -> externalDependence .)
+    CARDINALITY     reduce using rule 86 (estereotipo_relacao -> externalDependence .)
+    ASSOCIATION     reduce using rule 86 (estereotipo_relacao -> externalDependence .)
+    COMPOSITION_L   reduce using rule 86 (estereotipo_relacao -> externalDependence .)
+    COMPOSITION_R   reduce using rule 86 (estereotipo_relacao -> externalDependence .)
+    COMPOSITION_LO  reduce using rule 86 (estereotipo_relacao -> externalDependence .)
+    COMPOSITION_RO  reduce using rule 86 (estereotipo_relacao -> externalDependence .)
 
 
 state 54
 
-    (82) estereotipo_relacao -> characterization .
+    (87) estereotipo_relacao -> componentOf .
 
-    relation        reduce using rule 82 (estereotipo_relacao -> characterization .)
-    CARDINALITY     reduce using rule 82 (estereotipo_relacao -> characterization .)
-    ASSOCIATION     reduce using rule 82 (estereotipo_relacao -> characterization .)
-    COMPOSITION_L   reduce using rule 82 (estereotipo_relacao -> characterization .)
-    COMPOSITION_R   reduce using rule 82 (estereotipo_relacao -> characterization .)
-    COMPOSITION_LO  reduce using rule 82 (estereotipo_relacao -> characterization .)
-    COMPOSITION_RO  reduce using rule 82 (estereotipo_relacao -> characterization .)
+    relation        reduce using rule 87 (estereotipo_relacao -> componentOf .)
+    CARDINALITY     reduce using rule 87 (estereotipo_relacao -> componentOf .)
+    ASSOCIATION     reduce using rule 87 (estereotipo_relacao -> componentOf .)
+    COMPOSITION_L   reduce using rule 87 (estereotipo_relacao -> componentOf .)
+    COMPOSITION_R   reduce using rule 87 (estereotipo_relacao -> componentOf .)
+    COMPOSITION_LO  reduce using rule 87 (estereotipo_relacao -> componentOf .)
+    COMPOSITION_RO  reduce using rule 87 (estereotipo_relacao -> componentOf .)
 
 
 state 55
 
-    (83) estereotipo_relacao -> externalDependence .
+    (88) estereotipo_relacao -> memberOf .
 
-    relation        reduce using rule 83 (estereotipo_relacao -> externalDependence .)
-    CARDINALITY     reduce using rule 83 (estereotipo_relacao -> externalDependence .)
-    ASSOCIATION     reduce using rule 83 (estereotipo_relacao -> externalDependence .)
-    COMPOSITION_L   reduce using rule 83 (estereotipo_relacao -> externalDependence .)
-    COMPOSITION_R   reduce using rule 83 (estereotipo_relacao -> externalDependence .)
-    COMPOSITION_LO  reduce using rule 83 (estereotipo_relacao -> externalDependence .)
-    COMPOSITION_RO  reduce using rule 83 (estereotipo_relacao -> externalDependence .)
+    relation        reduce using rule 88 (estereotipo_relacao -> memberOf .)
+    CARDINALITY     reduce using rule 88 (estereotipo_relacao -> memberOf .)
+    ASSOCIATION     reduce using rule 88 (estereotipo_relacao -> memberOf .)
+    COMPOSITION_L   reduce using rule 88 (estereotipo_relacao -> memberOf .)
+    COMPOSITION_R   reduce using rule 88 (estereotipo_relacao -> memberOf .)
+    COMPOSITION_LO  reduce using rule 88 (estereotipo_relacao -> memberOf .)
+    COMPOSITION_RO  reduce using rule 88 (estereotipo_relacao -> memberOf .)
 
 
 state 56
 
-    (84) estereotipo_relacao -> componentOf .
+    (89) estereotipo_relacao -> subCollectionOf .
 
-    relation        reduce using rule 84 (estereotipo_relacao -> componentOf .)
-    CARDINALITY     reduce using rule 84 (estereotipo_relacao -> componentOf .)
-    ASSOCIATION     reduce using rule 84 (estereotipo_relacao -> componentOf .)
-    COMPOSITION_L   reduce using rule 84 (estereotipo_relacao -> componentOf .)
-    COMPOSITION_R   reduce using rule 84 (estereotipo_relacao -> componentOf .)
-    COMPOSITION_LO  reduce using rule 84 (estereotipo_relacao -> componentOf .)
-    COMPOSITION_RO  reduce using rule 84 (estereotipo_relacao -> componentOf .)
+    relation        reduce using rule 89 (estereotipo_relacao -> subCollectionOf .)
+    CARDINALITY     reduce using rule 89 (estereotipo_relacao -> subCollectionOf .)
+    ASSOCIATION     reduce using rule 89 (estereotipo_relacao -> subCollectionOf .)
+    COMPOSITION_L   reduce using rule 89 (estereotipo_relacao -> subCollectionOf .)
+    COMPOSITION_R   reduce using rule 89 (estereotipo_relacao -> subCollectionOf .)
+    COMPOSITION_LO  reduce using rule 89 (estereotipo_relacao -> subCollectionOf .)
+    COMPOSITION_RO  reduce using rule 89 (estereotipo_relacao -> subCollectionOf .)
 
 
 state 57
 
-    (85) estereotipo_relacao -> memberOf .
+    (90) estereotipo_relacao -> subQualityOf .
 
-    relation        reduce using rule 85 (estereotipo_relacao -> memberOf .)
-    CARDINALITY     reduce using rule 85 (estereotipo_relacao -> memberOf .)
-    ASSOCIATION     reduce using rule 85 (estereotipo_relacao -> memberOf .)
-    COMPOSITION_L   reduce using rule 85 (estereotipo_relacao -> memberOf .)
-    COMPOSITION_R   reduce using rule 85 (estereotipo_relacao -> memberOf .)
-    COMPOSITION_LO  reduce using rule 85 (estereotipo_relacao -> memberOf .)
-    COMPOSITION_RO  reduce using rule 85 (estereotipo_relacao -> memberOf .)
+    relation        reduce using rule 90 (estereotipo_relacao -> subQualityOf .)
+    CARDINALITY     reduce using rule 90 (estereotipo_relacao -> subQualityOf .)
+    ASSOCIATION     reduce using rule 90 (estereotipo_relacao -> subQualityOf .)
+    COMPOSITION_L   reduce using rule 90 (estereotipo_relacao -> subQualityOf .)
+    COMPOSITION_R   reduce using rule 90 (estereotipo_relacao -> subQualityOf .)
+    COMPOSITION_LO  reduce using rule 90 (estereotipo_relacao -> subQualityOf .)
+    COMPOSITION_RO  reduce using rule 90 (estereotipo_relacao -> subQualityOf .)
 
 
 state 58
 
-    (86) estereotipo_relacao -> subCollectionOf .
+    (91) estereotipo_relacao -> instantiation .
 
-    relation        reduce using rule 86 (estereotipo_relacao -> subCollectionOf .)
-    CARDINALITY     reduce using rule 86 (estereotipo_relacao -> subCollectionOf .)
-    ASSOCIATION     reduce using rule 86 (estereotipo_relacao -> subCollectionOf .)
-    COMPOSITION_L   reduce using rule 86 (estereotipo_relacao -> subCollectionOf .)
-    COMPOSITION_R   reduce using rule 86 (estereotipo_relacao -> subCollectionOf .)
-    COMPOSITION_LO  reduce using rule 86 (estereotipo_relacao -> subCollectionOf .)
-    COMPOSITION_RO  reduce using rule 86 (estereotipo_relacao -> subCollectionOf .)
+    relation        reduce using rule 91 (estereotipo_relacao -> instantiation .)
+    CARDINALITY     reduce using rule 91 (estereotipo_relacao -> instantiation .)
+    ASSOCIATION     reduce using rule 91 (estereotipo_relacao -> instantiation .)
+    COMPOSITION_L   reduce using rule 91 (estereotipo_relacao -> instantiation .)
+    COMPOSITION_R   reduce using rule 91 (estereotipo_relacao -> instantiation .)
+    COMPOSITION_LO  reduce using rule 91 (estereotipo_relacao -> instantiation .)
+    COMPOSITION_RO  reduce using rule 91 (estereotipo_relacao -> instantiation .)
 
 
 state 59
 
-    (87) estereotipo_relacao -> subQualityOf .
+    (92) estereotipo_relacao -> termination .
 
-    relation        reduce using rule 87 (estereotipo_relacao -> subQualityOf .)
-    CARDINALITY     reduce using rule 87 (estereotipo_relacao -> subQualityOf .)
-    ASSOCIATION     reduce using rule 87 (estereotipo_relacao -> subQualityOf .)
-    COMPOSITION_L   reduce using rule 87 (estereotipo_relacao -> subQualityOf .)
-    COMPOSITION_R   reduce using rule 87 (estereotipo_relacao -> subQualityOf .)
-    COMPOSITION_LO  reduce using rule 87 (estereotipo_relacao -> subQualityOf .)
-    COMPOSITION_RO  reduce using rule 87 (estereotipo_relacao -> subQualityOf .)
+    relation        reduce using rule 92 (estereotipo_relacao -> termination .)
+    CARDINALITY     reduce using rule 92 (estereotipo_relacao -> termination .)
+    ASSOCIATION     reduce using rule 92 (estereotipo_relacao -> termination .)
+    COMPOSITION_L   reduce using rule 92 (estereotipo_relacao -> termination .)
+    COMPOSITION_R   reduce using rule 92 (estereotipo_relacao -> termination .)
+    COMPOSITION_LO  reduce using rule 92 (estereotipo_relacao -> termination .)
+    COMPOSITION_RO  reduce using rule 92 (estereotipo_relacao -> termination .)
 
 
 state 60
 
-    (88) estereotipo_relacao -> instantiation .
+    (93) estereotipo_relacao -> participational .
 
-    relation        reduce using rule 88 (estereotipo_relacao -> instantiation .)
-    CARDINALITY     reduce using rule 88 (estereotipo_relacao -> instantiation .)
-    ASSOCIATION     reduce using rule 88 (estereotipo_relacao -> instantiation .)
-    COMPOSITION_L   reduce using rule 88 (estereotipo_relacao -> instantiation .)
-    COMPOSITION_R   reduce using rule 88 (estereotipo_relacao -> instantiation .)
-    COMPOSITION_LO  reduce using rule 88 (estereotipo_relacao -> instantiation .)
-    COMPOSITION_RO  reduce using rule 88 (estereotipo_relacao -> instantiation .)
+    relation        reduce using rule 93 (estereotipo_relacao -> participational .)
+    CARDINALITY     reduce using rule 93 (estereotipo_relacao -> participational .)
+    ASSOCIATION     reduce using rule 93 (estereotipo_relacao -> participational .)
+    COMPOSITION_L   reduce using rule 93 (estereotipo_relacao -> participational .)
+    COMPOSITION_R   reduce using rule 93 (estereotipo_relacao -> participational .)
+    COMPOSITION_LO  reduce using rule 93 (estereotipo_relacao -> participational .)
+    COMPOSITION_RO  reduce using rule 93 (estereotipo_relacao -> participational .)
 
 
 state 61
 
-    (89) estereotipo_relacao -> termination .
+    (94) estereotipo_relacao -> participation .
 
-    relation        reduce using rule 89 (estereotipo_relacao -> termination .)
-    CARDINALITY     reduce using rule 89 (estereotipo_relacao -> termination .)
-    ASSOCIATION     reduce using rule 89 (estereotipo_relacao -> termination .)
-    COMPOSITION_L   reduce using rule 89 (estereotipo_relacao -> termination .)
-    COMPOSITION_R   reduce using rule 89 (estereotipo_relacao -> termination .)
-    COMPOSITION_LO  reduce using rule 89 (estereotipo_relacao -> termination .)
-    COMPOSITION_RO  reduce using rule 89 (estereotipo_relacao -> termination .)
+    relation        reduce using rule 94 (estereotipo_relacao -> participation .)
+    CARDINALITY     reduce using rule 94 (estereotipo_relacao -> participation .)
+    ASSOCIATION     reduce using rule 94 (estereotipo_relacao -> participation .)
+    COMPOSITION_L   reduce using rule 94 (estereotipo_relacao -> participation .)
+    COMPOSITION_R   reduce using rule 94 (estereotipo_relacao -> participation .)
+    COMPOSITION_LO  reduce using rule 94 (estereotipo_relacao -> participation .)
+    COMPOSITION_RO  reduce using rule 94 (estereotipo_relacao -> participation .)
 
 
 state 62
 
-    (90) estereotipo_relacao -> participational .
+    (95) estereotipo_relacao -> historicalDependence .
 
-    relation        reduce using rule 90 (estereotipo_relacao -> participational .)
-    CARDINALITY     reduce using rule 90 (estereotipo_relacao -> participational .)
-    ASSOCIATION     reduce using rule 90 (estereotipo_relacao -> participational .)
-    COMPOSITION_L   reduce using rule 90 (estereotipo_relacao -> participational .)
-    COMPOSITION_R   reduce using rule 90 (estereotipo_relacao -> participational .)
-    COMPOSITION_LO  reduce using rule 90 (estereotipo_relacao -> participational .)
-    COMPOSITION_RO  reduce using rule 90 (estereotipo_relacao -> participational .)
+    relation        reduce using rule 95 (estereotipo_relacao -> historicalDependence .)
+    CARDINALITY     reduce using rule 95 (estereotipo_relacao -> historicalDependence .)
+    ASSOCIATION     reduce using rule 95 (estereotipo_relacao -> historicalDependence .)
+    COMPOSITION_L   reduce using rule 95 (estereotipo_relacao -> historicalDependence .)
+    COMPOSITION_R   reduce using rule 95 (estereotipo_relacao -> historicalDependence .)
+    COMPOSITION_LO  reduce using rule 95 (estereotipo_relacao -> historicalDependence .)
+    COMPOSITION_RO  reduce using rule 95 (estereotipo_relacao -> historicalDependence .)
 
 
 state 63
 
-    (91) estereotipo_relacao -> participation .
+    (96) estereotipo_relacao -> creation .
 
-    relation        reduce using rule 91 (estereotipo_relacao -> participation .)
-    CARDINALITY     reduce using rule 91 (estereotipo_relacao -> participation .)
-    ASSOCIATION     reduce using rule 91 (estereotipo_relacao -> participation .)
-    COMPOSITION_L   reduce using rule 91 (estereotipo_relacao -> participation .)
-    COMPOSITION_R   reduce using rule 91 (estereotipo_relacao -> participation .)
-    COMPOSITION_LO  reduce using rule 91 (estereotipo_relacao -> participation .)
-    COMPOSITION_RO  reduce using rule 91 (estereotipo_relacao -> participation .)
+    relation        reduce using rule 96 (estereotipo_relacao -> creation .)
+    CARDINALITY     reduce using rule 96 (estereotipo_relacao -> creation .)
+    ASSOCIATION     reduce using rule 96 (estereotipo_relacao -> creation .)
+    COMPOSITION_L   reduce using rule 96 (estereotipo_relacao -> creation .)
+    COMPOSITION_R   reduce using rule 96 (estereotipo_relacao -> creation .)
+    COMPOSITION_LO  reduce using rule 96 (estereotipo_relacao -> creation .)
+    COMPOSITION_RO  reduce using rule 96 (estereotipo_relacao -> creation .)
 
 
 state 64
 
-    (92) estereotipo_relacao -> historicalDependence .
+    (97) estereotipo_relacao -> manifestation .
 
-    relation        reduce using rule 92 (estereotipo_relacao -> historicalDependence .)
-    CARDINALITY     reduce using rule 92 (estereotipo_relacao -> historicalDependence .)
-    ASSOCIATION     reduce using rule 92 (estereotipo_relacao -> historicalDependence .)
-    COMPOSITION_L   reduce using rule 92 (estereotipo_relacao -> historicalDependence .)
-    COMPOSITION_R   reduce using rule 92 (estereotipo_relacao -> historicalDependence .)
-    COMPOSITION_LO  reduce using rule 92 (estereotipo_relacao -> historicalDependence .)
-    COMPOSITION_RO  reduce using rule 92 (estereotipo_relacao -> historicalDependence .)
+    relation        reduce using rule 97 (estereotipo_relacao -> manifestation .)
+    CARDINALITY     reduce using rule 97 (estereotipo_relacao -> manifestation .)
+    ASSOCIATION     reduce using rule 97 (estereotipo_relacao -> manifestation .)
+    COMPOSITION_L   reduce using rule 97 (estereotipo_relacao -> manifestation .)
+    COMPOSITION_R   reduce using rule 97 (estereotipo_relacao -> manifestation .)
+    COMPOSITION_LO  reduce using rule 97 (estereotipo_relacao -> manifestation .)
+    COMPOSITION_RO  reduce using rule 97 (estereotipo_relacao -> manifestation .)
 
 
 state 65
 
-    (93) estereotipo_relacao -> creation .
+    (98) estereotipo_relacao -> bringsAbout .
 
-    relation        reduce using rule 93 (estereotipo_relacao -> creation .)
-    CARDINALITY     reduce using rule 93 (estereotipo_relacao -> creation .)
-    ASSOCIATION     reduce using rule 93 (estereotipo_relacao -> creation .)
-    COMPOSITION_L   reduce using rule 93 (estereotipo_relacao -> creation .)
-    COMPOSITION_R   reduce using rule 93 (estereotipo_relacao -> creation .)
-    COMPOSITION_LO  reduce using rule 93 (estereotipo_relacao -> creation .)
-    COMPOSITION_RO  reduce using rule 93 (estereotipo_relacao -> creation .)
+    relation        reduce using rule 98 (estereotipo_relacao -> bringsAbout .)
+    CARDINALITY     reduce using rule 98 (estereotipo_relacao -> bringsAbout .)
+    ASSOCIATION     reduce using rule 98 (estereotipo_relacao -> bringsAbout .)
+    COMPOSITION_L   reduce using rule 98 (estereotipo_relacao -> bringsAbout .)
+    COMPOSITION_R   reduce using rule 98 (estereotipo_relacao -> bringsAbout .)
+    COMPOSITION_LO  reduce using rule 98 (estereotipo_relacao -> bringsAbout .)
+    COMPOSITION_RO  reduce using rule 98 (estereotipo_relacao -> bringsAbout .)
 
 
 state 66
 
-    (94) estereotipo_relacao -> manifestation .
+    (99) estereotipo_relacao -> triggers .
 
-    relation        reduce using rule 94 (estereotipo_relacao -> manifestation .)
-    CARDINALITY     reduce using rule 94 (estereotipo_relacao -> manifestation .)
-    ASSOCIATION     reduce using rule 94 (estereotipo_relacao -> manifestation .)
-    COMPOSITION_L   reduce using rule 94 (estereotipo_relacao -> manifestation .)
-    COMPOSITION_R   reduce using rule 94 (estereotipo_relacao -> manifestation .)
-    COMPOSITION_LO  reduce using rule 94 (estereotipo_relacao -> manifestation .)
-    COMPOSITION_RO  reduce using rule 94 (estereotipo_relacao -> manifestation .)
+    relation        reduce using rule 99 (estereotipo_relacao -> triggers .)
+    CARDINALITY     reduce using rule 99 (estereotipo_relacao -> triggers .)
+    ASSOCIATION     reduce using rule 99 (estereotipo_relacao -> triggers .)
+    COMPOSITION_L   reduce using rule 99 (estereotipo_relacao -> triggers .)
+    COMPOSITION_R   reduce using rule 99 (estereotipo_relacao -> triggers .)
+    COMPOSITION_LO  reduce using rule 99 (estereotipo_relacao -> triggers .)
+    COMPOSITION_RO  reduce using rule 99 (estereotipo_relacao -> triggers .)
 
 
 state 67
 
-    (95) estereotipo_relacao -> bringsAbout .
+    (100) estereotipo_relacao -> composition .
 
-    relation        reduce using rule 95 (estereotipo_relacao -> bringsAbout .)
-    CARDINALITY     reduce using rule 95 (estereotipo_relacao -> bringsAbout .)
-    ASSOCIATION     reduce using rule 95 (estereotipo_relacao -> bringsAbout .)
-    COMPOSITION_L   reduce using rule 95 (estereotipo_relacao -> bringsAbout .)
-    COMPOSITION_R   reduce using rule 95 (estereotipo_relacao -> bringsAbout .)
-    COMPOSITION_LO  reduce using rule 95 (estereotipo_relacao -> bringsAbout .)
-    COMPOSITION_RO  reduce using rule 95 (estereotipo_relacao -> bringsAbout .)
+    relation        reduce using rule 100 (estereotipo_relacao -> composition .)
+    CARDINALITY     reduce using rule 100 (estereotipo_relacao -> composition .)
+    ASSOCIATION     reduce using rule 100 (estereotipo_relacao -> composition .)
+    COMPOSITION_L   reduce using rule 100 (estereotipo_relacao -> composition .)
+    COMPOSITION_R   reduce using rule 100 (estereotipo_relacao -> composition .)
+    COMPOSITION_LO  reduce using rule 100 (estereotipo_relacao -> composition .)
+    COMPOSITION_RO  reduce using rule 100 (estereotipo_relacao -> composition .)
 
 
 state 68
 
-    (96) estereotipo_relacao -> triggers .
+    (101) estereotipo_relacao -> aggregation .
 
-    relation        reduce using rule 96 (estereotipo_relacao -> triggers .)
-    CARDINALITY     reduce using rule 96 (estereotipo_relacao -> triggers .)
-    ASSOCIATION     reduce using rule 96 (estereotipo_relacao -> triggers .)
-    COMPOSITION_L   reduce using rule 96 (estereotipo_relacao -> triggers .)
-    COMPOSITION_R   reduce using rule 96 (estereotipo_relacao -> triggers .)
-    COMPOSITION_LO  reduce using rule 96 (estereotipo_relacao -> triggers .)
-    COMPOSITION_RO  reduce using rule 96 (estereotipo_relacao -> triggers .)
+    relation        reduce using rule 101 (estereotipo_relacao -> aggregation .)
+    CARDINALITY     reduce using rule 101 (estereotipo_relacao -> aggregation .)
+    ASSOCIATION     reduce using rule 101 (estereotipo_relacao -> aggregation .)
+    COMPOSITION_L   reduce using rule 101 (estereotipo_relacao -> aggregation .)
+    COMPOSITION_R   reduce using rule 101 (estereotipo_relacao -> aggregation .)
+    COMPOSITION_LO  reduce using rule 101 (estereotipo_relacao -> aggregation .)
+    COMPOSITION_RO  reduce using rule 101 (estereotipo_relacao -> aggregation .)
 
 
 state 69
 
-    (97) estereotipo_relacao -> composition .
+    (102) estereotipo_relacao -> inherence .
 
-    relation        reduce using rule 97 (estereotipo_relacao -> composition .)
-    CARDINALITY     reduce using rule 97 (estereotipo_relacao -> composition .)
-    ASSOCIATION     reduce using rule 97 (estereotipo_relacao -> composition .)
-    COMPOSITION_L   reduce using rule 97 (estereotipo_relacao -> composition .)
-    COMPOSITION_R   reduce using rule 97 (estereotipo_relacao -> composition .)
-    COMPOSITION_LO  reduce using rule 97 (estereotipo_relacao -> composition .)
-    COMPOSITION_RO  reduce using rule 97 (estereotipo_relacao -> composition .)
+    relation        reduce using rule 102 (estereotipo_relacao -> inherence .)
+    CARDINALITY     reduce using rule 102 (estereotipo_relacao -> inherence .)
+    ASSOCIATION     reduce using rule 102 (estereotipo_relacao -> inherence .)
+    COMPOSITION_L   reduce using rule 102 (estereotipo_relacao -> inherence .)
+    COMPOSITION_R   reduce using rule 102 (estereotipo_relacao -> inherence .)
+    COMPOSITION_LO  reduce using rule 102 (estereotipo_relacao -> inherence .)
+    COMPOSITION_RO  reduce using rule 102 (estereotipo_relacao -> inherence .)
 
 
 state 70
 
-    (98) estereotipo_relacao -> aggregation .
+    (103) estereotipo_relacao -> value .
 
-    relation        reduce using rule 98 (estereotipo_relacao -> aggregation .)
-    CARDINALITY     reduce using rule 98 (estereotipo_relacao -> aggregation .)
-    ASSOCIATION     reduce using rule 98 (estereotipo_relacao -> aggregation .)
-    COMPOSITION_L   reduce using rule 98 (estereotipo_relacao -> aggregation .)
-    COMPOSITION_R   reduce using rule 98 (estereotipo_relacao -> aggregation .)
-    COMPOSITION_LO  reduce using rule 98 (estereotipo_relacao -> aggregation .)
-    COMPOSITION_RO  reduce using rule 98 (estereotipo_relacao -> aggregation .)
+    relation        reduce using rule 103 (estereotipo_relacao -> value .)
+    CARDINALITY     reduce using rule 103 (estereotipo_relacao -> value .)
+    ASSOCIATION     reduce using rule 103 (estereotipo_relacao -> value .)
+    COMPOSITION_L   reduce using rule 103 (estereotipo_relacao -> value .)
+    COMPOSITION_R   reduce using rule 103 (estereotipo_relacao -> value .)
+    COMPOSITION_LO  reduce using rule 103 (estereotipo_relacao -> value .)
+    COMPOSITION_RO  reduce using rule 103 (estereotipo_relacao -> value .)
 
 
 state 71
 
-    (99) estereotipo_relacao -> inherence .
+    (104) estereotipo_relacao -> formal .
 
-    relation        reduce using rule 99 (estereotipo_relacao -> inherence .)
-    CARDINALITY     reduce using rule 99 (estereotipo_relacao -> inherence .)
-    ASSOCIATION     reduce using rule 99 (estereotipo_relacao -> inherence .)
-    COMPOSITION_L   reduce using rule 99 (estereotipo_relacao -> inherence .)
-    COMPOSITION_R   reduce using rule 99 (estereotipo_relacao -> inherence .)
-    COMPOSITION_LO  reduce using rule 99 (estereotipo_relacao -> inherence .)
-    COMPOSITION_RO  reduce using rule 99 (estereotipo_relacao -> inherence .)
+    relation        reduce using rule 104 (estereotipo_relacao -> formal .)
+    CARDINALITY     reduce using rule 104 (estereotipo_relacao -> formal .)
+    ASSOCIATION     reduce using rule 104 (estereotipo_relacao -> formal .)
+    COMPOSITION_L   reduce using rule 104 (estereotipo_relacao -> formal .)
+    COMPOSITION_R   reduce using rule 104 (estereotipo_relacao -> formal .)
+    COMPOSITION_LO  reduce using rule 104 (estereotipo_relacao -> formal .)
+    COMPOSITION_RO  reduce using rule 104 (estereotipo_relacao -> formal .)
 
 
 state 72
 
-    (100) estereotipo_relacao -> value .
+    (105) estereotipo_relacao -> constitution .
 
-    relation        reduce using rule 100 (estereotipo_relacao -> value .)
-    CARDINALITY     reduce using rule 100 (estereotipo_relacao -> value .)
-    ASSOCIATION     reduce using rule 100 (estereotipo_relacao -> value .)
-    COMPOSITION_L   reduce using rule 100 (estereotipo_relacao -> value .)
-    COMPOSITION_R   reduce using rule 100 (estereotipo_relacao -> value .)
-    COMPOSITION_LO  reduce using rule 100 (estereotipo_relacao -> value .)
-    COMPOSITION_RO  reduce using rule 100 (estereotipo_relacao -> value .)
+    relation        reduce using rule 105 (estereotipo_relacao -> constitution .)
+    CARDINALITY     reduce using rule 105 (estereotipo_relacao -> constitution .)
+    ASSOCIATION     reduce using rule 105 (estereotipo_relacao -> constitution .)
+    COMPOSITION_L   reduce using rule 105 (estereotipo_relacao -> constitution .)
+    COMPOSITION_R   reduce using rule 105 (estereotipo_relacao -> constitution .)
+    COMPOSITION_LO  reduce using rule 105 (estereotipo_relacao -> constitution .)
+    COMPOSITION_RO  reduce using rule 105 (estereotipo_relacao -> constitution .)
 
 
 state 73
 
-    (101) estereotipo_relacao -> formal .
+    (40) genset_modifiers_opt -> disjoint complete .
 
-    relation        reduce using rule 101 (estereotipo_relacao -> formal .)
-    CARDINALITY     reduce using rule 101 (estereotipo_relacao -> formal .)
-    ASSOCIATION     reduce using rule 101 (estereotipo_relacao -> formal .)
-    COMPOSITION_L   reduce using rule 101 (estereotipo_relacao -> formal .)
-    COMPOSITION_R   reduce using rule 101 (estereotipo_relacao -> formal .)
-    COMPOSITION_LO  reduce using rule 101 (estereotipo_relacao -> formal .)
-    COMPOSITION_RO  reduce using rule 101 (estereotipo_relacao -> formal .)
+    genset          reduce using rule 40 (genset_modifiers_opt -> disjoint complete .)
 
 
 state 74
 
-    (102) estereotipo_relacao -> constitution .
+    (12) declaracao_classe -> estereotipo_classe CLASS_ID { . corpo_classe }
+    (17) corpo_classe -> . lista_membros_classe
+    (18) corpo_classe -> . empty
+    (19) lista_membros_classe -> . membro_classe lista_membros_classe
+    (20) lista_membros_classe -> . membro_classe
+    (112) empty -> .
+    (21) membro_classe -> . declaracao_atributo
+    (22) membro_classe -> . declaracao_relacao_interna
+    (23) declaracao_atributo -> . RELATION_ID : tipo meta_atributos_opt
+    (47) declaracao_relacao_interna -> . @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (48) declaracao_relacao_interna -> . @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
+    (49) declaracao_relacao_interna -> . link_nomeado CARDINALITY CLASS_ID
+    (50) link_nomeado -> . ASSOCIATION RELATION_ID ASSOCIATION
+    (51) link_nomeado -> . COMPOSITION_L RELATION_ID ASSOCIATION
+    (52) link_nomeado -> . COMPOSITION_R RELATION_ID ASSOCIATION
+    (53) link_nomeado -> . COMPOSITION_LO RELATION_ID ASSOCIATION
+    (54) link_nomeado -> . COMPOSITION_RO RELATION_ID ASSOCIATION
 
-    relation        reduce using rule 102 (estereotipo_relacao -> constitution .)
-    CARDINALITY     reduce using rule 102 (estereotipo_relacao -> constitution .)
-    ASSOCIATION     reduce using rule 102 (estereotipo_relacao -> constitution .)
-    COMPOSITION_L   reduce using rule 102 (estereotipo_relacao -> constitution .)
-    COMPOSITION_R   reduce using rule 102 (estereotipo_relacao -> constitution .)
-    COMPOSITION_LO  reduce using rule 102 (estereotipo_relacao -> constitution .)
-    COMPOSITION_RO  reduce using rule 102 (estereotipo_relacao -> constitution .)
+    }               reduce using rule 112 (empty -> .)
+    RELATION_ID     shift and go to state 86
+    @               shift and go to state 87
+    ASSOCIATION     shift and go to state 89
+    COMPOSITION_L   shift and go to state 90
+    COMPOSITION_R   shift and go to state 91
+    COMPOSITION_LO  shift and go to state 92
+    COMPOSITION_RO  shift and go to state 93
 
+    corpo_classe                   shift and go to state 80
+    lista_membros_classe           shift and go to state 81
+    empty                          shift and go to state 82
+    membro_classe                  shift and go to state 83
+    declaracao_atributo            shift and go to state 84
+    declaracao_relacao_interna     shift and go to state 85
+    link_nomeado                   shift and go to state 88
 
 state 75
 
-    (38) genset_modifiers_opt -> disjoint complete .
+    (13) declaracao_classe -> estereotipo_classe CLASS_ID specializes . lista_ids
+    (15) lista_ids -> . CLASS_ID , lista_ids
+    (16) lista_ids -> . CLASS_ID
 
-    genset          reduce using rule 38 (genset_modifiers_opt -> disjoint complete .)
+    CLASS_ID        shift and go to state 94
 
+    lista_ids                      shift and go to state 95
 
 state 76
 
-    (12) declaracao_classe -> estereotipo_classe CLASS_ID { . corpo_classe }
-    (15) corpo_classe -> . lista_membros_classe
-    (16) corpo_classe -> . empty
-    (17) lista_membros_classe -> . membro_classe lista_membros_classe
-    (18) lista_membros_classe -> . membro_classe
-    (109) empty -> .
-    (19) membro_classe -> . declaracao_atributo
-    (20) membro_classe -> . declaracao_relacao_interna
-    (21) declaracao_atributo -> . RELATION_ID : tipo meta_atributos_opt
-    (45) declaracao_relacao_interna -> . @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-    (46) declaracao_relacao_interna -> . @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
+    (34) declaracao_tipo_dado -> datatype CLASS_ID { . corpo_classe }
+    (17) corpo_classe -> . lista_membros_classe
+    (18) corpo_classe -> . empty
+    (19) lista_membros_classe -> . membro_classe lista_membros_classe
+    (20) lista_membros_classe -> . membro_classe
+    (112) empty -> .
+    (21) membro_classe -> . declaracao_atributo
+    (22) membro_classe -> . declaracao_relacao_interna
+    (23) declaracao_atributo -> . RELATION_ID : tipo meta_atributos_opt
+    (47) declaracao_relacao_interna -> . @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (48) declaracao_relacao_interna -> . @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
+    (49) declaracao_relacao_interna -> . link_nomeado CARDINALITY CLASS_ID
+    (50) link_nomeado -> . ASSOCIATION RELATION_ID ASSOCIATION
+    (51) link_nomeado -> . COMPOSITION_L RELATION_ID ASSOCIATION
+    (52) link_nomeado -> . COMPOSITION_R RELATION_ID ASSOCIATION
+    (53) link_nomeado -> . COMPOSITION_LO RELATION_ID ASSOCIATION
+    (54) link_nomeado -> . COMPOSITION_RO RELATION_ID ASSOCIATION
 
-    }               reduce using rule 109 (empty -> .)
-    RELATION_ID     shift and go to state 89
-    @               shift and go to state 90
+    }               reduce using rule 112 (empty -> .)
+    RELATION_ID     shift and go to state 86
+    @               shift and go to state 87
+    ASSOCIATION     shift and go to state 89
+    COMPOSITION_L   shift and go to state 90
+    COMPOSITION_R   shift and go to state 91
+    COMPOSITION_LO  shift and go to state 92
+    COMPOSITION_RO  shift and go to state 93
 
-    corpo_classe                   shift and go to state 83
-    lista_membros_classe           shift and go to state 84
-    empty                          shift and go to state 85
-    membro_classe                  shift and go to state 86
-    declaracao_atributo            shift and go to state 87
-    declaracao_relacao_interna     shift and go to state 88
+    corpo_classe                   shift and go to state 96
+    lista_membros_classe           shift and go to state 81
+    empty                          shift and go to state 82
+    membro_classe                  shift and go to state 83
+    declaracao_atributo            shift and go to state 84
+    declaracao_relacao_interna     shift and go to state 85
+    link_nomeado                   shift and go to state 88
 
 state 77
 
-    (13) declaracao_classe -> estereotipo_classe CLASS_ID specializes . CLASS_ID
+    (35) declaracao_enum -> enum CLASS_ID { . lista_instancias_enum }
+    (36) lista_instancias_enum -> . CLASS_ID , lista_instancias_enum
+    (37) lista_instancias_enum -> . CLASS_ID
 
-    CLASS_ID        shift and go to state 91
+    CLASS_ID        shift and go to state 97
 
+    lista_instancias_enum          shift and go to state 98
 
 state 78
 
-    (32) declaracao_tipo_dado -> datatype CLASS_ID { . corpo_classe }
-    (15) corpo_classe -> . lista_membros_classe
-    (16) corpo_classe -> . empty
-    (17) lista_membros_classe -> . membro_classe lista_membros_classe
-    (18) lista_membros_classe -> . membro_classe
-    (109) empty -> .
-    (19) membro_classe -> . declaracao_atributo
-    (20) membro_classe -> . declaracao_relacao_interna
-    (21) declaracao_atributo -> . RELATION_ID : tipo meta_atributos_opt
-    (45) declaracao_relacao_interna -> . @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-    (46) declaracao_relacao_interna -> . @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
+    (38) declaracao_genset -> genset_modifiers_opt genset CLASS_ID . where lista_classes_genset specializes CLASS_ID
+    (39) declaracao_genset -> genset_modifiers_opt genset CLASS_ID . { genset_corpo }
 
-    }               reduce using rule 109 (empty -> .)
-    RELATION_ID     shift and go to state 89
-    @               shift and go to state 90
+    where           shift and go to state 99
+    {               shift and go to state 100
 
-    corpo_classe                   shift and go to state 92
-    lista_membros_classe           shift and go to state 84
-    empty                          shift and go to state 85
-    membro_classe                  shift and go to state 86
-    declaracao_atributo            shift and go to state 87
-    declaracao_relacao_interna     shift and go to state 88
 
 state 79
 
-    (33) declaracao_enum -> enum CLASS_ID { . lista_instancias_enum }
-    (34) lista_instancias_enum -> . CLASS_ID , lista_instancias_enum
-    (35) lista_instancias_enum -> . CLASS_ID
+    (55) declaracao_relacao_externa -> @ estereotipo_relacao relation . CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
 
-    CLASS_ID        shift and go to state 93
+    CLASS_ID        shift and go to state 101
 
-    lista_instancias_enum          shift and go to state 94
 
 state 80
 
-    (36) declaracao_genset -> genset_modifiers_opt genset CLASS_ID . where lista_classes_genset specializes CLASS_ID
+    (12) declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe . }
 
-    where           shift and go to state 95
+    }               shift and go to state 102
 
 
 state 81
 
-    (37) declaracao_genset -> genset CLASS_ID { . genset_corpo }
-    (44) genset_corpo -> . general CLASS_ID specifics lista_classes_genset
+    (17) corpo_classe -> lista_membros_classe .
 
-    general         shift and go to state 97
+    }               reduce using rule 17 (corpo_classe -> lista_membros_classe .)
 
-    genset_corpo                   shift and go to state 96
 
 state 82
 
-    (52) declaracao_relacao_externa -> @ estereotipo_relacao relation . CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (18) corpo_classe -> empty .
 
-    CLASS_ID        shift and go to state 98
+    }               reduce using rule 18 (corpo_classe -> empty .)
 
 
 state 83
 
-    (12) declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe . }
+    (19) lista_membros_classe -> membro_classe . lista_membros_classe
+    (20) lista_membros_classe -> membro_classe .
+    (19) lista_membros_classe -> . membro_classe lista_membros_classe
+    (20) lista_membros_classe -> . membro_classe
+    (21) membro_classe -> . declaracao_atributo
+    (22) membro_classe -> . declaracao_relacao_interna
+    (23) declaracao_atributo -> . RELATION_ID : tipo meta_atributos_opt
+    (47) declaracao_relacao_interna -> . @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (48) declaracao_relacao_interna -> . @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
+    (49) declaracao_relacao_interna -> . link_nomeado CARDINALITY CLASS_ID
+    (50) link_nomeado -> . ASSOCIATION RELATION_ID ASSOCIATION
+    (51) link_nomeado -> . COMPOSITION_L RELATION_ID ASSOCIATION
+    (52) link_nomeado -> . COMPOSITION_R RELATION_ID ASSOCIATION
+    (53) link_nomeado -> . COMPOSITION_LO RELATION_ID ASSOCIATION
+    (54) link_nomeado -> . COMPOSITION_RO RELATION_ID ASSOCIATION
 
-    }               shift and go to state 99
+    }               reduce using rule 20 (lista_membros_classe -> membro_classe .)
+    RELATION_ID     shift and go to state 86
+    @               shift and go to state 87
+    ASSOCIATION     shift and go to state 89
+    COMPOSITION_L   shift and go to state 90
+    COMPOSITION_R   shift and go to state 91
+    COMPOSITION_LO  shift and go to state 92
+    COMPOSITION_RO  shift and go to state 93
 
+    membro_classe                  shift and go to state 83
+    lista_membros_classe           shift and go to state 103
+    declaracao_atributo            shift and go to state 84
+    declaracao_relacao_interna     shift and go to state 85
+    link_nomeado                   shift and go to state 88
 
 state 84
 
-    (15) corpo_classe -> lista_membros_classe .
+    (21) membro_classe -> declaracao_atributo .
 
-    }               reduce using rule 15 (corpo_classe -> lista_membros_classe .)
+    RELATION_ID     reduce using rule 21 (membro_classe -> declaracao_atributo .)
+    @               reduce using rule 21 (membro_classe -> declaracao_atributo .)
+    ASSOCIATION     reduce using rule 21 (membro_classe -> declaracao_atributo .)
+    COMPOSITION_L   reduce using rule 21 (membro_classe -> declaracao_atributo .)
+    COMPOSITION_R   reduce using rule 21 (membro_classe -> declaracao_atributo .)
+    COMPOSITION_LO  reduce using rule 21 (membro_classe -> declaracao_atributo .)
+    COMPOSITION_RO  reduce using rule 21 (membro_classe -> declaracao_atributo .)
+    }               reduce using rule 21 (membro_classe -> declaracao_atributo .)
 
 
 state 85
 
-    (16) corpo_classe -> empty .
+    (22) membro_classe -> declaracao_relacao_interna .
 
-    }               reduce using rule 16 (corpo_classe -> empty .)
+    RELATION_ID     reduce using rule 22 (membro_classe -> declaracao_relacao_interna .)
+    @               reduce using rule 22 (membro_classe -> declaracao_relacao_interna .)
+    ASSOCIATION     reduce using rule 22 (membro_classe -> declaracao_relacao_interna .)
+    COMPOSITION_L   reduce using rule 22 (membro_classe -> declaracao_relacao_interna .)
+    COMPOSITION_R   reduce using rule 22 (membro_classe -> declaracao_relacao_interna .)
+    COMPOSITION_LO  reduce using rule 22 (membro_classe -> declaracao_relacao_interna .)
+    COMPOSITION_RO  reduce using rule 22 (membro_classe -> declaracao_relacao_interna .)
+    }               reduce using rule 22 (membro_classe -> declaracao_relacao_interna .)
 
 
 state 86
 
-    (17) lista_membros_classe -> membro_classe . lista_membros_classe
-    (18) lista_membros_classe -> membro_classe .
-    (17) lista_membros_classe -> . membro_classe lista_membros_classe
-    (18) lista_membros_classe -> . membro_classe
-    (19) membro_classe -> . declaracao_atributo
-    (20) membro_classe -> . declaracao_relacao_interna
-    (21) declaracao_atributo -> . RELATION_ID : tipo meta_atributos_opt
-    (45) declaracao_relacao_interna -> . @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-    (46) declaracao_relacao_interna -> . @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
+    (23) declaracao_atributo -> RELATION_ID . : tipo meta_atributos_opt
 
-    }               reduce using rule 18 (lista_membros_classe -> membro_classe .)
-    RELATION_ID     shift and go to state 89
-    @               shift and go to state 90
+    :               shift and go to state 104
 
-    membro_classe                  shift and go to state 86
-    lista_membros_classe           shift and go to state 100
-    declaracao_atributo            shift and go to state 87
-    declaracao_relacao_interna     shift and go to state 88
 
 state 87
 
-    (19) membro_classe -> declaracao_atributo .
+    (47) declaracao_relacao_interna -> @ . estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (48) declaracao_relacao_interna -> @ . estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
+    (81) estereotipo_relacao -> . material
+    (82) estereotipo_relacao -> . derivation
+    (83) estereotipo_relacao -> . comparative
+    (84) estereotipo_relacao -> . mediation
+    (85) estereotipo_relacao -> . characterization
+    (86) estereotipo_relacao -> . externalDependence
+    (87) estereotipo_relacao -> . componentOf
+    (88) estereotipo_relacao -> . memberOf
+    (89) estereotipo_relacao -> . subCollectionOf
+    (90) estereotipo_relacao -> . subQualityOf
+    (91) estereotipo_relacao -> . instantiation
+    (92) estereotipo_relacao -> . termination
+    (93) estereotipo_relacao -> . participational
+    (94) estereotipo_relacao -> . participation
+    (95) estereotipo_relacao -> . historicalDependence
+    (96) estereotipo_relacao -> . creation
+    (97) estereotipo_relacao -> . manifestation
+    (98) estereotipo_relacao -> . bringsAbout
+    (99) estereotipo_relacao -> . triggers
+    (100) estereotipo_relacao -> . composition
+    (101) estereotipo_relacao -> . aggregation
+    (102) estereotipo_relacao -> . inherence
+    (103) estereotipo_relacao -> . value
+    (104) estereotipo_relacao -> . formal
+    (105) estereotipo_relacao -> . constitution
 
-    RELATION_ID     reduce using rule 19 (membro_classe -> declaracao_atributo .)
-    @               reduce using rule 19 (membro_classe -> declaracao_atributo .)
-    }               reduce using rule 19 (membro_classe -> declaracao_atributo .)
+    material        shift and go to state 48
+    derivation      shift and go to state 49
+    comparative     shift and go to state 50
+    mediation       shift and go to state 51
+    characterization shift and go to state 52
+    externalDependence shift and go to state 53
+    componentOf     shift and go to state 54
+    memberOf        shift and go to state 55
+    subCollectionOf shift and go to state 56
+    subQualityOf    shift and go to state 57
+    instantiation   shift and go to state 58
+    termination     shift and go to state 59
+    participational shift and go to state 60
+    participation   shift and go to state 61
+    historicalDependence shift and go to state 62
+    creation        shift and go to state 63
+    manifestation   shift and go to state 64
+    bringsAbout     shift and go to state 65
+    triggers        shift and go to state 66
+    composition     shift and go to state 67
+    aggregation     shift and go to state 68
+    inherence       shift and go to state 69
+    value           shift and go to state 70
+    formal          shift and go to state 71
+    constitution    shift and go to state 72
 
+    estereotipo_relacao            shift and go to state 105
 
 state 88
 
-    (20) membro_classe -> declaracao_relacao_interna .
+    (49) declaracao_relacao_interna -> link_nomeado . CARDINALITY CLASS_ID
 
-    RELATION_ID     reduce using rule 20 (membro_classe -> declaracao_relacao_interna .)
-    @               reduce using rule 20 (membro_classe -> declaracao_relacao_interna .)
-    }               reduce using rule 20 (membro_classe -> declaracao_relacao_interna .)
+    CARDINALITY     shift and go to state 106
 
 
 state 89
 
-    (21) declaracao_atributo -> RELATION_ID . : tipo meta_atributos_opt
+    (50) link_nomeado -> ASSOCIATION . RELATION_ID ASSOCIATION
 
-    :               shift and go to state 101
+    RELATION_ID     shift and go to state 107
 
 
 state 90
 
-    (45) declaracao_relacao_interna -> @ . estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-    (46) declaracao_relacao_interna -> @ . estereotipo_relacao link_nomeado CARDINALITY CLASS_ID
-    (78) estereotipo_relacao -> . material
-    (79) estereotipo_relacao -> . derivation
-    (80) estereotipo_relacao -> . comparative
-    (81) estereotipo_relacao -> . mediation
-    (82) estereotipo_relacao -> . characterization
-    (83) estereotipo_relacao -> . externalDependence
-    (84) estereotipo_relacao -> . componentOf
-    (85) estereotipo_relacao -> . memberOf
-    (86) estereotipo_relacao -> . subCollectionOf
-    (87) estereotipo_relacao -> . subQualityOf
-    (88) estereotipo_relacao -> . instantiation
-    (89) estereotipo_relacao -> . termination
-    (90) estereotipo_relacao -> . participational
-    (91) estereotipo_relacao -> . participation
-    (92) estereotipo_relacao -> . historicalDependence
-    (93) estereotipo_relacao -> . creation
-    (94) estereotipo_relacao -> . manifestation
-    (95) estereotipo_relacao -> . bringsAbout
-    (96) estereotipo_relacao -> . triggers
-    (97) estereotipo_relacao -> . composition
-    (98) estereotipo_relacao -> . aggregation
-    (99) estereotipo_relacao -> . inherence
-    (100) estereotipo_relacao -> . value
-    (101) estereotipo_relacao -> . formal
-    (102) estereotipo_relacao -> . constitution
+    (51) link_nomeado -> COMPOSITION_L . RELATION_ID ASSOCIATION
 
-    material        shift and go to state 50
-    derivation      shift and go to state 51
-    comparative     shift and go to state 52
-    mediation       shift and go to state 53
-    characterization shift and go to state 54
-    externalDependence shift and go to state 55
-    componentOf     shift and go to state 56
-    memberOf        shift and go to state 57
-    subCollectionOf shift and go to state 58
-    subQualityOf    shift and go to state 59
-    instantiation   shift and go to state 60
-    termination     shift and go to state 61
-    participational shift and go to state 62
-    participation   shift and go to state 63
-    historicalDependence shift and go to state 64
-    creation        shift and go to state 65
-    manifestation   shift and go to state 66
-    bringsAbout     shift and go to state 67
-    triggers        shift and go to state 68
-    composition     shift and go to state 69
-    aggregation     shift and go to state 70
-    inherence       shift and go to state 71
-    value           shift and go to state 72
-    formal          shift and go to state 73
-    constitution    shift and go to state 74
+    RELATION_ID     shift and go to state 108
 
-    estereotipo_relacao            shift and go to state 102
 
 state 91
 
-    (13) declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .
+    (52) link_nomeado -> COMPOSITION_R . RELATION_ID ASSOCIATION
 
-    datatype        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    enum            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    genset          reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    @               reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    event           reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    situation       reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    process         reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    category        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    mixin           reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    phaseMixin      reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    roleMixin       reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    historicalRoleMixin reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    kind            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    collective      reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    quantity        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    quality         reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    mode            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    intrisicMode    reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    extrinsicMode   reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    subkind         reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    phase           reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    role            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    historicalRole  reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    relator         reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    disjoint        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    complete        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
-    $end            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes CLASS_ID .)
+    RELATION_ID     shift and go to state 109
 
 
 state 92
 
-    (32) declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe . }
+    (53) link_nomeado -> COMPOSITION_LO . RELATION_ID ASSOCIATION
 
-    }               shift and go to state 103
+    RELATION_ID     shift and go to state 110
 
 
 state 93
 
-    (34) lista_instancias_enum -> CLASS_ID . , lista_instancias_enum
-    (35) lista_instancias_enum -> CLASS_ID .
+    (54) link_nomeado -> COMPOSITION_RO . RELATION_ID ASSOCIATION
 
-    ,               shift and go to state 104
-    }               reduce using rule 35 (lista_instancias_enum -> CLASS_ID .)
+    RELATION_ID     shift and go to state 111
 
 
 state 94
 
-    (33) declaracao_enum -> enum CLASS_ID { lista_instancias_enum . }
+    (15) lista_ids -> CLASS_ID . , lista_ids
+    (16) lista_ids -> CLASS_ID .
 
-    }               shift and go to state 105
+    ,               shift and go to state 112
+    datatype        reduce using rule 16 (lista_ids -> CLASS_ID .)
+    enum            reduce using rule 16 (lista_ids -> CLASS_ID .)
+    @               reduce using rule 16 (lista_ids -> CLASS_ID .)
+    event           reduce using rule 16 (lista_ids -> CLASS_ID .)
+    situation       reduce using rule 16 (lista_ids -> CLASS_ID .)
+    process         reduce using rule 16 (lista_ids -> CLASS_ID .)
+    category        reduce using rule 16 (lista_ids -> CLASS_ID .)
+    mixin           reduce using rule 16 (lista_ids -> CLASS_ID .)
+    phaseMixin      reduce using rule 16 (lista_ids -> CLASS_ID .)
+    roleMixin       reduce using rule 16 (lista_ids -> CLASS_ID .)
+    historicalRoleMixin reduce using rule 16 (lista_ids -> CLASS_ID .)
+    kind            reduce using rule 16 (lista_ids -> CLASS_ID .)
+    collective      reduce using rule 16 (lista_ids -> CLASS_ID .)
+    quantity        reduce using rule 16 (lista_ids -> CLASS_ID .)
+    quality         reduce using rule 16 (lista_ids -> CLASS_ID .)
+    mode            reduce using rule 16 (lista_ids -> CLASS_ID .)
+    intrisicMode    reduce using rule 16 (lista_ids -> CLASS_ID .)
+    extrinsicMode   reduce using rule 16 (lista_ids -> CLASS_ID .)
+    subkind         reduce using rule 16 (lista_ids -> CLASS_ID .)
+    phase           reduce using rule 16 (lista_ids -> CLASS_ID .)
+    role            reduce using rule 16 (lista_ids -> CLASS_ID .)
+    historicalRole  reduce using rule 16 (lista_ids -> CLASS_ID .)
+    relator         reduce using rule 16 (lista_ids -> CLASS_ID .)
+    disjoint        reduce using rule 16 (lista_ids -> CLASS_ID .)
+    complete        reduce using rule 16 (lista_ids -> CLASS_ID .)
+    genset          reduce using rule 16 (lista_ids -> CLASS_ID .)
+    $end            reduce using rule 16 (lista_ids -> CLASS_ID .)
 
 
 state 95
 
-    (36) declaracao_genset -> genset_modifiers_opt genset CLASS_ID where . lista_classes_genset specializes CLASS_ID
-    (42) lista_classes_genset -> . CLASS_ID , lista_classes_genset
-    (43) lista_classes_genset -> . CLASS_ID
+    (13) declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .
 
-    CLASS_ID        shift and go to state 106
+    datatype        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    enum            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    @               reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    event           reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    situation       reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    process         reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    category        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    mixin           reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    phaseMixin      reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    roleMixin       reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    historicalRoleMixin reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    kind            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    collective      reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    quantity        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    quality         reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    mode            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    intrisicMode    reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    extrinsicMode   reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    subkind         reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    phase           reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    role            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    historicalRole  reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    relator         reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    disjoint        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    complete        reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    genset          reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
+    $end            reduce using rule 13 (declaracao_classe -> estereotipo_classe CLASS_ID specializes lista_ids .)
 
-    lista_classes_genset           shift and go to state 107
 
 state 96
 
-    (37) declaracao_genset -> genset CLASS_ID { genset_corpo . }
+    (34) declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe . }
 
-    }               shift and go to state 108
+    }               shift and go to state 113
 
 
 state 97
 
-    (44) genset_corpo -> general . CLASS_ID specifics lista_classes_genset
+    (36) lista_instancias_enum -> CLASS_ID . , lista_instancias_enum
+    (37) lista_instancias_enum -> CLASS_ID .
 
-    CLASS_ID        shift and go to state 109
+    ,               shift and go to state 114
+    }               reduce using rule 37 (lista_instancias_enum -> CLASS_ID .)
 
 
 state 98
 
-    (52) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID . CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (35) declaracao_enum -> enum CLASS_ID { lista_instancias_enum . }
 
-    CARDINALITY     shift and go to state 110
+    }               shift and go to state 115
 
 
 state 99
+
+    (38) declaracao_genset -> genset_modifiers_opt genset CLASS_ID where . lista_classes_genset specializes CLASS_ID
+    (44) lista_classes_genset -> . CLASS_ID , lista_classes_genset
+    (45) lista_classes_genset -> . CLASS_ID
+
+    CLASS_ID        shift and go to state 116
+
+    lista_classes_genset           shift and go to state 117
+
+state 100
+
+    (39) declaracao_genset -> genset_modifiers_opt genset CLASS_ID { . genset_corpo }
+    (46) genset_corpo -> . general CLASS_ID specifics lista_classes_genset
+
+    general         shift and go to state 119
+
+    genset_corpo                   shift and go to state 118
+
+state 101
+
+    (55) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID . CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+
+    CARDINALITY     shift and go to state 120
+
+
+state 102
 
     (12) declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .
 
     datatype        reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
     enum            reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
-    genset          reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
     @               reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
     event           reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
     situation       reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
@@ -1661,734 +1760,848 @@ state 99
     relator         reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
     disjoint        reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
     complete        reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
+    genset          reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
     $end            reduce using rule 12 (declaracao_classe -> estereotipo_classe CLASS_ID { corpo_classe } .)
 
 
-state 100
-
-    (17) lista_membros_classe -> membro_classe lista_membros_classe .
-
-    }               reduce using rule 17 (lista_membros_classe -> membro_classe lista_membros_classe .)
-
-
-state 101
-
-    (21) declaracao_atributo -> RELATION_ID : . tipo meta_atributos_opt
-    (22) tipo -> . dado_nativo
-    (23) tipo -> . NEW_TYPE
-    (24) tipo -> . CLASS_ID
-    (103) dado_nativo -> . number
-    (104) dado_nativo -> . string
-    (105) dado_nativo -> . boolean
-    (106) dado_nativo -> . date
-    (107) dado_nativo -> . time
-    (108) dado_nativo -> . datetime
-
-    NEW_TYPE        shift and go to state 113
-    CLASS_ID        shift and go to state 114
-    number          shift and go to state 115
-    string          shift and go to state 116
-    boolean         shift and go to state 117
-    date            shift and go to state 118
-    time            shift and go to state 119
-    datetime        shift and go to state 120
-
-    tipo                           shift and go to state 111
-    dado_nativo                    shift and go to state 112
-
-state 102
-
-    (45) declaracao_relacao_interna -> @ estereotipo_relacao . CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
-    (46) declaracao_relacao_interna -> @ estereotipo_relacao . link_nomeado CARDINALITY CLASS_ID
-    (47) link_nomeado -> . ASSOCIATION RELATION_ID ASSOCIATION
-    (48) link_nomeado -> . COMPOSITION_L RELATION_ID ASSOCIATION
-    (49) link_nomeado -> . COMPOSITION_R RELATION_ID ASSOCIATION
-    (50) link_nomeado -> . COMPOSITION_LO RELATION_ID ASSOCIATION
-    (51) link_nomeado -> . COMPOSITION_RO RELATION_ID ASSOCIATION
-
-    CARDINALITY     shift and go to state 121
-    ASSOCIATION     shift and go to state 123
-    COMPOSITION_L   shift and go to state 124
-    COMPOSITION_R   shift and go to state 125
-    COMPOSITION_LO  shift and go to state 126
-    COMPOSITION_RO  shift and go to state 127
-
-    link_nomeado                   shift and go to state 122
-
 state 103
 
-    (32) declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .
+    (19) lista_membros_classe -> membro_classe lista_membros_classe .
 
-    datatype        reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    enum            reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    genset          reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    @               reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    event           reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    situation       reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    process         reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    category        reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    mixin           reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    phaseMixin      reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    roleMixin       reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    historicalRoleMixin reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    kind            reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    collective      reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    quantity        reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    quality         reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    mode            reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    intrisicMode    reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    extrinsicMode   reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    subkind         reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    phase           reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    role            reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    historicalRole  reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    relator         reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    disjoint        reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    complete        reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
-    $end            reduce using rule 32 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    }               reduce using rule 19 (lista_membros_classe -> membro_classe lista_membros_classe .)
 
 
 state 104
 
-    (34) lista_instancias_enum -> CLASS_ID , . lista_instancias_enum
-    (34) lista_instancias_enum -> . CLASS_ID , lista_instancias_enum
-    (35) lista_instancias_enum -> . CLASS_ID
+    (23) declaracao_atributo -> RELATION_ID : . tipo meta_atributos_opt
+    (24) tipo -> . dado_nativo
+    (25) tipo -> . NEW_TYPE
+    (26) tipo -> . CLASS_ID
+    (106) dado_nativo -> . number
+    (107) dado_nativo -> . string
+    (108) dado_nativo -> . boolean
+    (109) dado_nativo -> . date
+    (110) dado_nativo -> . time
+    (111) dado_nativo -> . datetime
 
-    CLASS_ID        shift and go to state 93
+    NEW_TYPE        shift and go to state 123
+    CLASS_ID        shift and go to state 124
+    number          shift and go to state 125
+    string          shift and go to state 126
+    boolean         shift and go to state 127
+    date            shift and go to state 128
+    time            shift and go to state 129
+    datetime        shift and go to state 130
 
-    lista_instancias_enum          shift and go to state 128
+    tipo                           shift and go to state 121
+    dado_nativo                    shift and go to state 122
 
 state 105
 
-    (33) declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .
+    (47) declaracao_relacao_interna -> @ estereotipo_relacao . CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+    (48) declaracao_relacao_interna -> @ estereotipo_relacao . link_nomeado CARDINALITY CLASS_ID
+    (50) link_nomeado -> . ASSOCIATION RELATION_ID ASSOCIATION
+    (51) link_nomeado -> . COMPOSITION_L RELATION_ID ASSOCIATION
+    (52) link_nomeado -> . COMPOSITION_R RELATION_ID ASSOCIATION
+    (53) link_nomeado -> . COMPOSITION_LO RELATION_ID ASSOCIATION
+    (54) link_nomeado -> . COMPOSITION_RO RELATION_ID ASSOCIATION
 
-    datatype        reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    enum            reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    genset          reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    @               reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    event           reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    situation       reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    process         reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    category        reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    mixin           reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    phaseMixin      reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    roleMixin       reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    historicalRoleMixin reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    kind            reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    collective      reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    quantity        reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    quality         reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    mode            reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    intrisicMode    reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    extrinsicMode   reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    subkind         reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    phase           reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    role            reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    historicalRole  reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    relator         reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    disjoint        reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    complete        reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
-    $end            reduce using rule 33 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    CARDINALITY     shift and go to state 131
+    ASSOCIATION     shift and go to state 89
+    COMPOSITION_L   shift and go to state 90
+    COMPOSITION_R   shift and go to state 91
+    COMPOSITION_LO  shift and go to state 92
+    COMPOSITION_RO  shift and go to state 93
 
+    link_nomeado                   shift and go to state 132
 
 state 106
 
-    (42) lista_classes_genset -> CLASS_ID . , lista_classes_genset
-    (43) lista_classes_genset -> CLASS_ID .
+    (49) declaracao_relacao_interna -> link_nomeado CARDINALITY . CLASS_ID
 
-    ,               shift and go to state 129
-    specializes     reduce using rule 43 (lista_classes_genset -> CLASS_ID .)
-    }               reduce using rule 43 (lista_classes_genset -> CLASS_ID .)
+    CLASS_ID        shift and go to state 133
 
 
 state 107
 
-    (36) declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset . specializes CLASS_ID
+    (50) link_nomeado -> ASSOCIATION RELATION_ID . ASSOCIATION
 
-    specializes     shift and go to state 130
+    ASSOCIATION     shift and go to state 134
 
 
 state 108
 
-    (37) declaracao_genset -> genset CLASS_ID { genset_corpo } .
+    (51) link_nomeado -> COMPOSITION_L RELATION_ID . ASSOCIATION
 
-    datatype        reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    enum            reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    genset          reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    @               reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    event           reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    situation       reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    process         reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    category        reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    mixin           reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    phaseMixin      reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    roleMixin       reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    historicalRoleMixin reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    kind            reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    collective      reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    quantity        reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    quality         reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    mode            reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    intrisicMode    reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    extrinsicMode   reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    subkind         reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    phase           reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    role            reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    historicalRole  reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    relator         reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    disjoint        reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    complete        reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
-    $end            reduce using rule 37 (declaracao_genset -> genset CLASS_ID { genset_corpo } .)
+    ASSOCIATION     shift and go to state 135
 
 
 state 109
 
-    (44) genset_corpo -> general CLASS_ID . specifics lista_classes_genset
+    (52) link_nomeado -> COMPOSITION_R RELATION_ID . ASSOCIATION
 
-    specifics       shift and go to state 131
+    ASSOCIATION     shift and go to state 136
 
 
 state 110
 
-    (52) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY . simbolo_associacao CARDINALITY CLASS_ID
-    (53) simbolo_associacao -> . ASSOCIATION
-    (54) simbolo_associacao -> . COMPOSITION_L
-    (55) simbolo_associacao -> . COMPOSITION_R
-    (56) simbolo_associacao -> . COMPOSITION_LO
-    (57) simbolo_associacao -> . COMPOSITION_RO
+    (53) link_nomeado -> COMPOSITION_LO RELATION_ID . ASSOCIATION
 
-    ASSOCIATION     shift and go to state 133
-    COMPOSITION_L   shift and go to state 134
-    COMPOSITION_R   shift and go to state 135
-    COMPOSITION_LO  shift and go to state 136
-    COMPOSITION_RO  shift and go to state 137
+    ASSOCIATION     shift and go to state 137
 
-    simbolo_associacao             shift and go to state 132
 
 state 111
 
-    (21) declaracao_atributo -> RELATION_ID : tipo . meta_atributos_opt
-    (25) meta_atributos_opt -> . { lista_meta_atributos }
-    (26) meta_atributos_opt -> . empty
-    (109) empty -> .
+    (54) link_nomeado -> COMPOSITION_RO RELATION_ID . ASSOCIATION
 
-    {               shift and go to state 139
-    RELATION_ID     reduce using rule 109 (empty -> .)
-    @               reduce using rule 109 (empty -> .)
-    }               reduce using rule 109 (empty -> .)
+    ASSOCIATION     shift and go to state 138
 
-    meta_atributos_opt             shift and go to state 138
-    empty                          shift and go to state 140
 
 state 112
 
-    (22) tipo -> dado_nativo .
+    (15) lista_ids -> CLASS_ID , . lista_ids
+    (15) lista_ids -> . CLASS_ID , lista_ids
+    (16) lista_ids -> . CLASS_ID
 
-    {               reduce using rule 22 (tipo -> dado_nativo .)
-    RELATION_ID     reduce using rule 22 (tipo -> dado_nativo .)
-    @               reduce using rule 22 (tipo -> dado_nativo .)
-    }               reduce using rule 22 (tipo -> dado_nativo .)
+    CLASS_ID        shift and go to state 94
 
+    lista_ids                      shift and go to state 139
 
 state 113
 
-    (23) tipo -> NEW_TYPE .
+    (34) declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .
 
-    {               reduce using rule 23 (tipo -> NEW_TYPE .)
-    RELATION_ID     reduce using rule 23 (tipo -> NEW_TYPE .)
-    @               reduce using rule 23 (tipo -> NEW_TYPE .)
-    }               reduce using rule 23 (tipo -> NEW_TYPE .)
+    datatype        reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    enum            reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    @               reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    event           reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    situation       reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    process         reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    category        reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    mixin           reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    phaseMixin      reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    roleMixin       reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    historicalRoleMixin reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    kind            reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    collective      reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    quantity        reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    quality         reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    mode            reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    intrisicMode    reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    extrinsicMode   reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    subkind         reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    phase           reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    role            reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    historicalRole  reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    relator         reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    disjoint        reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    complete        reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    genset          reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
+    $end            reduce using rule 34 (declaracao_tipo_dado -> datatype CLASS_ID { corpo_classe } .)
 
 
 state 114
 
-    (24) tipo -> CLASS_ID .
+    (36) lista_instancias_enum -> CLASS_ID , . lista_instancias_enum
+    (36) lista_instancias_enum -> . CLASS_ID , lista_instancias_enum
+    (37) lista_instancias_enum -> . CLASS_ID
 
-    {               reduce using rule 24 (tipo -> CLASS_ID .)
-    RELATION_ID     reduce using rule 24 (tipo -> CLASS_ID .)
-    @               reduce using rule 24 (tipo -> CLASS_ID .)
-    }               reduce using rule 24 (tipo -> CLASS_ID .)
+    CLASS_ID        shift and go to state 97
 
+    lista_instancias_enum          shift and go to state 140
 
 state 115
 
-    (103) dado_nativo -> number .
+    (35) declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .
 
-    {               reduce using rule 103 (dado_nativo -> number .)
-    RELATION_ID     reduce using rule 103 (dado_nativo -> number .)
-    @               reduce using rule 103 (dado_nativo -> number .)
-    }               reduce using rule 103 (dado_nativo -> number .)
+    datatype        reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    enum            reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    @               reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    event           reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    situation       reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    process         reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    category        reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    mixin           reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    phaseMixin      reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    roleMixin       reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    historicalRoleMixin reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    kind            reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    collective      reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    quantity        reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    quality         reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    mode            reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    intrisicMode    reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    extrinsicMode   reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    subkind         reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    phase           reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    role            reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    historicalRole  reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    relator         reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    disjoint        reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    complete        reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    genset          reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
+    $end            reduce using rule 35 (declaracao_enum -> enum CLASS_ID { lista_instancias_enum } .)
 
 
 state 116
 
-    (104) dado_nativo -> string .
+    (44) lista_classes_genset -> CLASS_ID . , lista_classes_genset
+    (45) lista_classes_genset -> CLASS_ID .
 
-    {               reduce using rule 104 (dado_nativo -> string .)
-    RELATION_ID     reduce using rule 104 (dado_nativo -> string .)
-    @               reduce using rule 104 (dado_nativo -> string .)
-    }               reduce using rule 104 (dado_nativo -> string .)
+    ,               shift and go to state 141
+    specializes     reduce using rule 45 (lista_classes_genset -> CLASS_ID .)
+    }               reduce using rule 45 (lista_classes_genset -> CLASS_ID .)
 
 
 state 117
 
-    (105) dado_nativo -> boolean .
+    (38) declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset . specializes CLASS_ID
 
-    {               reduce using rule 105 (dado_nativo -> boolean .)
-    RELATION_ID     reduce using rule 105 (dado_nativo -> boolean .)
-    @               reduce using rule 105 (dado_nativo -> boolean .)
-    }               reduce using rule 105 (dado_nativo -> boolean .)
+    specializes     shift and go to state 142
 
 
 state 118
 
-    (106) dado_nativo -> date .
+    (39) declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo . }
 
-    {               reduce using rule 106 (dado_nativo -> date .)
-    RELATION_ID     reduce using rule 106 (dado_nativo -> date .)
-    @               reduce using rule 106 (dado_nativo -> date .)
-    }               reduce using rule 106 (dado_nativo -> date .)
+    }               shift and go to state 143
 
 
 state 119
 
-    (107) dado_nativo -> time .
+    (46) genset_corpo -> general . CLASS_ID specifics lista_classes_genset
 
-    {               reduce using rule 107 (dado_nativo -> time .)
-    RELATION_ID     reduce using rule 107 (dado_nativo -> time .)
-    @               reduce using rule 107 (dado_nativo -> time .)
-    }               reduce using rule 107 (dado_nativo -> time .)
+    CLASS_ID        shift and go to state 144
 
 
 state 120
 
-    (108) dado_nativo -> datetime .
+    (55) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY . simbolo_associacao CARDINALITY CLASS_ID
+    (56) simbolo_associacao -> . ASSOCIATION
+    (57) simbolo_associacao -> . COMPOSITION_L
+    (58) simbolo_associacao -> . COMPOSITION_R
+    (59) simbolo_associacao -> . COMPOSITION_LO
+    (60) simbolo_associacao -> . COMPOSITION_RO
 
-    {               reduce using rule 108 (dado_nativo -> datetime .)
-    RELATION_ID     reduce using rule 108 (dado_nativo -> datetime .)
-    @               reduce using rule 108 (dado_nativo -> datetime .)
-    }               reduce using rule 108 (dado_nativo -> datetime .)
+    ASSOCIATION     shift and go to state 146
+    COMPOSITION_L   shift and go to state 147
+    COMPOSITION_R   shift and go to state 148
+    COMPOSITION_LO  shift and go to state 149
+    COMPOSITION_RO  shift and go to state 150
 
+    simbolo_associacao             shift and go to state 145
 
 state 121
 
-    (45) declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY . simbolo_associacao CARDINALITY CLASS_ID
-    (53) simbolo_associacao -> . ASSOCIATION
-    (54) simbolo_associacao -> . COMPOSITION_L
-    (55) simbolo_associacao -> . COMPOSITION_R
-    (56) simbolo_associacao -> . COMPOSITION_LO
-    (57) simbolo_associacao -> . COMPOSITION_RO
+    (23) declaracao_atributo -> RELATION_ID : tipo . meta_atributos_opt
+    (27) meta_atributos_opt -> . { lista_meta_atributos }
+    (28) meta_atributos_opt -> . empty
+    (112) empty -> .
 
-    ASSOCIATION     shift and go to state 133
-    COMPOSITION_L   shift and go to state 134
-    COMPOSITION_R   shift and go to state 135
-    COMPOSITION_LO  shift and go to state 136
-    COMPOSITION_RO  shift and go to state 137
+    {               shift and go to state 152
+    RELATION_ID     reduce using rule 112 (empty -> .)
+    @               reduce using rule 112 (empty -> .)
+    ASSOCIATION     reduce using rule 112 (empty -> .)
+    COMPOSITION_L   reduce using rule 112 (empty -> .)
+    COMPOSITION_R   reduce using rule 112 (empty -> .)
+    COMPOSITION_LO  reduce using rule 112 (empty -> .)
+    COMPOSITION_RO  reduce using rule 112 (empty -> .)
+    }               reduce using rule 112 (empty -> .)
 
-    simbolo_associacao             shift and go to state 141
+    meta_atributos_opt             shift and go to state 151
+    empty                          shift and go to state 153
 
 state 122
 
-    (46) declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado . CARDINALITY CLASS_ID
+    (24) tipo -> dado_nativo .
 
-    CARDINALITY     shift and go to state 142
+    {               reduce using rule 24 (tipo -> dado_nativo .)
+    RELATION_ID     reduce using rule 24 (tipo -> dado_nativo .)
+    @               reduce using rule 24 (tipo -> dado_nativo .)
+    ASSOCIATION     reduce using rule 24 (tipo -> dado_nativo .)
+    COMPOSITION_L   reduce using rule 24 (tipo -> dado_nativo .)
+    COMPOSITION_R   reduce using rule 24 (tipo -> dado_nativo .)
+    COMPOSITION_LO  reduce using rule 24 (tipo -> dado_nativo .)
+    COMPOSITION_RO  reduce using rule 24 (tipo -> dado_nativo .)
+    }               reduce using rule 24 (tipo -> dado_nativo .)
 
 
 state 123
 
-    (47) link_nomeado -> ASSOCIATION . RELATION_ID ASSOCIATION
+    (25) tipo -> NEW_TYPE .
 
-    RELATION_ID     shift and go to state 143
+    {               reduce using rule 25 (tipo -> NEW_TYPE .)
+    RELATION_ID     reduce using rule 25 (tipo -> NEW_TYPE .)
+    @               reduce using rule 25 (tipo -> NEW_TYPE .)
+    ASSOCIATION     reduce using rule 25 (tipo -> NEW_TYPE .)
+    COMPOSITION_L   reduce using rule 25 (tipo -> NEW_TYPE .)
+    COMPOSITION_R   reduce using rule 25 (tipo -> NEW_TYPE .)
+    COMPOSITION_LO  reduce using rule 25 (tipo -> NEW_TYPE .)
+    COMPOSITION_RO  reduce using rule 25 (tipo -> NEW_TYPE .)
+    }               reduce using rule 25 (tipo -> NEW_TYPE .)
 
 
 state 124
 
-    (48) link_nomeado -> COMPOSITION_L . RELATION_ID ASSOCIATION
+    (26) tipo -> CLASS_ID .
 
-    RELATION_ID     shift and go to state 144
+    {               reduce using rule 26 (tipo -> CLASS_ID .)
+    RELATION_ID     reduce using rule 26 (tipo -> CLASS_ID .)
+    @               reduce using rule 26 (tipo -> CLASS_ID .)
+    ASSOCIATION     reduce using rule 26 (tipo -> CLASS_ID .)
+    COMPOSITION_L   reduce using rule 26 (tipo -> CLASS_ID .)
+    COMPOSITION_R   reduce using rule 26 (tipo -> CLASS_ID .)
+    COMPOSITION_LO  reduce using rule 26 (tipo -> CLASS_ID .)
+    COMPOSITION_RO  reduce using rule 26 (tipo -> CLASS_ID .)
+    }               reduce using rule 26 (tipo -> CLASS_ID .)
 
 
 state 125
 
-    (49) link_nomeado -> COMPOSITION_R . RELATION_ID ASSOCIATION
+    (106) dado_nativo -> number .
 
-    RELATION_ID     shift and go to state 145
+    {               reduce using rule 106 (dado_nativo -> number .)
+    RELATION_ID     reduce using rule 106 (dado_nativo -> number .)
+    @               reduce using rule 106 (dado_nativo -> number .)
+    ASSOCIATION     reduce using rule 106 (dado_nativo -> number .)
+    COMPOSITION_L   reduce using rule 106 (dado_nativo -> number .)
+    COMPOSITION_R   reduce using rule 106 (dado_nativo -> number .)
+    COMPOSITION_LO  reduce using rule 106 (dado_nativo -> number .)
+    COMPOSITION_RO  reduce using rule 106 (dado_nativo -> number .)
+    }               reduce using rule 106 (dado_nativo -> number .)
 
 
 state 126
 
-    (50) link_nomeado -> COMPOSITION_LO . RELATION_ID ASSOCIATION
+    (107) dado_nativo -> string .
 
-    RELATION_ID     shift and go to state 146
+    {               reduce using rule 107 (dado_nativo -> string .)
+    RELATION_ID     reduce using rule 107 (dado_nativo -> string .)
+    @               reduce using rule 107 (dado_nativo -> string .)
+    ASSOCIATION     reduce using rule 107 (dado_nativo -> string .)
+    COMPOSITION_L   reduce using rule 107 (dado_nativo -> string .)
+    COMPOSITION_R   reduce using rule 107 (dado_nativo -> string .)
+    COMPOSITION_LO  reduce using rule 107 (dado_nativo -> string .)
+    COMPOSITION_RO  reduce using rule 107 (dado_nativo -> string .)
+    }               reduce using rule 107 (dado_nativo -> string .)
 
 
 state 127
 
-    (51) link_nomeado -> COMPOSITION_RO . RELATION_ID ASSOCIATION
+    (108) dado_nativo -> boolean .
 
-    RELATION_ID     shift and go to state 147
+    {               reduce using rule 108 (dado_nativo -> boolean .)
+    RELATION_ID     reduce using rule 108 (dado_nativo -> boolean .)
+    @               reduce using rule 108 (dado_nativo -> boolean .)
+    ASSOCIATION     reduce using rule 108 (dado_nativo -> boolean .)
+    COMPOSITION_L   reduce using rule 108 (dado_nativo -> boolean .)
+    COMPOSITION_R   reduce using rule 108 (dado_nativo -> boolean .)
+    COMPOSITION_LO  reduce using rule 108 (dado_nativo -> boolean .)
+    COMPOSITION_RO  reduce using rule 108 (dado_nativo -> boolean .)
+    }               reduce using rule 108 (dado_nativo -> boolean .)
 
 
 state 128
 
-    (34) lista_instancias_enum -> CLASS_ID , lista_instancias_enum .
+    (109) dado_nativo -> date .
 
-    }               reduce using rule 34 (lista_instancias_enum -> CLASS_ID , lista_instancias_enum .)
+    {               reduce using rule 109 (dado_nativo -> date .)
+    RELATION_ID     reduce using rule 109 (dado_nativo -> date .)
+    @               reduce using rule 109 (dado_nativo -> date .)
+    ASSOCIATION     reduce using rule 109 (dado_nativo -> date .)
+    COMPOSITION_L   reduce using rule 109 (dado_nativo -> date .)
+    COMPOSITION_R   reduce using rule 109 (dado_nativo -> date .)
+    COMPOSITION_LO  reduce using rule 109 (dado_nativo -> date .)
+    COMPOSITION_RO  reduce using rule 109 (dado_nativo -> date .)
+    }               reduce using rule 109 (dado_nativo -> date .)
 
 
 state 129
 
-    (42) lista_classes_genset -> CLASS_ID , . lista_classes_genset
-    (42) lista_classes_genset -> . CLASS_ID , lista_classes_genset
-    (43) lista_classes_genset -> . CLASS_ID
+    (110) dado_nativo -> time .
 
-    CLASS_ID        shift and go to state 106
+    {               reduce using rule 110 (dado_nativo -> time .)
+    RELATION_ID     reduce using rule 110 (dado_nativo -> time .)
+    @               reduce using rule 110 (dado_nativo -> time .)
+    ASSOCIATION     reduce using rule 110 (dado_nativo -> time .)
+    COMPOSITION_L   reduce using rule 110 (dado_nativo -> time .)
+    COMPOSITION_R   reduce using rule 110 (dado_nativo -> time .)
+    COMPOSITION_LO  reduce using rule 110 (dado_nativo -> time .)
+    COMPOSITION_RO  reduce using rule 110 (dado_nativo -> time .)
+    }               reduce using rule 110 (dado_nativo -> time .)
 
-    lista_classes_genset           shift and go to state 148
 
 state 130
 
-    (36) declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes . CLASS_ID
+    (111) dado_nativo -> datetime .
 
-    CLASS_ID        shift and go to state 149
+    {               reduce using rule 111 (dado_nativo -> datetime .)
+    RELATION_ID     reduce using rule 111 (dado_nativo -> datetime .)
+    @               reduce using rule 111 (dado_nativo -> datetime .)
+    ASSOCIATION     reduce using rule 111 (dado_nativo -> datetime .)
+    COMPOSITION_L   reduce using rule 111 (dado_nativo -> datetime .)
+    COMPOSITION_R   reduce using rule 111 (dado_nativo -> datetime .)
+    COMPOSITION_LO  reduce using rule 111 (dado_nativo -> datetime .)
+    COMPOSITION_RO  reduce using rule 111 (dado_nativo -> datetime .)
+    }               reduce using rule 111 (dado_nativo -> datetime .)
 
 
 state 131
 
-    (44) genset_corpo -> general CLASS_ID specifics . lista_classes_genset
-    (42) lista_classes_genset -> . CLASS_ID , lista_classes_genset
-    (43) lista_classes_genset -> . CLASS_ID
+    (47) declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY . simbolo_associacao CARDINALITY CLASS_ID
+    (56) simbolo_associacao -> . ASSOCIATION
+    (57) simbolo_associacao -> . COMPOSITION_L
+    (58) simbolo_associacao -> . COMPOSITION_R
+    (59) simbolo_associacao -> . COMPOSITION_LO
+    (60) simbolo_associacao -> . COMPOSITION_RO
 
-    CLASS_ID        shift and go to state 106
+    ASSOCIATION     shift and go to state 146
+    COMPOSITION_L   shift and go to state 147
+    COMPOSITION_R   shift and go to state 148
+    COMPOSITION_LO  shift and go to state 149
+    COMPOSITION_RO  shift and go to state 150
 
-    lista_classes_genset           shift and go to state 150
+    simbolo_associacao             shift and go to state 154
 
 state 132
 
-    (52) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao . CARDINALITY CLASS_ID
+    (48) declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado . CARDINALITY CLASS_ID
 
-    CARDINALITY     shift and go to state 151
+    CARDINALITY     shift and go to state 155
 
 
 state 133
 
-    (53) simbolo_associacao -> ASSOCIATION .
+    (49) declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID .
 
-    CARDINALITY     reduce using rule 53 (simbolo_associacao -> ASSOCIATION .)
+    RELATION_ID     reduce using rule 49 (declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID .)
+    @               reduce using rule 49 (declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID .)
+    ASSOCIATION     reduce using rule 49 (declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID .)
+    COMPOSITION_L   reduce using rule 49 (declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID .)
+    COMPOSITION_R   reduce using rule 49 (declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID .)
+    COMPOSITION_LO  reduce using rule 49 (declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID .)
+    COMPOSITION_RO  reduce using rule 49 (declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID .)
+    }               reduce using rule 49 (declaracao_relacao_interna -> link_nomeado CARDINALITY CLASS_ID .)
 
 
 state 134
 
-    (54) simbolo_associacao -> COMPOSITION_L .
+    (50) link_nomeado -> ASSOCIATION RELATION_ID ASSOCIATION .
 
-    CARDINALITY     reduce using rule 54 (simbolo_associacao -> COMPOSITION_L .)
+    CARDINALITY     reduce using rule 50 (link_nomeado -> ASSOCIATION RELATION_ID ASSOCIATION .)
 
 
 state 135
 
-    (55) simbolo_associacao -> COMPOSITION_R .
+    (51) link_nomeado -> COMPOSITION_L RELATION_ID ASSOCIATION .
 
-    CARDINALITY     reduce using rule 55 (simbolo_associacao -> COMPOSITION_R .)
+    CARDINALITY     reduce using rule 51 (link_nomeado -> COMPOSITION_L RELATION_ID ASSOCIATION .)
 
 
 state 136
 
-    (56) simbolo_associacao -> COMPOSITION_LO .
+    (52) link_nomeado -> COMPOSITION_R RELATION_ID ASSOCIATION .
 
-    CARDINALITY     reduce using rule 56 (simbolo_associacao -> COMPOSITION_LO .)
+    CARDINALITY     reduce using rule 52 (link_nomeado -> COMPOSITION_R RELATION_ID ASSOCIATION .)
 
 
 state 137
 
-    (57) simbolo_associacao -> COMPOSITION_RO .
+    (53) link_nomeado -> COMPOSITION_LO RELATION_ID ASSOCIATION .
 
-    CARDINALITY     reduce using rule 57 (simbolo_associacao -> COMPOSITION_RO .)
+    CARDINALITY     reduce using rule 53 (link_nomeado -> COMPOSITION_LO RELATION_ID ASSOCIATION .)
 
 
 state 138
 
-    (21) declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .
+    (54) link_nomeado -> COMPOSITION_RO RELATION_ID ASSOCIATION .
 
-    RELATION_ID     reduce using rule 21 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
-    @               reduce using rule 21 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
-    }               reduce using rule 21 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
+    CARDINALITY     reduce using rule 54 (link_nomeado -> COMPOSITION_RO RELATION_ID ASSOCIATION .)
 
 
 state 139
 
-    (25) meta_atributos_opt -> { . lista_meta_atributos }
-    (27) lista_meta_atributos -> . const
-    (28) lista_meta_atributos -> . ordered
-    (29) lista_meta_atributos -> . derived
-    (30) lista_meta_atributos -> . subsets
-    (31) lista_meta_atributos -> . redefines
+    (15) lista_ids -> CLASS_ID , lista_ids .
 
-    const           shift and go to state 153
-    ordered         shift and go to state 154
-    derived         shift and go to state 155
-    subsets         shift and go to state 156
-    redefines       shift and go to state 157
+    datatype        reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    enum            reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    @               reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    event           reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    situation       reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    process         reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    category        reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    mixin           reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    phaseMixin      reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    roleMixin       reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    historicalRoleMixin reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    kind            reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    collective      reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    quantity        reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    quality         reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    mode            reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    intrisicMode    reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    extrinsicMode   reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    subkind         reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    phase           reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    role            reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    historicalRole  reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    relator         reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    disjoint        reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    complete        reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    genset          reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
+    $end            reduce using rule 15 (lista_ids -> CLASS_ID , lista_ids .)
 
-    lista_meta_atributos           shift and go to state 152
 
 state 140
 
-    (26) meta_atributos_opt -> empty .
+    (36) lista_instancias_enum -> CLASS_ID , lista_instancias_enum .
 
-    RELATION_ID     reduce using rule 26 (meta_atributos_opt -> empty .)
-    @               reduce using rule 26 (meta_atributos_opt -> empty .)
-    }               reduce using rule 26 (meta_atributos_opt -> empty .)
+    }               reduce using rule 36 (lista_instancias_enum -> CLASS_ID , lista_instancias_enum .)
 
 
 state 141
 
-    (45) declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao . CARDINALITY CLASS_ID
+    (44) lista_classes_genset -> CLASS_ID , . lista_classes_genset
+    (44) lista_classes_genset -> . CLASS_ID , lista_classes_genset
+    (45) lista_classes_genset -> . CLASS_ID
 
-    CARDINALITY     shift and go to state 158
+    CLASS_ID        shift and go to state 116
 
+    lista_classes_genset           shift and go to state 156
 
 state 142
 
-    (46) declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY . CLASS_ID
+    (38) declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes . CLASS_ID
 
-    CLASS_ID        shift and go to state 159
+    CLASS_ID        shift and go to state 157
 
 
 state 143
 
-    (47) link_nomeado -> ASSOCIATION RELATION_ID . ASSOCIATION
+    (39) declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .
 
-    ASSOCIATION     shift and go to state 160
+    datatype        reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    enum            reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    @               reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    event           reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    situation       reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    process         reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    category        reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    mixin           reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    phaseMixin      reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    roleMixin       reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    historicalRoleMixin reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    kind            reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    collective      reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    quantity        reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    quality         reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    mode            reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    intrisicMode    reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    extrinsicMode   reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    subkind         reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    phase           reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    role            reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    historicalRole  reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    relator         reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    disjoint        reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    complete        reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    genset          reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
+    $end            reduce using rule 39 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID { genset_corpo } .)
 
 
 state 144
 
-    (48) link_nomeado -> COMPOSITION_L RELATION_ID . ASSOCIATION
+    (46) genset_corpo -> general CLASS_ID . specifics lista_classes_genset
 
-    ASSOCIATION     shift and go to state 161
+    specifics       shift and go to state 158
 
 
 state 145
 
-    (49) link_nomeado -> COMPOSITION_R RELATION_ID . ASSOCIATION
+    (55) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao . CARDINALITY CLASS_ID
 
-    ASSOCIATION     shift and go to state 162
+    CARDINALITY     shift and go to state 159
 
 
 state 146
 
-    (50) link_nomeado -> COMPOSITION_LO RELATION_ID . ASSOCIATION
+    (56) simbolo_associacao -> ASSOCIATION .
 
-    ASSOCIATION     shift and go to state 163
+    CARDINALITY     reduce using rule 56 (simbolo_associacao -> ASSOCIATION .)
 
 
 state 147
 
-    (51) link_nomeado -> COMPOSITION_RO RELATION_ID . ASSOCIATION
+    (57) simbolo_associacao -> COMPOSITION_L .
 
-    ASSOCIATION     shift and go to state 164
+    CARDINALITY     reduce using rule 57 (simbolo_associacao -> COMPOSITION_L .)
 
 
 state 148
 
-    (42) lista_classes_genset -> CLASS_ID , lista_classes_genset .
+    (58) simbolo_associacao -> COMPOSITION_R .
 
-    specializes     reduce using rule 42 (lista_classes_genset -> CLASS_ID , lista_classes_genset .)
-    }               reduce using rule 42 (lista_classes_genset -> CLASS_ID , lista_classes_genset .)
+    CARDINALITY     reduce using rule 58 (simbolo_associacao -> COMPOSITION_R .)
 
 
 state 149
 
-    (36) declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .
+    (59) simbolo_associacao -> COMPOSITION_LO .
 
-    datatype        reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    enum            reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    genset          reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    @               reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    event           reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    situation       reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    process         reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    category        reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    mixin           reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    phaseMixin      reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    roleMixin       reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    historicalRoleMixin reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    kind            reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    collective      reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    quantity        reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    quality         reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    mode            reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    intrisicMode    reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    extrinsicMode   reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    subkind         reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    phase           reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    role            reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    historicalRole  reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    relator         reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    disjoint        reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    complete        reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
-    $end            reduce using rule 36 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    CARDINALITY     reduce using rule 59 (simbolo_associacao -> COMPOSITION_LO .)
 
 
 state 150
 
-    (44) genset_corpo -> general CLASS_ID specifics lista_classes_genset .
+    (60) simbolo_associacao -> COMPOSITION_RO .
 
-    }               reduce using rule 44 (genset_corpo -> general CLASS_ID specifics lista_classes_genset .)
+    CARDINALITY     reduce using rule 60 (simbolo_associacao -> COMPOSITION_RO .)
 
 
 state 151
 
-    (52) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY . CLASS_ID
+    (23) declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .
 
-    CLASS_ID        shift and go to state 165
+    RELATION_ID     reduce using rule 23 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
+    @               reduce using rule 23 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
+    ASSOCIATION     reduce using rule 23 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
+    COMPOSITION_L   reduce using rule 23 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
+    COMPOSITION_R   reduce using rule 23 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
+    COMPOSITION_LO  reduce using rule 23 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
+    COMPOSITION_RO  reduce using rule 23 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
+    }               reduce using rule 23 (declaracao_atributo -> RELATION_ID : tipo meta_atributos_opt .)
 
 
 state 152
 
-    (25) meta_atributos_opt -> { lista_meta_atributos . }
+    (27) meta_atributos_opt -> { . lista_meta_atributos }
+    (29) lista_meta_atributos -> . const
+    (30) lista_meta_atributos -> . ordered
+    (31) lista_meta_atributos -> . derived
+    (32) lista_meta_atributos -> . subsets
+    (33) lista_meta_atributos -> . redefines
 
-    }               shift and go to state 166
+    const           shift and go to state 161
+    ordered         shift and go to state 162
+    derived         shift and go to state 163
+    subsets         shift and go to state 164
+    redefines       shift and go to state 165
 
+    lista_meta_atributos           shift and go to state 160
 
 state 153
 
-    (27) lista_meta_atributos -> const .
+    (28) meta_atributos_opt -> empty .
 
-    }               reduce using rule 27 (lista_meta_atributos -> const .)
+    RELATION_ID     reduce using rule 28 (meta_atributos_opt -> empty .)
+    @               reduce using rule 28 (meta_atributos_opt -> empty .)
+    ASSOCIATION     reduce using rule 28 (meta_atributos_opt -> empty .)
+    COMPOSITION_L   reduce using rule 28 (meta_atributos_opt -> empty .)
+    COMPOSITION_R   reduce using rule 28 (meta_atributos_opt -> empty .)
+    COMPOSITION_LO  reduce using rule 28 (meta_atributos_opt -> empty .)
+    COMPOSITION_RO  reduce using rule 28 (meta_atributos_opt -> empty .)
+    }               reduce using rule 28 (meta_atributos_opt -> empty .)
 
 
 state 154
 
-    (28) lista_meta_atributos -> ordered .
+    (47) declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao . CARDINALITY CLASS_ID
 
-    }               reduce using rule 28 (lista_meta_atributos -> ordered .)
+    CARDINALITY     shift and go to state 166
 
 
 state 155
 
-    (29) lista_meta_atributos -> derived .
-
-    }               reduce using rule 29 (lista_meta_atributos -> derived .)
-
-
-state 156
-
-    (30) lista_meta_atributos -> subsets .
-
-    }               reduce using rule 30 (lista_meta_atributos -> subsets .)
-
-
-state 157
-
-    (31) lista_meta_atributos -> redefines .
-
-    }               reduce using rule 31 (lista_meta_atributos -> redefines .)
-
-
-state 158
-
-    (45) declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY . CLASS_ID
+    (48) declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY . CLASS_ID
 
     CLASS_ID        shift and go to state 167
 
 
+state 156
+
+    (44) lista_classes_genset -> CLASS_ID , lista_classes_genset .
+
+    specializes     reduce using rule 44 (lista_classes_genset -> CLASS_ID , lista_classes_genset .)
+    }               reduce using rule 44 (lista_classes_genset -> CLASS_ID , lista_classes_genset .)
+
+
+state 157
+
+    (38) declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .
+
+    datatype        reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    enum            reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    @               reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    event           reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    situation       reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    process         reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    category        reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    mixin           reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    phaseMixin      reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    roleMixin       reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    historicalRoleMixin reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    kind            reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    collective      reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    quantity        reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    quality         reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    mode            reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    intrisicMode    reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    extrinsicMode   reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    subkind         reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    phase           reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    role            reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    historicalRole  reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    relator         reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    disjoint        reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    complete        reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    genset          reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+    $end            reduce using rule 38 (declaracao_genset -> genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID .)
+
+
+state 158
+
+    (46) genset_corpo -> general CLASS_ID specifics . lista_classes_genset
+    (44) lista_classes_genset -> . CLASS_ID , lista_classes_genset
+    (45) lista_classes_genset -> . CLASS_ID
+
+    CLASS_ID        shift and go to state 116
+
+    lista_classes_genset           shift and go to state 168
+
 state 159
 
-    (46) declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .
+    (55) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY . CLASS_ID
 
-    RELATION_ID     reduce using rule 46 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
-    @               reduce using rule 46 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
-    }               reduce using rule 46 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
+    CLASS_ID        shift and go to state 169
 
 
 state 160
 
-    (47) link_nomeado -> ASSOCIATION RELATION_ID ASSOCIATION .
+    (27) meta_atributos_opt -> { lista_meta_atributos . }
 
-    CARDINALITY     reduce using rule 47 (link_nomeado -> ASSOCIATION RELATION_ID ASSOCIATION .)
+    }               shift and go to state 170
 
 
 state 161
 
-    (48) link_nomeado -> COMPOSITION_L RELATION_ID ASSOCIATION .
+    (29) lista_meta_atributos -> const .
 
-    CARDINALITY     reduce using rule 48 (link_nomeado -> COMPOSITION_L RELATION_ID ASSOCIATION .)
+    }               reduce using rule 29 (lista_meta_atributos -> const .)
 
 
 state 162
 
-    (49) link_nomeado -> COMPOSITION_R RELATION_ID ASSOCIATION .
+    (30) lista_meta_atributos -> ordered .
 
-    CARDINALITY     reduce using rule 49 (link_nomeado -> COMPOSITION_R RELATION_ID ASSOCIATION .)
+    }               reduce using rule 30 (lista_meta_atributos -> ordered .)
 
 
 state 163
 
-    (50) link_nomeado -> COMPOSITION_LO RELATION_ID ASSOCIATION .
+    (31) lista_meta_atributos -> derived .
 
-    CARDINALITY     reduce using rule 50 (link_nomeado -> COMPOSITION_LO RELATION_ID ASSOCIATION .)
+    }               reduce using rule 31 (lista_meta_atributos -> derived .)
 
 
 state 164
 
-    (51) link_nomeado -> COMPOSITION_RO RELATION_ID ASSOCIATION .
+    (32) lista_meta_atributos -> subsets .
 
-    CARDINALITY     reduce using rule 51 (link_nomeado -> COMPOSITION_RO RELATION_ID ASSOCIATION .)
+    }               reduce using rule 32 (lista_meta_atributos -> subsets .)
 
 
 state 165
 
-    (52) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .
+    (33) lista_meta_atributos -> redefines .
 
-    datatype        reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    enum            reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    genset          reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    @               reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    event           reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    situation       reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    process         reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    category        reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    mixin           reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    phaseMixin      reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    roleMixin       reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    historicalRoleMixin reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    kind            reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    collective      reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    quantity        reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    quality         reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    mode            reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    intrisicMode    reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    extrinsicMode   reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    subkind         reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    phase           reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    role            reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    historicalRole  reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    relator         reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    disjoint        reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    complete        reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    $end            reduce using rule 52 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    }               reduce using rule 33 (lista_meta_atributos -> redefines .)
 
 
 state 166
 
-    (25) meta_atributos_opt -> { lista_meta_atributos } .
+    (47) declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY . CLASS_ID
 
-    RELATION_ID     reduce using rule 25 (meta_atributos_opt -> { lista_meta_atributos } .)
-    @               reduce using rule 25 (meta_atributos_opt -> { lista_meta_atributos } .)
-    }               reduce using rule 25 (meta_atributos_opt -> { lista_meta_atributos } .)
+    CLASS_ID        shift and go to state 171
 
 
 state 167
 
-    (45) declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .
+    (48) declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .
 
-    RELATION_ID     reduce using rule 45 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    @               reduce using rule 45 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
-    }               reduce using rule 45 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    RELATION_ID     reduce using rule 48 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
+    @               reduce using rule 48 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
+    ASSOCIATION     reduce using rule 48 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
+    COMPOSITION_L   reduce using rule 48 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
+    COMPOSITION_R   reduce using rule 48 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
+    COMPOSITION_LO  reduce using rule 48 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
+    COMPOSITION_RO  reduce using rule 48 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
+    }               reduce using rule 48 (declaracao_relacao_interna -> @ estereotipo_relacao link_nomeado CARDINALITY CLASS_ID .)
 
-WARNING: 
-WARNING: Conflicts:
-WARNING: 
-WARNING: shift/reduce conflict for genset in state 2 resolved as shift
-WARNING: shift/reduce conflict for genset in state 7 resolved as shift
+
+state 168
+
+    (46) genset_corpo -> general CLASS_ID specifics lista_classes_genset .
+
+    }               reduce using rule 46 (genset_corpo -> general CLASS_ID specifics lista_classes_genset .)
+
+
+state 169
+
+    (55) declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .
+
+    datatype        reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    enum            reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    @               reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    event           reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    situation       reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    process         reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    category        reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    mixin           reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    phaseMixin      reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    roleMixin       reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    historicalRoleMixin reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    kind            reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    collective      reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    quantity        reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    quality         reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    mode            reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    intrisicMode    reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    extrinsicMode   reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    subkind         reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    phase           reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    role            reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    historicalRole  reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    relator         reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    disjoint        reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    complete        reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    genset          reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    $end            reduce using rule 55 (declaracao_relacao_externa -> @ estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+
+
+state 170
+
+    (27) meta_atributos_opt -> { lista_meta_atributos } .
+
+    RELATION_ID     reduce using rule 27 (meta_atributos_opt -> { lista_meta_atributos } .)
+    @               reduce using rule 27 (meta_atributos_opt -> { lista_meta_atributos } .)
+    ASSOCIATION     reduce using rule 27 (meta_atributos_opt -> { lista_meta_atributos } .)
+    COMPOSITION_L   reduce using rule 27 (meta_atributos_opt -> { lista_meta_atributos } .)
+    COMPOSITION_R   reduce using rule 27 (meta_atributos_opt -> { lista_meta_atributos } .)
+    COMPOSITION_LO  reduce using rule 27 (meta_atributos_opt -> { lista_meta_atributos } .)
+    COMPOSITION_RO  reduce using rule 27 (meta_atributos_opt -> { lista_meta_atributos } .)
+    }               reduce using rule 27 (meta_atributos_opt -> { lista_meta_atributos } .)
+
+
+state 171
+
+    (47) declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .
+
+    RELATION_ID     reduce using rule 47 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    @               reduce using rule 47 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    ASSOCIATION     reduce using rule 47 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    COMPOSITION_L   reduce using rule 47 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    COMPOSITION_R   reduce using rule 47 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    COMPOSITION_LO  reduce using rule 47 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    COMPOSITION_RO  reduce using rule 47 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+    }               reduce using rule 47 (declaracao_relacao_interna -> @ estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID .)
+
