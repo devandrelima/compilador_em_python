@@ -34,13 +34,20 @@ def p_declaracao_pacote(p):
 
 def p_declaracao_classe(p):
     """declaracao_classe : estereotipo_classe CLASS_ID '{' corpo_classe '}'
-                         | estereotipo_classe CLASS_ID specializes CLASS_ID"""
+                         | estereotipo_classe CLASS_ID specializes CLASS_ID
+                         | estereotipo_classe CLASS_ID""" 
+    
     if len(p) == 6:
         p[0] = ('classe', p[1], p[2], p[4])
         print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) com corpo.")
-    else:
+    
+    elif len(p) == 5:
         p[0] = ('classe_especializada', p[1], p[2], p[4]) 
         print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) especializando '{p[4]}'")
+        
+    else:
+        p[0] = ('classe_simples', p[1], p[2])
+        print(f"Sintático: Encontrada classe simples '{p[2]}' (Tipo: {p[1]})")
 
 def p_corpo_classe(p):
     '''corpo_classe : lista_membros_classe
@@ -214,9 +221,6 @@ def p_empty(p):
     pass
 
 def p_error(p):
-    """
-    Função de erro para erros de sintaxe.
-    """
     if p:
         print(f"Erro de Sintaxe: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}")
   
@@ -226,8 +230,5 @@ def p_error(p):
 parser = yacc.yacc(debug=True) 
 
 def analisar_sintaxe(texto_codigo: str):
-    """
-    Função principal para analisar o código.
-    """
     lexer.lineno = 1
     return parser.parse(texto_codigo, lexer=lexer)

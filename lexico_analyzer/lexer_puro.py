@@ -76,7 +76,7 @@ reserved = {
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
     'ASSOCIATION', 'NEW_TYPE', 'CLASS_ID', 'RELATION_ID', 
-    'CARDINALITY', 'ERROR', 'NEWLINE'
+    'CARDINALITY', 'ERROR'
 ] + list(set(reserved.values())) 
 
 literals = ['(', ')', '{', '}', '.', ',', '+', '<', '>', '@', '-',
