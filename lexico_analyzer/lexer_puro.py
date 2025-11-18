@@ -5,7 +5,7 @@ reserved = {
     'import': 'import',
     'relator': 'relator',
     'specializes': 'specializes',
-    'functional-complexes': 'FUNCTIONAL_COMPLEXES',
+    'of':'of',
     'event': 'event',
     'situation': 'situation',
     'process': 'process',
@@ -22,7 +22,7 @@ reserved = {
     'quantity': 'quantity',
     'quality': 'quality',
     'mode': 'mode',
-    'intrisicMode': 'intrisicMode',
+    'intrinsicMode': 'intrinsicMode', 
     'extrinsicMode': 'extrinsicMode',
     'subkind': 'subkind',
     'phase': 'phase',
@@ -71,19 +71,31 @@ reserved = {
     'derived': 'derived',
     'subsets': 'subsets',
     'redefines': 'redefines',
+    'relators': 'relators', 
+    'disjoint_complete': 'disjoint_complete'
 }
 
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
     'ASSOCIATION', 'NEW_TYPE', 'CLASS_ID', 'RELATION_ID', 
-    'CARDINALITY', 'ERROR'
+    'CARDINALITY', 'ERROR', 'functional_complexes', 'intrinsic_modes'
 ] + list(set(reserved.values())) 
 
 literals = ['(', ')', '{', '}', '.', ',', '+', '<', '>', '@', '-',
-            '*', ':']
+             '*', ':']
 
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
+
+def t_FUNCTIONAL_COMPLEXES(t):
+    r'functional-complexes'
+    t.type = 'functional_complexes'
+    return t
+
+def t_INTRINSIC_MODES(t):
+    r'intrinsic-modes'
+    t.type = 'intrinsic_modes'
+    return t
 
 def t_COMPOSITION_L(t):
     r'<>--'
@@ -128,10 +140,6 @@ def t_NEWLINE(t):
     t.lexer.lineno += len(t.value)
 
 def t_error(t):
-    """
-    Função de erro para caracteres ilegais.
-    Cria e retorna um token de ERRO.
-    """
     illegal_char = t.value[0]
     print(f"Erro Léxico (Puro): Caractere '{illegal_char}' não reconhecido na linha {t.lexer.lineno}")
     

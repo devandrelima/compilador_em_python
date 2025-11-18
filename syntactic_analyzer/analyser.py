@@ -2,9 +2,27 @@ import ply.yacc as yacc
 from lexico_analyzer.lexer_puro import tokens, lexer
 
 def p_programa(p):
-    'programa : declaracao_pacote lista_declaracoes_opt'
-    p[0] = ('programa', p[1], p[2])
-    print("Programa CarRental reconhecido com sucesso.")
+    'programa : lista_imports_opt declaracao_pacote lista_declaracoes_opt'
+    p[0] = ('programa', p[1], p[2], p[3])
+    print("Programa reconhecido com sucesso.")
+
+def p_lista_imports_opt(p):
+    '''lista_imports_opt : lista_imports
+                         | empty'''
+    p[0] = p[1]
+
+def p_lista_imports(p):
+    '''lista_imports : declaracao_import lista_imports
+                     | declaracao_import'''
+    if len(p) == 3:
+        p[0] = [p[1]] + p[2]
+    else:
+        p[0] = [p[1]]
+
+def p_declaracao_import(p):
+    'declaracao_import : import CLASS_ID'
+    p[0] = ('import', p[2])
+    print(f"Sintático: Encontrado import de '{p[2]}'")
 
 def p_lista_declaracoes_opt(p):
     '''lista_declaracoes_opt : lista_declaracoes
@@ -35,19 +53,39 @@ def p_declaracao_pacote(p):
 def p_declaracao_classe(p):
     """declaracao_classe : estereotipo_classe CLASS_ID '{' corpo_classe '}'
                          | estereotipo_classe CLASS_ID specializes lista_ids
+                         | estereotipo_subtipo CLASS_ID specializes lista_ids
+                         | estereotipo_subtipo CLASS_ID of estereotipo_complexo specializes lista_ids
                          | estereotipo_classe CLASS_ID""" 
     
     if len(p) == 6:
-        p[0] = ('classe', p[1], p[2], p[4])
+        p[0] = ('classe_com_corpo', p[1], p[2], p[4])
         print(f"Sintático: Encontrada classe/relator '{p[2]}' (Tipo: {p[1]}) com corpo.")
     
-    elif len(p) == 5:
-        p[0] = ('classe_especializada', p[1], p[2], p[4]) 
-        print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) especializando {p[4]}")
+    elif len(p) > 3:
+        
+        if len(p) == 7:
+            p[0] = ('classe_subtipo_complexo', p[1], p[2], p[4], p[6])
+            print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) do tipo {p[4]} especializando {p[6]} (Complexa)")
+        
+        elif len(p) == 5:
+            p[0] = ('classe_especializada_simples', p[1], p[2], p[4]) 
+            print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) especializando {p[4]} (Simples)")
         
     else:
         p[0] = ('classe_simples', p[1], p[2])
         print(f"Sintático: Encontrada classe simples '{p[2]}' (Tipo: {p[1]})")
+
+def p_estereotipo_subtipo(p):
+    '''estereotipo_subtipo : subkind
+                           | phase
+                           | role'''
+    p[0] = p[1]
+
+def p_estereotipo_complexo(p):
+    '''estereotipo_complexo : functional_complexes
+                            | relators
+                            | intrinsic_modes'''
+    p[0] = p[1]
 
 def p_lista_ids(p):
     """lista_ids : CLASS_ID ',' lista_ids
@@ -119,21 +157,56 @@ def p_lista_instancias_enum(p):
 
 def p_declaracao_genset(p):
     """declaracao_genset : genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
-                         | genset_modifiers_opt genset CLASS_ID '{' genset_corpo '}'"""
+                         | genset_modifiers_opt genset CLASS_ID '{' genset_corpo '}'
+                         | genset_modifiers_opt genset '{' genset_corpo '}'
+                         | genset genset_modifiers_opt CLASS_ID '{' genset_corpo '}'
+                         | genset genset_modifiers_opt '{' genset_corpo '}'"""
     
-    if len(p) == 8: 
+    # Where format (len=8)
+    if len(p) == 8:
         p[0] = ('genset_where', p[1], p[3], p[5], p[7])
         print(f"Sintático: Encontrado genset (where) '{p[3]}'")
-    else: 
-        p[0] = ('genset_corpo', p[1], p[3], p[5])
-        print(f"Sintático: Encontrado genset (bloco) '{p[3]}' com modificadores {p[1]}")
+    
+    # Block Named (len=6)
+    elif len(p) == 6:
+        # Verifica se é Modificador Primeiro (p[1] mod, p[2] genset) ou Genset Primeiro (p[1] genset, p[2] mod)
+        if p[2] == 'genset':
+            # Modificador Primeiro
+            p[0] = ('genset_corpo_nomeado', p[1], p[3], p[5])
+            print(f"Sintático: Encontrado genset (bloco nomeado, Mod-First) '{p[3]}' com modificadores {p[1]}")
+        else:
+            # Genset Primeiro
+            p[0] = ('genset_corpo_nomeado', p[2], p[3], p[5])
+            print(f"Sintático: Encontrado genset (bloco nomeado, Genset-First) '{p[3]}' com modificadores {p[2]}")
+
+    # Block Unnamed (len=5)
+    elif len(p) == 5:
+        # Verifica se é Modificador Primeiro (p[1] mod, p[2] genset) ou Genset Primeiro (p[1] genset, p[2] mod)
+        if p[2] == 'genset':
+            # Modificador Primeiro
+            p[0] = ('genset_corpo_sem_nome', p[1], p[4])
+            print(f"Sintático: Encontrado genset (bloco sem nome, Mod-First) com modificadores {p[1]}")
+        else:
+            # Genset Primeiro
+            p[0] = ('genset_corpo_sem_nome', p[2], p[4])
+            print(f"Sintático: Encontrado genset (bloco sem nome, Genset-First) com modificadores {p[2]}")
 
 def p_genset_modifiers_opt(p):
-    '''genset_modifiers_opt : disjoint complete
+    '''genset_modifiers_opt : disjoint complete 
+                            | disjoint_complete
                             | disjoint
                             | complete
                             | empty'''
-    p[0] = (p[1], p[2]) if len(p) == 3 else (p[1] if len(p) == 2 else None)
+    
+    if len(p) == 3: # Caso: disjoint complete (dois tokens separados)
+        p[0] = (p[1], p[2])
+    elif len(p) == 2:
+        if p[1] == 'disjoint_complete':
+            p[0] = ('disjoint', 'complete')
+        else:
+            p[0] = p[1]
+    else:
+        p[0] = None
 
 def p_lista_classes_genset(p):
     """lista_classes_genset : CLASS_ID ',' lista_classes_genset
@@ -199,11 +272,8 @@ def p_estereotipo_classe(p):
                           | quantity
                           | quality
                           | mode
-                          | intrisicMode
+                          | intrinsicMode     
                           | extrinsicMode
-                          | subkind
-                          | phase
-                          | role
                           | historicalRole
                           | relator'''
     p[0] = p[1]
