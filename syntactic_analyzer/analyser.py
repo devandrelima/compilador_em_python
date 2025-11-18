@@ -4,7 +4,7 @@ from lexico_analyzer.lexer_puro import tokens, lexer
 def p_programa(p):
     'programa : declaracao_pacote lista_declaracoes_opt'
     p[0] = ('programa', p[1], p[2])
-    print("Programa Tonto reconhecido.")
+    print("Programa Tonto reconhecido com sucesso.")
 
 def p_lista_declaracoes_opt(p):
     '''lista_declaracoes_opt : lista_declaracoes
@@ -39,7 +39,7 @@ def p_declaracao_classe(p):
     
     if len(p) == 6:
         p[0] = ('classe', p[1], p[2], p[4])
-        print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) com corpo.")
+        print(f"Sintático: Encontrada classe/relator '{p[2]}' (Tipo: {p[1]}) com corpo.")
     
     elif len(p) == 5:
         p[0] = ('classe_especializada', p[1], p[2], p[4]) 
@@ -138,10 +138,28 @@ def p_genset_corpo(p):
     'genset_corpo : general CLASS_ID specifics lista_classes_genset'
     p[0] = ('corpo_genset', p[2], p[4])
 
+# --- ATUALIZADO: Regra de Relação Interna (Suporta sintaxe nomeada) ---
 def p_declaracao_relacao_interna(p):
-    "declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID"
-    p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], p[6])
-    print(f"Sintático: Encontrada relação interna (Estereótipo: {p[2]})")
+    '''declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
+                                  | '@' estereotipo_relacao link_nomeado CARDINALITY CLASS_ID'''
+    # Caso 1: Sintaxe completa antiga (ex: [1] -- [1] Car)
+    if len(p) == 7:
+        p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], p[6])
+        print(f"Sintático: Encontrada relação interna padrão (Estereótipo: {p[2]})")
+    
+    # Caso 2: Sintaxe nomeada (ex: -- involvesOwner -- [1] Car)
+    else:
+        p[0] = ('relacao_interna_nomeada', p[2], p[3], p[4], p[5])
+        print(f"Sintático: Encontrada relação nomeada '{p[3]}' com estereótipo '{p[2]}'")
+
+# --- NOVO: Regra auxiliar para capturar nome da relação entre traços ---
+def p_link_nomeado(p):
+    '''link_nomeado : ASSOCIATION RELATION_ID ASSOCIATION
+                    | COMPOSITION_L RELATION_ID ASSOCIATION
+                    | COMPOSITION_R RELATION_ID ASSOCIATION
+                    | COMPOSITION_LO RELATION_ID ASSOCIATION
+                    | COMPOSITION_RO RELATION_ID ASSOCIATION'''
+    p[0] = p[2] # Retorna apenas o nome (ID)
 
 def p_declaracao_relacao_externa(p):
     "declaracao_relacao_externa : '@' estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID"
@@ -156,6 +174,7 @@ def p_simbolo_associacao(p):
                           | COMPOSITION_RO'''
     p[0] = p[1]
 
+# --- ATUALIZADO: Adicionado 'relator' ---
 def p_estereotipo_classe(p):
     '''estereotipo_classe : event
                           | situation
@@ -175,7 +194,8 @@ def p_estereotipo_classe(p):
                           | subkind
                           | phase
                           | role
-                          | historicalRole'''
+                          | historicalRole
+                          | relator'''
     p[0] = p[1]
 
 def p_estereotipo_relacao(p):
@@ -223,7 +243,6 @@ def p_empty(p):
 def p_error(p):
     if p:
         print(f"Erro de Sintaxe: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}")
-  
     else:
         print("Erro de Sintaxe: Fim inesperado do arquivo! (Verifique se fechou todos os '{' '}')")
 
