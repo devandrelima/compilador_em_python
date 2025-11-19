@@ -22,7 +22,7 @@ def p_lista_imports(p):
 def p_declaracao_import(p):
     'declaracao_import : import CLASS_ID'
     p[0] = ('import', p[2])
-    print(f"Sintático: Encontrado import de '{p[2]}'")
+    print(f"import de '{p[2]}'")
 
 def p_lista_declaracoes_opt(p):
     '''lista_declaracoes_opt : lista_declaracoes
@@ -48,7 +48,7 @@ def p_declaracao(p):
 def p_declaracao_pacote(p):
     'declaracao_pacote : package CLASS_ID'
     p[0] = ('pacote', p[2])
-    print(f"Sintático: Encontrada declaração de pacote '{p[2]}'")
+    print(f"Declaração de pacote '{p[2]}'")
 
 def p_declaracao_classe(p):
     """declaracao_classe : estereotipo_classe CLASS_ID '{' corpo_classe '}'
@@ -59,21 +59,21 @@ def p_declaracao_classe(p):
     
     if len(p) == 6:
         p[0] = ('classe_com_corpo', p[1], p[2], p[4])
-        print(f"Sintático: Encontrada classe/relator '{p[2]}' (Tipo: {p[1]}) com corpo.")
+        print(f"classe/relator '{p[2]}' (Tipo: {p[1]}) com corpo.")
     
     elif len(p) > 3:
         
         if len(p) == 7:
             p[0] = ('classe_subtipo_complexo', p[1], p[2], p[4], p[6])
-            print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) do tipo {p[4]} especializando {p[6]} (Complexa)")
+            print(f"classe '{p[2]}' (Tipo: {p[1]}) do tipo {p[4]} especializando {p[6]}")
         
         elif len(p) == 5:
             p[0] = ('classe_especializada_simples', p[1], p[2], p[4]) 
-            print(f"Sintático: Encontrada classe '{p[2]}' (Tipo: {p[1]}) especializando {p[4]} (Simples)")
+            print(f"classe '{p[2]}' (Tipo: {p[1]}) especializando {p[4]}")
         
     else:
         p[0] = ('classe_simples', p[1], p[2])
-        print(f"Sintático: Encontrada classe simples '{p[2]}' (Tipo: {p[1]})")
+        print(f"classe '{p[2]}' (Tipo: {p[1]})")
 
 def p_estereotipo_subtipo(p):
     '''estereotipo_subtipo : subkind
@@ -116,7 +116,7 @@ def p_membro_classe(p):
 def p_declaracao_atributo(p):
     "declaracao_atributo : RELATION_ID ':' tipo meta_atributos_opt"
     p[0] = ('atributo', p[1], p[3], p[4])
-    print(f"Sintático: Encontrado atributo '{p[1]}'")
+    print(f"atributo '{p[1]}'")
 
 def p_tipo(p):
     '''tipo : dado_nativo
@@ -140,12 +140,12 @@ def p_lista_meta_atributos(p):
 def p_declaracao_tipo_dado(p):
     "declaracao_tipo_dado : datatype CLASS_ID '{' corpo_classe '}'"
     p[0] = ('datatype', p[2], p[4]) 
-    print(f"Sintático: Encontrado datatype '{p[2]}'")
+    print(f"datatype '{p[2]}'")
 
 def p_declaracao_enum(p):
     "declaracao_enum : enum CLASS_ID '{' lista_instancias_enum '}'"
     p[0] = ('enum', p[2], p[4]) 
-    print(f"Sintático: Encontrado enum '{p[2]}'")
+    print(f"enum '{p[2]}'")
 
 def p_lista_instancias_enum(p):
     """lista_instancias_enum : CLASS_ID ',' lista_instancias_enum
@@ -162,34 +162,20 @@ def p_declaracao_genset(p):
                          | genset genset_modifiers_opt CLASS_ID '{' genset_corpo '}'
                          | genset genset_modifiers_opt '{' genset_corpo '}'"""
     
-    # Where format (len=8)
     if len(p) == 8:
         p[0] = ('genset_where', p[1], p[3], p[5], p[7])
-        print(f"Sintático: Encontrado genset (where) '{p[3]}'")
     
-    # Block Named (len=6)
     elif len(p) == 6:
-        # Verifica se é Modificador Primeiro (p[1] mod, p[2] genset) ou Genset Primeiro (p[1] genset, p[2] mod)
         if p[2] == 'genset':
-            # Modificador Primeiro
             p[0] = ('genset_corpo_nomeado', p[1], p[3], p[5])
-            print(f"Sintático: Encontrado genset (bloco nomeado, Mod-First) '{p[3]}' com modificadores {p[1]}")
         else:
-            # Genset Primeiro
             p[0] = ('genset_corpo_nomeado', p[2], p[3], p[5])
-            print(f"Sintático: Encontrado genset (bloco nomeado, Genset-First) '{p[3]}' com modificadores {p[2]}")
 
-    # Block Unnamed (len=5)
     elif len(p) == 5:
-        # Verifica se é Modificador Primeiro (p[1] mod, p[2] genset) ou Genset Primeiro (p[1] genset, p[2] mod)
         if p[2] == 'genset':
-            # Modificador Primeiro
             p[0] = ('genset_corpo_sem_nome', p[1], p[4])
-            print(f"Sintático: Encontrado genset (bloco sem nome, Mod-First) com modificadores {p[1]}")
         else:
-            # Genset Primeiro
             p[0] = ('genset_corpo_sem_nome', p[2], p[4])
-            print(f"Sintático: Encontrado genset (bloco sem nome, Genset-First) com modificadores {p[2]}")
 
 def p_genset_modifiers_opt(p):
     '''genset_modifiers_opt : disjoint complete 
@@ -198,7 +184,7 @@ def p_genset_modifiers_opt(p):
                             | complete
                             | empty'''
     
-    if len(p) == 3: # Caso: disjoint complete (dois tokens separados)
+    if len(p) == 3: 
         p[0] = (p[1], p[2])
     elif len(p) == 2:
         if p[1] == 'disjoint_complete':
@@ -219,6 +205,8 @@ def p_lista_classes_genset(p):
 def p_genset_corpo(p):
     'genset_corpo : general CLASS_ID specifics lista_classes_genset'
     p[0] = ('corpo_genset', p[2], p[4])
+    print(f"Genset")
+    print(f"Relação interna '{p[2]}' especificando '{p[4]}'")
 
 def p_declaracao_relacao_interna(p):
     '''declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID
@@ -227,15 +215,15 @@ def p_declaracao_relacao_interna(p):
     
     if len(p) == 7:
         p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], p[6])
-        print(f"Sintático: Relação interna padrão '{p[2]}'")
+        print(f"Relação interna padrão '{p[2]}'")
 
     elif len(p) == 6:
         p[0] = ('relacao_interna_nomeada', p[2], p[3], p[4], p[5])
-        print(f"Sintático: Relação '{p[3]}' (Estereótipo: {p[2]})")
+        print(f"Relação '{p[3]}' (Estereótipo: {p[2]})")
         
     else:
         p[0] = ('relacao_interna_sem_tag', None, p[1], p[2], p[3])
-        print(f"Sintático: Relação '{p[1]}' (Sem estereótipo)")
+        print(f"Relação '{p[1]}' (Sem estereótipo)")
 
 def p_link_nomeado(p):
     '''link_nomeado : ASSOCIATION RELATION_ID ASSOCIATION
@@ -248,7 +236,7 @@ def p_link_nomeado(p):
 def p_declaracao_relacao_externa(p):
     "declaracao_relacao_externa : '@' estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID"
     p[0] = ('relacao_externa', p[2], p[4], p[5], p[6], p[7], p[8])
-    print(f"Sintático: Encontrada relação externa (Estereótipo: {p[2]})")
+    print(f"relação externa (Estereótipo: {p[2]})")
 
 def p_simbolo_associacao(p):
     '''simbolo_associacao : ASSOCIATION
