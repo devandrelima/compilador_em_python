@@ -153,7 +153,7 @@ def p_declaracao_genset(p):
                          | genset genset_modifiers_opt '{' genset_corpo '}'"""
     
     modifiers = None
-    name = "Sem nome"
+    name = "Anônimo"
     general = None
     specifics = []
 
@@ -368,13 +368,29 @@ def analisar_sintaxe(texto_codigo: str):
                 
                 tabela_dados.append([nome_classe, estereotipo, atributos_formatados, relacoes_formatadas, "-"])
 
+            elif tipo_decl == 'datatype':
+                nome_classe = decl[1]
+                estereotipo = "datatype"
+                corpo = decl[2]
+                
+                lista_atributos = []
+                
+                if corpo:
+                    for membro in corpo:
+                        if membro[0] == 'atributo':
+                            attr_str = f"{membro[1]} : {membro[2]}"
+                            lista_atributos.append(attr_str)
+                
+                atributos_formatados = "\n".join(lista_atributos) if lista_atributos else "-"
+                tabela_dados.append([nome_classe, estereotipo, atributos_formatados, "-", "-"])
+
             elif tipo_decl == 'classe_especializada_simples':
                 pais = ", ".join(decl[3]) if isinstance(decl[3], list) else decl[3]
-                tabela_dados.append([decl[2], decl[1], "-", "-", f"Specializes: {pais}"])
+                tabela_dados.append([decl[2], decl[1], "-", "-", f"Especializa: {pais}"])
                 
             elif tipo_decl == 'classe_subtipo_complexo':
                 pais = ", ".join(decl[4]) if isinstance(decl[4], list) else decl[4]
-                tabela_dados.append([decl[2], decl[1], "-", "-", f"Specializes: {pais}"])
+                tabela_dados.append([decl[2], decl[1], "-", "-", f"Especializa: {pais}"])
                 
             elif tipo_decl == 'classe_simples':
                 tabela_dados.append([decl[2], decl[1], "-", "-", "-"])
@@ -388,7 +404,6 @@ def analisar_sintaxe(texto_codigo: str):
                 mods_str = ""
                 if isinstance(modifiers, tuple):
                     mods_str = " ".join(modifiers)
-
                 elif modifiers:
                     mods_str = str(modifiers)
                 

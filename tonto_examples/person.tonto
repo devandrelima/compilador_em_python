@@ -1,10 +1,18 @@
 package PersonPhases
 
-kind Person
+kind Person {
+    name: string
+    birthDate: date {const}
+}
 
 phase Child specializes Person
 phase Teenager specializes Person
 phase YoungAdult specializes Person
+
+datatype Address {
+    street: string
+    nr: number
+}
 
 role UniversityStudent specializes Person
 role FormerStudent specializes UniversityStudent
