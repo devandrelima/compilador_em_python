@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 *.json
 lexico_analyzer/exports/**
+

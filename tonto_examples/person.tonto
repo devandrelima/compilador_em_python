@@ -5,8 +5,21 @@ kind Person {
     birthDate: date {const}
 }
 
+kind Adult
+kind Departament
+kind EmploymentContract
+kind Employee
 phase Child specializes Person
 phase Teenager specializes Person
+
+// Internal relation
+kind University {
+    @componentOf [1] <>-- [1..*] Departament
+}
+
+// External relation
+@mediation relation EmploymentContract [1..*] -- [1] Employee
+
 phase YoungAdult specializes Person
 
 datatype Address {
@@ -16,4 +29,10 @@ datatype Address {
 
 role UniversityStudent specializes Person
 role FormerStudent specializes UniversityStudent
+
+disjoint complete genset PersonAgeGroup where Child, Adult specializes Person
+
 role ActiveStudent specializes UniversityStudent
+
+enum EyerColor {Blue, Green, Brown, Black}
+

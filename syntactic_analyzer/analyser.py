@@ -162,6 +162,7 @@ def p_declaracao_genset(p):
         name = p[3]
         specifics = p[5]
         general = p[7]
+        p[0] = ('genset_where', modifiers, name, specifics, general)
     
     elif len(p) == 7:
         if p[2] == 'genset':
@@ -176,6 +177,8 @@ def p_declaracao_genset(p):
         if body:
             general = body[1]
             specifics = body[2]
+        
+        p[0] = ('genset_completo', modifiers, name, general, specifics)
 
     elif len(p) == 6:
         if p[2] == 'genset':
@@ -189,7 +192,7 @@ def p_declaracao_genset(p):
             general = body[1]
             specifics = body[2]
 
-    p[0] = ('genset_completo', modifiers, name, general, specifics)
+        p[0] = ('genset_completo', modifiers, name, general, specifics)
 
 def p_genset_modifiers_opt(p):
     '''genset_modifiers_opt : disjoint complete 
@@ -354,13 +357,13 @@ def analisar_sintaxe(texto_codigo: str):
                             lista_atributos.append(attr_str)
                         elif membro[0].startswith('relacao_interna'):
                             if membro[0] == 'relacao_interna':
-                                rel_str = f"-> {membro[5]} ({membro[1]})"
+                                rel_str = f"{membro[5]} ({membro[1]})"
                                 lista_relacoes.append(rel_str)
                             elif membro[0] == 'relacao_interna_nomeada':
-                                rel_str = f"{membro[2]} -> {membro[4]} ({membro[1]})"
+                                rel_str = f"{membro[2]} {membro[4]} ({membro[1]})"
                                 lista_relacoes.append(rel_str)
                             elif membro[0] == 'relacao_interna_sem_tag':
-                                rel_str = f"{membro[2]} -> {membro[4]}"
+                                rel_str = f"{membro[2]} {membro[4]}"
                                 lista_relacoes.append(rel_str)
 
                 atributos_formatados = "\n".join(lista_atributos) if lista_atributos else "-"
@@ -384,16 +387,31 @@ def analisar_sintaxe(texto_codigo: str):
                 atributos_formatados = "\n".join(lista_atributos) if lista_atributos else "-"
                 tabela_dados.append([nome_classe, estereotipo, atributos_formatados, "-", "-"])
 
+            elif tipo_decl == 'enum':
+                nome_enum = decl[1]
+                valores = decl[2]
+                valores_formatados = ", ".join(valores) if isinstance(valores, list) else str(valores)
+                tabela_dados.append([nome_enum, "enum", valores_formatados, "-", "-"])
+
             elif tipo_decl == 'classe_especializada_simples':
                 pais = ", ".join(decl[3]) if isinstance(decl[3], list) else decl[3]
-                tabela_dados.append([decl[2], decl[1], "-", "-", f"Especializa: {pais}"])
+                tabela_dados.append([decl[2], decl[1], "-", "-", f"Specializes: {pais}"])
                 
             elif tipo_decl == 'classe_subtipo_complexo':
                 pais = ", ".join(decl[4]) if isinstance(decl[4], list) else decl[4]
-                tabela_dados.append([decl[2], decl[1], "-", "-", f"Especializa: {pais}"])
+                tabela_dados.append([decl[2], decl[1], "-", "-", f"Specializes: {pais}"])
                 
             elif tipo_decl == 'classe_simples':
                 tabela_dados.append([decl[2], decl[1], "-", "-", "-"])
+
+            elif tipo_decl == 'relacao_externa':
+                estereotipo = decl[1]
+                nome_relacao = decl[2]
+                alvo = decl[6]
+                
+                relacao_str = f"{alvo}"
+                
+                tabela_dados.append([nome_relacao, f"Relation ({estereotipo})", "-", relacao_str, "-"])
 
             elif tipo_decl == 'genset_completo':
                 modifiers = decl[1]
@@ -402,16 +420,32 @@ def analisar_sintaxe(texto_codigo: str):
                 specifics = ", ".join(decl[4]) if isinstance(decl[4], list) else str(decl[4])
                 
                 mods_str = ""
+                
                 if isinstance(modifiers, tuple):
                     mods_str = " ".join(modifiers)
                 elif modifiers:
                     mods_str = str(modifiers)
                 
-                tipo_genset = f"Genset {mods_str}".strip()
+                tipo_genset = f"{mods_str} genset".strip()
                 
-                tabela_dados.append([f"Genset ({name})", tipo_genset, "-", "-", f"General: {general} | Specifics: {specifics}"])
+                tabela_dados.append([f"{name}", tipo_genset, "-", "-", f"General: {general} \nSpecifics: {specifics}"])
 
-    headers = ["Classe", "Estereótipo", "Atributos Internos", "Relações Internas", "Herança/Detalhes"]
+            elif tipo_decl == 'genset_where':
+                modifiers = decl[1]
+                name = decl[2]
+                specifics = ", ".join(decl[3]) if isinstance(decl[3], list) else str(decl[3])
+                general = decl[4]
+
+                mods_str = ""
+                if isinstance(modifiers, tuple):
+                    mods_str = " ".join(modifiers)
+                elif modifiers:
+                    mods_str = str(modifiers)
+                
+                tipo_genset = f"{mods_str} genset".strip()
+                tabela_dados.append([f"{name}", tipo_genset, "-", "-", f"General: {general} \nSpecifics: {specifics}"])
+
+    headers = ["Classe", "Estereótipo", "Atributos Internos", "Relações", "Detalhes (Herança ou Generalização)"]
     
     print(tabulate(tabela_dados, headers=headers, tablefmt="grid"))
     
