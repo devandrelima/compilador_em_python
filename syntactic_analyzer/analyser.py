@@ -60,6 +60,7 @@ def p_declaracao_classe(p):
     
     elif len(p) > 3:
         if len(p) == 7:
+            # p[0] = (tag, estereotipo, nome, TIPO_COMPLEXO, pais)
             p[0] = ('classe_subtipo_complexo', p[1], p[2], p[4], p[6])
         
         elif len(p) == 5:
@@ -360,10 +361,10 @@ def analisar_sintaxe(texto_codigo: str):
                                 rel_str = f"{membro[5]} ({membro[1]})"
                                 lista_relacoes.append(rel_str)
                             elif membro[0] == 'relacao_interna_nomeada':
-                                rel_str = f"{membro[2]} {membro[4]} ({membro[1]})"
+                                rel_str = f"{membro[4]} ({membro[1]} - {membro[2]})"
                                 lista_relacoes.append(rel_str)
                             elif membro[0] == 'relacao_interna_sem_tag':
-                                rel_str = f"{membro[2]} {membro[4]}"
+                                rel_str = f"{membro[4]} ({membro[2]})"
                                 lista_relacoes.append(rel_str)
 
                 atributos_formatados = "\n".join(lista_atributos) if lista_atributos else "-"
@@ -398,8 +399,12 @@ def analisar_sintaxe(texto_codigo: str):
                 tabela_dados.append([decl[2], decl[1], "-", "-", f"Specializes: {pais}"])
                 
             elif tipo_decl == 'classe_subtipo_complexo':
+                tipo_complexo = decl[3]
                 pais = ", ".join(decl[4]) if isinstance(decl[4], list) else decl[4]
-                tabela_dados.append([decl[2], decl[1], "-", "-", f"Specializes: {pais}"])
+                
+                detalhes = f"of {tipo_complexo}\nSpecializes: {pais}"
+                
+                tabela_dados.append([decl[2], decl[1], "-", "-", detalhes])
                 
             elif tipo_decl == 'classe_simples':
                 tabela_dados.append([decl[2], decl[1], "-", "-", "-"])
@@ -420,7 +425,6 @@ def analisar_sintaxe(texto_codigo: str):
                 specifics = ", ".join(decl[4]) if isinstance(decl[4], list) else str(decl[4])
                 
                 mods_str = ""
-                
                 if isinstance(modifiers, tuple):
                     mods_str = " ".join(modifiers)
                 elif modifiers:
@@ -449,4 +453,5 @@ def analisar_sintaxe(texto_codigo: str):
     
     print(tabulate(tabela_dados, headers=headers, tablefmt="grid"))
     
+    print("\nPrograma Tonto Reconhecido!")
     return resultado
