@@ -458,18 +458,37 @@ def p_empty(p):
     p[0] = None
     pass
 
+# --- TRATAMENTO DE ERROS ESPECIALIZADO ---
 def p_error(p):
     if p:
         error_msg = f"Erro Sintático: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}"
-        suggestion = "Verifique se você esqueceu um fechamento '}', se usou uma palavra reservada como nome, ou se a estrutura da relação está correta."
-        
-        if p.type == 'RELATION_ID' and 'datatype' in str(parser.symstack):
-             suggestion = "Nomes de Datatypes devem começar com letra Maiúscula."
-        
-        erros_sintaticos.append(f"{error_msg}\n   Sugestão: {suggestion}")
+        suggestion = "Erro Genérico. Verifique a sintaxe."
+
+        if p.type == 'RELATION_ID':
+            suggestion = "Nomes de Classes, Datatypes, Gensets e Pacotes devem começar com LETRA MAIÚSCULA."
+            
+            if p.value in ['int', 'float', 'bool']:
+                suggestion = f"'{p.value}' não pode ser nome de entidade. Use um nome descritivo iniciando com Maiúscula."
+
+        elif p.type in ['kind', 'phase', 'role', 'category', 'mixin', 'subkind', 'relator']:
+            suggestion = f"A palavra reservada '{p.value}' apareceu onde não devia. Verifique se você fechou '}}' da classe anterior."
+
+        elif p.type == 'CLASS_ID' or p.type == 'dado_nativo':
+             
+             suggestion = "Declaração de atributo inválida? O formato correto é 'nome: Tipo'."
+
+        elif p.value == '{':
+            suggestion = "Token '{' inesperado. Faltou o nome da classe ou a palavra reservada antes"
+        elif p.value == '}':
+            suggestion = "Token '}' inesperado. Há chaves em excesso ou fora de lugar"
+
+        elif p.value in ['--', '<>--', '--<>', '<o>--', '--<o>']:
+            suggestion = "Problema na definição da relação. Verifique cardinalidades [1..*] e a ordem dos elementos."
+
+        erros_sintaticos.append(f"{error_msg}\n   -> Sugestão: {suggestion}")
         print(error_msg)
     else:
-        erros_sintaticos.append("Erro Sintático: Fim inesperado do arquivo! (Verifique se fechou todos os blocos)")
+        erros_sintaticos.append("Erro Sintático: Fim inesperado do arquivo! (Verifique se fechou todos os blocos com '}')")
         print("Erro Sintático: Fim inesperado do arquivo!")
 
 parser = yacc.yacc(debug=False)
@@ -666,7 +685,6 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                             lista_atributos.append(attr_str)
                         elif membro[0].startswith('relacao_interna'):
                             stats['qtd_relacoes_internas'] += 1
-                            
                             inverse = membro[-1]
                             inverse_str = f" (Inverse: {inverse})" if inverse else ""
                             target = membro[-2]
@@ -722,6 +740,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
         ["Enums", stats['qtd_enums']],
         ["Gensets", stats['qtd_gensets']]
     ]
+    
     tabela_string_sum = tabulate(sintese_dados, tablefmt="simple_grid")
 
     relatorio_erros = ""
