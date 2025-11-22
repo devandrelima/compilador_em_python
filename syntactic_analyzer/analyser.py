@@ -3,7 +3,7 @@ import os
 from lexico_analyzer.lexer_puro import tokens, lexer
 from tabulate import tabulate
 
-# --- Regras da Gramática ---
+erros_sintaticos = []
 
 def p_programa(p):
     'programa : lista_imports_opt declaracao_pacote lista_declaracoes_opt'
@@ -309,7 +309,6 @@ def p_relation_constraint_opt(p):
     else:
         p[0] = None
 
-# ATUALIZADO: Ajuste nas regras para suportar Link Nomeado com e sem @
 def p_declaracao_relacao_interna(p):
     '''declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
                                   | '@' estereotipo_relacao link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
@@ -321,37 +320,31 @@ def p_declaracao_relacao_interna(p):
                                   | relation_constraint_opt CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
                                   | CARDINALITY link_nomeado relation_constraint_opt class_ref inverse_opt'''
     
-    # Tupla Padronizada: ('tipo', stereo, card_src, link, card_dest, constr_src, constr_dest, target, inv)
-    
-    if len(p) == 10: # @ stereo {const} [1] <o>-- [1] {const} Class
+    if len(p) == 10:
         if p[1] == '@':
-             # ('relacao_interna', stereo, c1, link, c2, constr1, constr2, target, inv)
-             p[0] = ('relacao_interna', p[2], p[4], p[5], p[6], p[3], p[7], p[8], p[9])
+             p[0] = ('relacao_interna', p[2], p[4], p[5], p[6], p[3], p[8], p[9])
     
-    elif len(p) == 9: # @ stereo [1] <o>-- [1] {const} Class
+    elif len(p) == 9:
         if p[1] == '@':
-            if p[4] in ['--', '<>--', '--<>', '<o>--', '--<o>']: # Simbolo
+            if isinstance(p[4], tuple) == False and p[4] in ['--', '<>--', '--<>', '<o>--', '--<o>']:
                  p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], None, p[6], p[7], p[8])
-            else: # @ stereo [1] nome [1] {const} Class
-                 p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], None, p[6], p[7], p[8])
+            else:
+                 p[0] = ('relacao_interna_tag_full', p[2], p[4], p[3], p[5], p[6], p[7], p[8])
 
     elif len(p) == 8:
-        if isinstance(p[1], str) and p[1] != '@': # {const} [1] <o>-- [1] {const} Class
-             p[0] = ('relacao_interna', None, p[2], p[3], p[4], p[1], p[5], p[6], p[7])
-        else: # @ stereo link [1] {const} Class (card unica)
-             p[0] = ('relacao_interna', p[2], None, p[3], p[4], None, p[5], p[6], p[7])
+        if isinstance(p[1], str) and p[1] != '@': 
+             p[0] = ('relacao_interna', None, p[2], p[3], p[4], p[1], p[6], p[7])
+        else:
+             p[0] = ('relacao_interna_nomeada', p[2], p[3], p[4], p[5], p[6], p[7])
     
     elif len(p) == 7:
-        if isinstance(p[2], tuple): # [1] nome [1] {const} Class
-             p[0] = ('relacao_interna', None, p[1], p[2], p[3], None, p[4], p[5], p[6])
-        else: # [1] <o>-- [1] {const} Class
-             p[0] = ('relacao_interna', None, p[1], p[2], p[3], None, p[4], p[5], p[6])
+        if isinstance(p[2], tuple): 
+             p[0] = ('relacao_interna_full_sem_tag', p[2], p[1], p[3], p[4], p[5], p[6])
+        else:
+             p[0] = ('relacao_interna_simbolo_full', p[2], p[1], p[3], p[4], p[5], p[6])
     
-    elif len(p) == 6: # [1] link {const} Class (card unica) OR link [1] {const} Class
-        if isinstance(p[2], tuple): # [1] link ...
-             p[0] = ('relacao_interna', None, p[1], p[2], None, None, p[3], p[4], p[5])
-        else: # link [1] ...
-             p[0] = ('relacao_interna', None, None, p[1], p[2], None, p[3], p[4], p[5])
+    elif len(p) == 6:
+        p[0] = ('relacao_interna_card_unica', p[2], p[1], p[3], p[4], p[5])
 
 def p_link_nomeado(p):
     '''link_nomeado : ASSOCIATION RELATION_ID ASSOCIATION
@@ -384,17 +377,15 @@ def p_declaracao_relacao_externa(p):
     
     if len(p) == 10:
         if isinstance(p[6], tuple):
-             # Link Nomeado (stereo, name, c1, link, c2, target, inv)
-             p[0] = ('relacao_externa', p[2], p[4], p[5], p[6], p[7], p[8], p[9])
+             p[0] = ('relacao_externa_link', p[2], p[4], p[5], p[6], p[7], p[8], p[9])
         else:
-             # Símbolo
              p[0] = ('relacao_externa', p[2], p[4], p[5], p[6], p[7], p[8], p[9])
 
     elif len(p) == 8:
         if isinstance(p[4], tuple):
-            p[0] = ('relacao_externa', None, p[2], p[3], p[4], p[5], p[6], p[7])
+            p[0] = ('relacao_externa_sem_tag_link', "relation", p[2], p[3], p[4], p[5], p[6], p[7])
         else:
-            p[0] = ('relacao_externa', None, p[2], p[3], p[4], p[5], p[6], p[7])
+            p[0] = ('relacao_externa_sem_tag', "relation", p[2], p[3], p[4], p[5], p[6], p[7])
 
 def p_simbolo_associacao(p):
     '''simbolo_associacao : ASSOCIATION
@@ -469,26 +460,49 @@ def p_empty(p):
 
 def p_error(p):
     if p:
-        print(f"Erro de Sintaxe: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}")
+        error_msg = f"Erro Sintático: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}"
+        suggestion = "Verifique se você esqueceu um fechamento '}', se usou uma palavra reservada como nome, ou se a estrutura da relação está correta."
+        
+        if p.type == 'RELATION_ID' and 'datatype' in str(parser.symstack):
+             suggestion = "Nomes de Datatypes devem começar com letra Maiúscula."
+        
+        erros_sintaticos.append(f"{error_msg}\n   Sugestão: {suggestion}")
+        print(error_msg)
     else:
-        print("Erro de Sintaxe: Fim inesperado do arquivo! (Verifique se fechou todos os '{' '}')")
+        erros_sintaticos.append("Erro Sintático: Fim inesperado do arquivo! (Verifique se fechou todos os blocos)")
+        print("Erro Sintático: Fim inesperado do arquivo!")
 
 parser = yacc.yacc(debug=False)
 
 def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tonto"):
+    erros_sintaticos.clear()
+    
     lexer.lineno = 1
     resultado = parser.parse(texto_codigo, lexer=lexer)
     
-    if not resultado:
-        print("Nenhum resultado gerado.")
-        return
+    stats = {
+        'pacote': "Desconhecido",
+        'qtd_classes': 0,
+        'qtd_relacoes_internas': 0,
+        'qtd_relacoes_externas': 0,
+        'qtd_datatypes': 0,
+        'qtd_enums': 0,
+        'qtd_gensets': 0,
+        'classes_por_pacote': []
+    }
 
-    pacote = resultado[2][1] if resultado[2] else "Desconhecido"
-    declaracoes = resultado[3]
-    
+    pacote = "Desconhecido"
+    if resultado and resultado[2]:
+        pacote = resultado[2][1]
+        stats['pacote'] = pacote
+
+    declaracoes = []
+    if resultado and resultado[3]:
+        declaracoes = resultado[3]
+
     tabela_dados = []
     
-    print(f"\nPacote: {pacote}\n")
+    print(f"\n--- Iniciando Análise do Pacote: {pacote} ---\n")
     
     if declaracoes:
         for decl in declaracoes:
@@ -501,53 +515,145 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
             detalhes = "-"
             corpo = None
 
-            if tipo_decl == 'classe_com_corpo':
-                nome_classe = decl[2]
-                estereotipo = decl[1]
-                corpo = decl[3]
-            elif tipo_decl == 'classe_com_corpo_e_heranca':
-                nome_classe = decl[2]
-                estereotipo = decl[1]
-                pais = ", ".join(decl[3]) if isinstance(decl[3], list) else decl[3]
-                corpo = decl[4]
-                detalhes = f"Specializes: {pais}"
-            elif tipo_decl == 'classe_subtipo_complexo_com_corpo':
-                nome_classe = decl[2]
-                estereotipo = decl[1]
-                tipo_complexo = decl[3]
-                pais = ", ".join(decl[4]) if isinstance(decl[4], list) else decl[4]
-                corpo = decl[5]
-                detalhes = f"of {tipo_complexo}\nSpecializes: {pais}"
-            elif tipo_decl == 'classe_subtipo_complexo':
-                nome_classe = decl[2]
-                estereotipo = decl[1]
-                tipo_complexo = decl[3] 
-                pais = ", ".join(decl[4]) if isinstance(decl[4], list) else decl[4]
-                detalhes = f"of {tipo_complexo}\nSpecializes: {pais}"
-                tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+            if tipo_decl.startswith('classe'):
+                stats['qtd_classes'] += 1
+                
+                if tipo_decl == 'classe_com_corpo':
+                    nome_classe = decl[2]
+                    estereotipo = decl[1]
+                    corpo = decl[3]
+                elif tipo_decl == 'classe_com_corpo_e_heranca':
+                    nome_classe = decl[2]
+                    estereotipo = decl[1]
+                    pais = ", ".join(decl[3]) if isinstance(decl[3], list) else decl[3]
+                    corpo = decl[4]
+                    detalhes = f"Specializes: {pais}"
+                elif tipo_decl == 'classe_subtipo_complexo_com_corpo':
+                    nome_classe = decl[2]
+                    estereotipo = decl[1]
+                    tipo_complexo = decl[3]
+                    pais = ", ".join(decl[4]) if isinstance(decl[4], list) else decl[4]
+                    corpo = decl[5]
+                    detalhes = f"of {tipo_complexo}\nSpecializes: {pais}"
+                elif tipo_decl == 'classe_subtipo_complexo':
+                    nome_classe = decl[2]
+                    estereotipo = decl[1]
+                    tipo_complexo = decl[3] 
+                    pais = ", ".join(decl[4]) if isinstance(decl[4], list) else decl[4]
+                    detalhes = f"of {tipo_complexo}\nSpecializes: {pais}"
+                    stats['classes_por_pacote'].append(nome_classe)
+                    tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+                    continue
+                elif tipo_decl == 'classe_complexa_com_corpo':
+                    nome_classe = decl[2]
+                    estereotipo = decl[1]
+                    tipo_complexo = decl[3]
+                    corpo = decl[4]
+                    detalhes = f"of {tipo_complexo}"
+                elif tipo_decl == 'classe_complexa_simples':
+                    nome_classe = decl[2]
+                    estereotipo = decl[1]
+                    tipo_complexo = decl[3]
+                    detalhes = f"of {tipo_complexo}"
+                    stats['classes_por_pacote'].append(nome_classe)
+                    tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+                    continue
+                elif tipo_decl == 'classe_especializada_simples':
+                    nome_classe = decl[2]
+                    estereotipo = decl[1]
+                    pais = ", ".join(decl[3]) if isinstance(decl[3], list) else decl[3]
+                    detalhes = f"Specializes: {pais}"
+                    stats['classes_por_pacote'].append(nome_classe)
+                    tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+                    continue
+                elif tipo_decl == 'classe_simples':
+                    stats['classes_por_pacote'].append(decl[2])
+                    tabela_dados.append([decl[2], decl[1], "-", "-", "-"])
+                    continue
+                
+                if nome_classe:
+                    stats['classes_por_pacote'].append(nome_classe)
+
+            elif tipo_decl.startswith('datatype'):
+                stats['qtd_datatypes'] += 1
+                if tipo_decl == 'datatype':
+                    nome_classe = decl[1]
+                    estereotipo = "datatype"
+                    corpo = decl[2]
+                    local_atributos = []
+                    if corpo:
+                        for membro in corpo:
+                            if membro[0] == 'atributo':
+                                card = f" {membro[3]}" if membro[3] else ""
+                                meta = f" {{ {membro[4]} }}" if membro[4] else ""
+                                attr_str = f"{membro[1]} : {membro[2]}{card}{meta}"
+                                local_atributos.append(attr_str)
+                    atributos_formatados = "\n".join(local_atributos) if local_atributos else "-"
+                    tabela_dados.append([nome_classe, estereotipo, atributos_formatados, "-", "-"])
+                elif tipo_decl == 'datatype_specialized':
+                    nome_classe = decl[1]
+                    estereotipo = "datatype"
+                    pais = decl[2]
+                    detalhes = f"Specializes: {pais}"
+                    tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
                 continue
-            elif tipo_decl == 'classe_complexa_com_corpo':
-                nome_classe = decl[2]
-                estereotipo = decl[1]
-                tipo_complexo = decl[3]
-                corpo = decl[4]
-                detalhes = f"of {tipo_complexo}"
-            elif tipo_decl == 'classe_complexa_simples':
-                nome_classe = decl[2]
-                estereotipo = decl[1]
-                tipo_complexo = decl[3]
-                detalhes = f"of {tipo_complexo}"
-                tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+
+            elif tipo_decl == 'enum':
+                stats['qtd_enums'] += 1
+                nome_enum = decl[1]
+                valores = decl[2]
+                valores_formatados = ", ".join(valores) if isinstance(valores, list) else str(valores)
+                tabela_dados.append([nome_enum, "enum", valores_formatados, "-", "-"])
                 continue
-            elif tipo_decl == 'classe_especializada_simples':
-                nome_classe = decl[2]
+
+            elif tipo_decl.startswith('relacao_externa'):
+                stats['qtd_relacoes_externas'] += 1
                 estereotipo = decl[1]
-                pais = ", ".join(decl[3]) if isinstance(decl[3], list) else decl[3]
-                detalhes = f"Specializes: {pais}"
-                tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+                nome_relacao = decl[2]
+                card_origem = decl[3]
+                card_destino = decl[5]
+                alvo = decl[6]
+                inverse = decl[7] 
+                
+                detalhes_str = f"Card. Origem: {card_origem}"
+                if inverse:
+                    detalhes_str += f"\nSpecializes: {inverse}"
+                
+                tag_display = f"Relation ({estereotipo})" if estereotipo else "Relation"
+                
+                relacao_str = ""
+                if tipo_decl == 'relacao_externa':
+                     relacao_str = f"[{card_origem}] {decl[4]} [{card_destino}] {alvo}"
+                elif tipo_decl == 'relacao_externa_link':
+                     link = decl[4]
+                     link_str = f"{link[0]} {link[1]} {link[2]}"
+                     relacao_str = f"({tag_display}) [{card_origem}] {link_str} [{card_destino}] {alvo}"
+                elif tipo_decl == 'relacao_externa_sem_tag':
+                     relacao_str = f"[{card_origem}] {decl[4]} [{card_destino}] {alvo}"
+                elif tipo_decl == 'relacao_externa_sem_tag_link':
+                     link = decl[4]
+                     link_str = f"{link[0]} {link[1]} {link[2]}"
+                     relacao_str = f"[{card_origem}] {link_str} [{card_destino}] {alvo}"
+
+                tabela_dados.append([nome_relacao, tag_display, "-", relacao_str, detalhes_str])
                 continue
-            elif tipo_decl == 'classe_simples':
-                tabela_dados.append([decl[2], decl[1], "-", "-", "-"])
+
+            elif tipo_decl.startswith('genset'):
+                stats['qtd_gensets'] += 1
+                if tipo_decl == 'genset_completo' or tipo_decl == 'genset_where':
+                    modifiers = decl[1]
+                    name = decl[2]
+                    general = decl[3] if tipo_decl == 'genset_completo' else decl[4]
+                    specifics_raw = decl[4] if tipo_decl == 'genset_completo' else decl[3]
+                    specifics = ", ".join(specifics_raw) if isinstance(specifics_raw, list) else str(specifics_raw)
+                    
+                    mods_str = ""
+                    if isinstance(modifiers, tuple):
+                        mods_str = " ".join(modifiers)
+                    elif modifiers:
+                        mods_str = str(modifiers)
+                    tipo_genset = f"{mods_str} genset".strip()
+                    tabela_dados.append([f"{name}", tipo_genset, "-", "-", f"General: {general} \nSpecifics: {specifics}"])
                 continue
 
             if nome_classe:
@@ -559,136 +665,96 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                             attr_str = f"{membro[1]} : {membro[2]}{card}{meta}"
                             lista_atributos.append(attr_str)
                         elif membro[0].startswith('relacao_interna'):
-                            # Tupla padrao agora: ('relacao_interna', stereo, c1, link, c2, constr1, constr2, target, inv)
-                            # Índices: stereo=1, c1=2, link=3, c2=4, constr1=5, constr2=6, target=7, inv=8
+                            stats['qtd_relacoes_internas'] += 1
                             
-                            stereo = membro[1]
-                            c1 = f"{membro[2]} " if membro[2] else ""
-                            link_raw = membro[3]
-                            c2 = f" {membro[4]}" if membro[4] else ""
-                            constr1 = f"{membro[5]} " if membro[5] else ""
-                            constr2 = f" {membro[6]}" if membro[6] else ""
-                            target = membro[7]
-                            inv = f" (Inverse: {membro[8]})" if membro[8] else ""
+                            inverse = membro[-1]
+                            inverse_str = f" (Inverse: {inverse})" if inverse else ""
+                            target = membro[-2]
+                            constraint = membro[-3]
+                            const_str = f" {constraint}" if constraint else ""
                             
-                            stereo_str = f"({stereo}) " if stereo else ""
+                            rel_str = ""
+                            if membro[0] == 'relacao_interna':
+                                stereo_str = f"({membro[1]}) " if membro[1] else ""
+                                const_init = f"{membro[5]} " if len(membro) == 8 and membro[5] else ""
+                                rel_str = f"{stereo_str}{const_init}[{membro[2]}] {membro[3]} [{membro[4]}] {const_str}{target}{inverse_str}"
+
+                            elif membro[0] == 'relacao_interna_tag_full':
+                                link = membro[2] 
+                                link_str = f"{link[0]} {link[1]} {link[2]}"
+                                rel_str = f"({membro[1]}) [{membro[3]}] {link_str} [{membro[4]}] {const_str}{target}{inverse_str}"
+
+                            elif membro[0] == 'relacao_interna_full_sem_tag':
+                                link = membro[1]
+                                link_str = f"{link[0]} {link[1]} {link[2]}"
+                                rel_str = f"[{membro[2]}] {link_str} [{membro[3]}] {const_str}{target}{inverse_str}"
+
+                            elif membro[0] == 'relacao_interna_simbolo_full':
+                                rel_str = f"[{membro[2]}] {membro[1]} [{membro[3]}] {const_str}{target}{inverse_str}"
+
+                            elif membro[0] == 'relacao_interna_card_unica':
+                                link = membro[1]
+                                link_str = f"{link[0]} {link[1]} {link[2]}"
+                                rel_str = f"[{membro[2]}] {link_str} {const_str}{target}{inverse_str}"
                             
-                            link_str = ""
-                            if isinstance(link_raw, tuple):
-                                link_str = f"{link_raw[0]} {link_raw[1]} {link_raw[2]}"
-                            else:
-                                link_str = link_raw
-                            
-                            # Monta a string RAW
-                            # Ex: (tag) {const} [1] <o>-- has -- [1] {subsets} Class (Inv)
-                            rel_str = f"{stereo_str}{constr1}{c1}{link_str}{c2}{constr2} {target}{inv}"
-                            lista_relacoes.append(rel_str)
+                            elif membro[0] == 'relacao_interna_nomeada':
+                                 rel_str = f"({membro[1]}) [1] -- {membro[2]} -- [1] {const_str}{target}{inverse_str}"
+
+                            elif membro[0] == 'relacao_interna_sem_tag':
+                                 rel_str = f"[1] -- {membro[2]} -- [1] {const_str}{target}{inverse_str}"
+
+                            if rel_str:
+                                lista_relacoes.append(rel_str)
 
                 atributos_formatados = "\n".join(lista_atributos) if lista_atributos else "-"
                 relacoes_formatadas = "\n".join(lista_relacoes) if lista_relacoes else "-"
                 tabela_dados.append([nome_classe, estereotipo, atributos_formatados, relacoes_formatadas, detalhes])
 
-            elif tipo_decl == 'datatype':
-                nome_classe = decl[1]
-                estereotipo = "datatype"
-                corpo = decl[2]
-                local_atributos = []
-                if corpo:
-                    for membro in corpo:
-                        if membro[0] == 'atributo':
-                            card = f" {membro[3]}" if membro[3] else ""
-                            meta = f" {{ {membro[4]} }}" if membro[4] else ""
-                            attr_str = f"{membro[1]} : {membro[2]}{card}{meta}"
-                            local_atributos.append(attr_str)
-                atributos_formatados = "\n".join(local_atributos) if local_atributos else "-"
-                tabela_dados.append([nome_classe, estereotipo, atributos_formatados, "-", "-"])
-
-            elif tipo_decl == 'datatype_specialized':
-                nome_classe = decl[1]
-                estereotipo = "datatype"
-                pais = decl[2]
-                detalhes = f"Specializes: {pais}"
-                tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
-
-            elif tipo_decl == 'enum':
-                nome_enum = decl[1]
-                valores = decl[2]
-                valores_formatados = ", ".join(valores) if isinstance(valores, list) else str(valores)
-                tabela_dados.append([nome_enum, "enum", valores_formatados, "-", "-"])
-
-            elif tipo_decl.startswith('relacao_externa'):
-                # ('relacao_externa', stereo, name, c1, link, c2, target, inv)
-                estereotipo = decl[1]
-                nome_relacao = decl[2]
-                c1 = decl[3]
-                link_raw = decl[4]
-                c2 = decl[5]
-                target = decl[6]
-                inverse = decl[7] 
-                
-                detalhes_str = ""
-                if inverse:
-                    detalhes_str += f"\nSpecializes: {inverse}"
-                
-                tag_display = f"relation ({estereotipo})" if estereotipo else "relation"
-                
-                link_str = ""
-                if isinstance(link_raw, tuple):
-                    link_str = f"{link_raw[0]} {link_raw[1]} {link_raw[2]}"
-                else:
-                    link_str = link_raw
-                
-                relacao_str = f"{c1} {link_str} {c2} {target}"
-                tabela_dados.append([nome_relacao, tag_display, "-", relacao_str, detalhes_str])
-
-            elif tipo_decl == 'genset_completo':
-                modifiers = decl[1]
-                name = decl[2]
-                general = decl[3]
-                specifics = ", ".join(decl[4]) if isinstance(decl[4], list) else str(decl[4])
-                mods_str = ""
-                if isinstance(modifiers, tuple):
-                    mods_str = " ".join(modifiers)
-                elif modifiers:
-                    mods_str = str(modifiers)
-                tipo_genset = f"{mods_str} genset".strip()
-                tabela_dados.append([f"{name}", tipo_genset, "-", "-", f"General: {general} \nSpecifics: {specifics}"])
-
-            elif tipo_decl == 'genset_where':
-                modifiers = decl[1]
-                name = decl[2]
-                specifics = ", ".join(decl[3]) if isinstance(decl[3], list) else str(decl[3])
-                general = decl[4]
-                mods_str = ""
-                if isinstance(modifiers, tuple):
-                    mods_str = " ".join(modifiers)
-                elif modifiers:
-                    mods_str = str(modifiers)
-                tipo_genset = f"{mods_str} genset".strip()
-                tabela_dados.append([f"{name}", tipo_genset, "-", "-", f"General: {general} \nSpecifics: {specifics}"])
-
-    headers = ["Classe", "Estereótipo", "Atributos Internos", "Relações", "Detalhes (Herança ou Generalização)"]
+    headers_det = ["Classe/Entidade", "Estereótipo", "Atributos", "Relações", "Detalhes"]
+    tabela_string_det = tabulate(tabela_dados, headers=headers_det, tablefmt="grid")
     
-    tabela_string = tabulate(tabela_dados, headers=headers, tablefmt="grid")
-    
-    print(tabela_string)
+    sintese_dados = [
+        ["Pacote", stats['pacote']],
+        ["Total de Classes", stats['qtd_classes']],
+        ["Relações Internas", stats['qtd_relacoes_internas']],
+        ["Relações Externas", stats['qtd_relacoes_externas']],
+        ["Datatypes", stats['qtd_datatypes']],
+        ["Enums", stats['qtd_enums']],
+        ["Gensets", stats['qtd_gensets']]
+    ]
+    tabela_string_sum = tabulate(sintese_dados, tablefmt="simple_grid")
+
+    relatorio_erros = ""
+    if erros_sintaticos:
+        relatorio_erros = "\n\n=== RELATÓRIO DE ERROS ===\n"
+        for i, erro in enumerate(erros_sintaticos, 1):
+            relatorio_erros += f"{i}. {erro}\n"
+    else:
+        relatorio_erros = "\n\n=== Nenhum erro sintático encontrado. ===\n"
+
+    print(tabela_string_det)
+    print("\n=== TABELA DE SÍNTESE ===")
+    print(tabela_string_sum)
+    print(relatorio_erros)
     
     diretorio_atual = os.path.dirname(__file__)  
     pasta_exports = os.path.join(diretorio_atual, 'exports')
-    
     os.makedirs(pasta_exports, exist_ok=True)
-    
     nome_arquivo_saida = f"tabela_sintatica_{nome_arquivo_origem}.txt"
     caminho_completo = os.path.join(pasta_exports, nome_arquivo_saida)
     
     try:
         with open(caminho_completo, "w", encoding="utf-8") as f:
-            f.write(f"Pacote: {pacote}\n\n")
-            f.write(tabela_string)
+            f.write(f"ANÁLISE DO PACOTE: {pacote}\n\n")
+            f.write("=== 1. VISUALIZAÇÃO DETALHADA ===\n")
+            f.write(tabela_string_det)
+            f.write("\n\n=== 2. TABELA DE SÍNTESE ===\n")
+            f.write(tabela_string_sum)
+            f.write(relatorio_erros)
 
-        print(f"\nTabela salva com sucesso em /syntatic_analyser/exports/")
+        print(f"\n[INFO] Análise completa salva em: {caminho_completo}")
 
     except Exception as e:
-        print(f"\n[ERRO] Não foi possível salvar a tabela")
+        print(f"\n[ERRO] Não foi possível salvar o arquivo: {e}")
     
     return resultado
