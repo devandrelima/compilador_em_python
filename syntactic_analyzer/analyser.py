@@ -3,6 +3,8 @@ import os
 from lexico_analyzer.lexer_puro import tokens, lexer
 from tabulate import tabulate
 
+# --- Regras da Gramática ---
+
 def p_programa(p):
     'programa : lista_imports_opt declaracao_pacote lista_declaracoes_opt'
     p[0] = ('programa', p[1], p[2], p[3])
@@ -307,6 +309,7 @@ def p_relation_constraint_opt(p):
     else:
         p[0] = None
 
+# ATUALIZADO: Ajuste nas regras para suportar Link Nomeado com e sem @
 def p_declaracao_relacao_interna(p):
     '''declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
                                   | '@' estereotipo_relacao link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
@@ -318,31 +321,37 @@ def p_declaracao_relacao_interna(p):
                                   | relation_constraint_opt CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
                                   | CARDINALITY link_nomeado relation_constraint_opt class_ref inverse_opt'''
     
-    if len(p) == 10:
-        if p[1] == '@':
-             p[0] = ('relacao_interna', p[2], p[4], p[5], p[6], p[3], p[8], p[9])
+    # Tupla Padronizada: ('tipo', stereo, card_src, link, card_dest, constr_src, constr_dest, target, inv)
     
-    elif len(p) == 9:
+    if len(p) == 10: # @ stereo {const} [1] <o>-- [1] {const} Class
         if p[1] == '@':
-            if p[4] in ['--', '<>--', '--<>', '<o>--', '--<o>']:
-                 p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], None, p[7], p[8]) 
-            else:
-                 p[0] = ('relacao_interna_tag_full', p[2], p[4], p[3], p[5], p[6], p[7], p[8])
+             # ('relacao_interna', stereo, c1, link, c2, constr1, constr2, target, inv)
+             p[0] = ('relacao_interna', p[2], p[4], p[5], p[6], p[3], p[7], p[8], p[9])
+    
+    elif len(p) == 9: # @ stereo [1] <o>-- [1] {const} Class
+        if p[1] == '@':
+            if p[4] in ['--', '<>--', '--<>', '<o>--', '--<o>']: # Simbolo
+                 p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], None, p[6], p[7], p[8])
+            else: # @ stereo [1] nome [1] {const} Class
+                 p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], None, p[6], p[7], p[8])
 
     elif len(p) == 8:
-        if isinstance(p[1], str) and p[1] != '@': 
-             p[0] = ('relacao_interna', None, p[2], p[3], p[4], p[1], p[6], p[7])
-        else:
-             p[0] = ('relacao_interna_nomeada', p[2], p[3], p[4], p[5], p[6], p[7])
+        if isinstance(p[1], str) and p[1] != '@': # {const} [1] <o>-- [1] {const} Class
+             p[0] = ('relacao_interna', None, p[2], p[3], p[4], p[1], p[5], p[6], p[7])
+        else: # @ stereo link [1] {const} Class (card unica)
+             p[0] = ('relacao_interna', p[2], None, p[3], p[4], None, p[5], p[6], p[7])
     
     elif len(p) == 7:
-        if isinstance(p[2], str) and ('--' in p[2]):
-             p[0] = ('relacao_interna_full_sem_tag', p[2], p[1], p[3], p[4], p[5], p[6])
-        else:
-             p[0] = ('relacao_interna_simbolo_full', p[2], p[1], p[3], p[4], p[5], p[6])
+        if isinstance(p[2], tuple): # [1] nome [1] {const} Class
+             p[0] = ('relacao_interna', None, p[1], p[2], p[3], None, p[4], p[5], p[6])
+        else: # [1] <o>-- [1] {const} Class
+             p[0] = ('relacao_interna', None, p[1], p[2], p[3], None, p[4], p[5], p[6])
     
-    elif len(p) == 6:
-        p[0] = ('relacao_interna_card_unica', p[2], p[1], p[3], p[4], p[5])
+    elif len(p) == 6: # [1] link {const} Class (card unica) OR link [1] {const} Class
+        if isinstance(p[2], tuple): # [1] link ...
+             p[0] = ('relacao_interna', None, p[1], p[2], None, None, p[3], p[4], p[5])
+        else: # link [1] ...
+             p[0] = ('relacao_interna', None, None, p[1], p[2], None, p[3], p[4], p[5])
 
 def p_link_nomeado(p):
     '''link_nomeado : ASSOCIATION RELATION_ID ASSOCIATION
@@ -354,7 +363,7 @@ def p_link_nomeado(p):
                     | ASSOCIATION RELATION_ID COMPOSITION_RO
                     | ASSOCIATION RELATION_ID COMPOSITION_L
                     | ASSOCIATION RELATION_ID COMPOSITION_LO'''
-    p[0] = p[2] 
+    p[0] = (p[1], p[2], p[3]) 
 
 def p_specializes_rel_opt(p):
     '''specializes_rel_opt : specializes CLASS_ID '.' RELATION_ID
@@ -374,16 +383,18 @@ def p_declaracao_relacao_externa(p):
                                   | '@' estereotipo_relacao relation CLASS_ID CARDINALITY link_nomeado CARDINALITY CLASS_ID specializes_rel_opt"""
     
     if len(p) == 10:
-        if p[6] in ['--', '<>--', '--<>', '<o>--', '--<o>']:
+        if isinstance(p[6], tuple):
+             # Link Nomeado (stereo, name, c1, link, c2, target, inv)
              p[0] = ('relacao_externa', p[2], p[4], p[5], p[6], p[7], p[8], p[9])
         else:
-             p[0] = ('relacao_externa_link', p[2], p[4], p[5], p[6], p[7], p[8], p[9])
+             # Símbolo
+             p[0] = ('relacao_externa', p[2], p[4], p[5], p[6], p[7], p[8], p[9])
 
     elif len(p) == 8:
-        if p[4] in ['--', '<>--', '--<>', '<o>--', '--<o>']:
-            p[0] = ('relacao_externa_sem_tag', "relation", p[2], p[3], p[4], p[5], p[6], p[7])
+        if isinstance(p[4], tuple):
+            p[0] = ('relacao_externa', None, p[2], p[3], p[4], p[5], p[6], p[7])
         else:
-            p[0] = ('relacao_externa_sem_tag_link', "relation", p[2], p[3], p[4], p[5], p[6], p[7])
+            p[0] = ('relacao_externa', None, p[2], p[3], p[4], p[5], p[6], p[7])
 
 def p_simbolo_associacao(p):
     '''simbolo_associacao : ASSOCIATION
@@ -548,33 +559,30 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                             attr_str = f"{membro[1]} : {membro[2]}{card}{meta}"
                             lista_atributos.append(attr_str)
                         elif membro[0].startswith('relacao_interna'):
-                            inverse = membro[-1]
-                            inverse_str = f" (Inverse: {inverse})" if inverse else ""
-                            target = membro[-2]
-                            constraint = membro[-3]
-                            const_str = f" {constraint}" if constraint else ""
+                            # Tupla padrao agora: ('relacao_interna', stereo, c1, link, c2, constr1, constr2, target, inv)
+                            # Índices: stereo=1, c1=2, link=3, c2=4, constr1=5, constr2=6, target=7, inv=8
                             
-                            if membro[0] == 'relacao_interna':
-                                rel_str = f"-> {target} ({membro[4]}){const_str}{inverse_str}"
-                                lista_relacoes.append(rel_str)
-                            elif membro[0] == 'relacao_interna_nomeada':
-                                rel_str = f"-> {target} ({membro[1]} - {membro[2]}){const_str}{inverse_str}"
-                                lista_relacoes.append(rel_str)
-                            elif membro[0] == 'relacao_interna_sem_tag':
-                                rel_str = f"-> {target} ({membro[2]}){const_str}{inverse_str}"
-                                lista_relacoes.append(rel_str)
-                            elif membro[0] == 'relacao_interna_full_sem_tag':
-                                rel_str = f"-> {target} ({membro[3]}) [{membro[1]} - {membro[0]}]{const_str}{inverse_str}"
-                                lista_relacoes.append(rel_str)
-                            elif membro[0] == 'relacao_interna_tag_full':
-                                rel_str = f"-> {target} ({membro[4]}) [{membro[2]} - {membro[1]}]{const_str}{inverse_str}"
-                                lista_relacoes.append(rel_str)
-                            elif membro[0] == 'relacao_interna_simbolo_full':
-                                rel_str = f"-> {target} ({membro[3]}) [Assoc: {membro[1]}]{const_str}{inverse_str}"
-                                lista_relacoes.append(rel_str)
-                            elif membro[0] == 'relacao_interna_card_unica':
-                                rel_str = f"-> {target} ({membro[1]} - ...){const_str}{inverse_str} [Single Card: {membro[2]}]"
-                                lista_relacoes.append(rel_str)
+                            stereo = membro[1]
+                            c1 = f"{membro[2]} " if membro[2] else ""
+                            link_raw = membro[3]
+                            c2 = f" {membro[4]}" if membro[4] else ""
+                            constr1 = f"{membro[5]} " if membro[5] else ""
+                            constr2 = f" {membro[6]}" if membro[6] else ""
+                            target = membro[7]
+                            inv = f" (Inverse: {membro[8]})" if membro[8] else ""
+                            
+                            stereo_str = f"({stereo}) " if stereo else ""
+                            
+                            link_str = ""
+                            if isinstance(link_raw, tuple):
+                                link_str = f"{link_raw[0]} {link_raw[1]} {link_raw[2]}"
+                            else:
+                                link_str = link_raw
+                            
+                            # Monta a string RAW
+                            # Ex: (tag) {const} [1] <o>-- has -- [1] {subsets} Class (Inv)
+                            rel_str = f"{stereo_str}{constr1}{c1}{link_str}{c2}{constr2} {target}{inv}"
+                            lista_relacoes.append(rel_str)
 
                 atributos_formatados = "\n".join(lista_atributos) if lista_atributos else "-"
                 relacoes_formatadas = "\n".join(lista_relacoes) if lista_relacoes else "-"
@@ -609,23 +617,28 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 tabela_dados.append([nome_enum, "enum", valores_formatados, "-", "-"])
 
             elif tipo_decl.startswith('relacao_externa'):
+                # ('relacao_externa', stereo, name, c1, link, c2, target, inv)
                 estereotipo = decl[1]
                 nome_relacao = decl[2]
-                card_origem = decl[3]
-                card_destino = decl[5]
-                alvo = decl[6]
+                c1 = decl[3]
+                link_raw = decl[4]
+                c2 = decl[5]
+                target = decl[6]
                 inverse = decl[7] 
                 
-                relacao_str = f"-> {alvo} ({card_destino})"
-                detalhes_str = f"Card. Origem: {card_origem}"
+                detalhes_str = ""
                 if inverse:
                     detalhes_str += f"\nSpecializes: {inverse}"
                 
-                tag_display = f"Relation ({estereotipo})" if estereotipo else "Relation"
+                tag_display = f"relation ({estereotipo})" if estereotipo else "relation"
                 
-                if tipo_decl == 'relacao_externa_link':
-                     relacao_str = f"-> {alvo} ({decl[5]}) [{decl[4]} - {card_destino}]"
+                link_str = ""
+                if isinstance(link_raw, tuple):
+                    link_str = f"{link_raw[0]} {link_raw[1]} {link_raw[2]}"
+                else:
+                    link_str = link_raw
                 
+                relacao_str = f"{c1} {link_str} {c2} {target}"
                 tabela_dados.append([nome_relacao, tag_display, "-", relacao_str, detalhes_str])
 
             elif tipo_decl == 'genset_completo':
