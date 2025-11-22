@@ -1,39 +1,28 @@
-ANÁLISE DO PACOTE: CoreDatatypes
+ANÁLISE DO PACOTE: Desconhecido
 
 === 1. VISUALIZAÇÃO DETALHADA ===
-+-------------------+---------------+----------------------------------+------------+---------------------+
-| Classe/Entidade   | Estereótipo   | Atributos                        | Relações   | Detalhes            |
-+===================+===============+==================================+============+=====================+
-| PhoneNumber       | datatype      | countryCode : Int                | -          | -                   |
-|                   |               | bodyNumber : Int                 |            |                     |
-+-------------------+---------------+----------------------------------+------------+---------------------+
-| Int               | datatype      | -                                | -          | Specializes: number |
-+-------------------+---------------+----------------------------------+------------+---------------------+
-| EyeColor          | enum          | Blue, Green, Brown, Black, Other | -          | -                   |
-+-------------------+---------------+----------------------------------+------------+---------------------+
-| Address           | datatype      | country : string                 | -          | -                   |
-|                   |               | city : string                    |            |                     |
-|                   |               | postalCode : string              |            |                     |
-|                   |               | street : string                  |            |                     |
-|                   |               | number : string                  |            |                     |
-|                   |               | complement : string              |            |                     |
-+-------------------+---------------+----------------------------------+------------+---------------------+
++-------------------+---------------+-------------+------------+------------+
+| Classe/Entidade   | Estereótipo   | Atributos   | Relações   | Detalhes   |
++===================+===============+=============+============+============+
++-------------------+---------------+-------------+------------+------------+
 
 === 2. TABELA DE SÍNTESE ===
-┌───────────────────┬───────────────┐
-│ Pacote            │ CoreDatatypes │
-├───────────────────┼───────────────┤
-│ Total de Classes  │ 0             │
-├───────────────────┼───────────────┤
-│ Relações Internas │ 0             │
-├───────────────────┼───────────────┤
-│ Relações Externas │ 0             │
-├───────────────────┼───────────────┤
-│ Datatypes         │ 3             │
-├───────────────────┼───────────────┤
-│ Enums             │ 1             │
-├───────────────────┼───────────────┤
-│ Gensets           │ 0             │
-└───────────────────┴───────────────┘
+┌───────────────────┬──────────────┐
+│ Pacote            │ Desconhecido │
+├───────────────────┼──────────────┤
+│ Total de Classes  │ 0            │
+├───────────────────┼──────────────┤
+│ Relações Internas │ 0            │
+├───────────────────┼──────────────┤
+│ Relações Externas │ 0            │
+├───────────────────┼──────────────┤
+│ Datatypes         │ 0            │
+├───────────────────┼──────────────┤
+│ Enums             │ 0            │
+├───────────────────┼──────────────┤
+│ Gensets           │ 0            │
+└───────────────────┴──────────────┘
 
-=== Nenhum erro sintático encontrado. ===
+=== RELATÓRIO DE ERROS ===
+1. Erro Sintático: Token inesperado 'EyeColorDataType' (Tipo: NEW_TYPE) na linha 10
+   -> Sugestão: Verifique se você esqueceu um fechamento '}', se usou uma palavra reservada como nome, ou se a estrutura da relação está correta.

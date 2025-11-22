@@ -22,7 +22,8 @@ kind University {
 
 phase YoungAdult specializes Person
 
-datatype Address {
+// datatype Address { // É para dar erro se os datatypes não terminarem com datatype
+datatype AddressDataType {
     street: string
     nr: number
 }

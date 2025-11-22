@@ -1,13 +1,13 @@
 package CoreDatatypes
 
-datatype PhoneNumber {
-  countryCode: Int
-  bodyNumber: Int
+datatype PhoneNumberDataType {
+  countryCode: IntDataType
+  bodyNumber: IntDataType
 }
 
-datatype Int specializes number
+datatype IntDataType specializes number
 
-enum EyeColor {
+enum EyeColorDataType {
   Blue,
   Green,
   Brown,
@@ -15,7 +15,7 @@ enum EyeColor {
   Other
 }
 
-datatype Address {
+datatype AddressDataType {
   country: string
   city: string
   postalCode: string

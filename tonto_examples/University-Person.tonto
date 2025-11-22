@@ -7,7 +7,7 @@ kind Person {
   age: number { derived }
   birthDate: date { const }
   name: string
-  preferredNames: string [1..*] { ordered }
+  preferredNames: stringDataType [1..*] { ordered }
 
   @instantiation
   [*] -- [1] PersonTypeByAge

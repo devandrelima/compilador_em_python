@@ -149,7 +149,6 @@ def p_tipo(p):
     '''tipo : dado_nativo
             | NEW_TYPE
             | CLASS_ID
-            | RELATION_ID
             | CLASS_ID '.' CLASS_ID'''
     if len(p) == 4:
         p[0] = f"{p[1]}.{p[3]}"
@@ -169,14 +168,15 @@ def p_lista_meta_atributos(p):
                             | redefines'''
     p[0] = p[1]
 
+# MODIFICADO: Agora exige NEW_TYPE (Sufixo 'DataType')
 def p_declaracao_tipo_dado(p):
-    """declaracao_tipo_dado : datatype CLASS_ID '{' corpo_classe '}'
-                            | datatype CLASS_ID specializes lista_ids
-                            | datatype CLASS_ID specializes dado_nativo"""
+    """declaracao_tipo_dado : datatype NEW_TYPE '{' corpo_classe '}'
+                            | datatype NEW_TYPE specializes lista_ids
+                            | datatype NEW_TYPE specializes dado_nativo"""
     
-    if len(p) == 6: 
+    if len(p) == 6: # Com corpo
         p[0] = ('datatype', p[2], p[4])
-    elif len(p) == 5: 
+    elif len(p) == 5: # Com especialização
         pais = p[4]
         if isinstance(pais, list):
             pais = ", ".join(pais)
@@ -458,29 +458,28 @@ def p_empty(p):
     p[0] = None
     pass
 
-# --- TRATAMENTO DE ERROS ESPECIALIZADO ---
 def p_error(p):
     if p:
         error_msg = f"Erro Sintático: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}"
-        suggestion = "Erro Genérico. Verifique a sintaxe."
-
+        suggestion = "Verifique se você esqueceu um fechamento '}', se usou uma palavra reservada como nome, ou se a estrutura da relação está correta."
+        
         if p.type == 'RELATION_ID':
-            suggestion = "Nomes de Classes, Datatypes, Gensets e Pacotes devem começar com LETRA MAIÚSCULA."
-            
-            if p.value in ['int', 'float', 'bool']:
-                suggestion = f"'{p.value}' não pode ser nome de entidade. Use um nome descritivo iniciando com Maiúscula."
+             if 'datatype' in str(parser.symstack):
+                 suggestion = "Nomes de Datatypes devem começar com Maiúscula e podem precisar do sufixo 'DataType'."
+             else:
+                 suggestion = f"O identificador '{p.value}' não é um tipo válido. Use um tipo Nativo ou um DataType (Maiúsculo)."
+        
+        elif p.type == 'CLASS_ID':
+             # Se deu erro com CLASS_ID logo após 'datatype', é porque falta o sufixo
+             suggestion = f"O nome '{p.value}' para datatype deve terminar com o sufixo 'DataType'."
 
         elif p.type in ['kind', 'phase', 'role', 'category', 'mixin', 'subkind', 'relator']:
             suggestion = f"A palavra reservada '{p.value}' apareceu onde não devia. Verifique se você fechou '}}' da classe anterior."
 
-        elif p.type == 'CLASS_ID' or p.type == 'dado_nativo':
-             
-             suggestion = "Declaração de atributo inválida? O formato correto é 'nome: Tipo'."
-
         elif p.value == '{':
-            suggestion = "Token '{' inesperado. Faltou o nome da classe ou a palavra reservada antes"
+            suggestion = "Token '{' inesperado. Faltou o nome da classe ou a palavra reservada antes?"
         elif p.value == '}':
-            suggestion = "Token '}' inesperado. Há chaves em excesso ou fora de lugar"
+            suggestion = "Token '}' inesperado. Há chaves em excesso ou fora de lugar?"
 
         elif p.value in ['--', '<>--', '--<>', '<o>--', '--<o>']:
             suggestion = "Problema na definição da relação. Verifique cardinalidades [1..*] e a ordem dos elementos."
@@ -685,6 +684,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                             lista_atributos.append(attr_str)
                         elif membro[0].startswith('relacao_interna'):
                             stats['qtd_relacoes_internas'] += 1
+                            
                             inverse = membro[-1]
                             inverse_str = f" (Inverse: {inverse})" if inverse else ""
                             target = membro[-2]
