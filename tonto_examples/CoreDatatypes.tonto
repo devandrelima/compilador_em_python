@@ -7,7 +7,7 @@ datatype PhoneNumberDataType {
 
 datatype IntDataType specializes number
 
-enum EyeColorDataType {
+enum EyeColor {
   Blue,
   Green,
   Brown,
