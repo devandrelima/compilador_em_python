@@ -1,11 +1,11 @@
 package CoreDatatypes
 
 datatype PhoneNumber {
-  countryCode: int
-  bodyNumber: int
+  countryCode: Int
+  bodyNumber: Int
 }
 
-datatype int specializes number
+datatype Int specializes number
 
 enum EyeColor {
   Blue,

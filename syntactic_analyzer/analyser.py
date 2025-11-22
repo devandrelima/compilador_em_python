@@ -57,24 +57,27 @@ def p_declaracao_classe(p):
                          | estereotipo_subtipo CLASS_ID specializes lista_ids '{' corpo_classe '}'
                          | estereotipo_subtipo CLASS_ID of estereotipo_complexo specializes lista_ids
                          | estereotipo_subtipo CLASS_ID of estereotipo_complexo specializes lista_ids '{' corpo_classe '}'
+                         | estereotipo_classe CLASS_ID of estereotipo_complexo
+                         | estereotipo_classe CLASS_ID of estereotipo_complexo '{' corpo_classe '}'
                          | estereotipo_classe CLASS_ID
                          | estereotipo_subtipo CLASS_ID""" 
     
     if len(p) == 9: 
         p[0] = ('classe_subtipo_complexo_com_corpo', p[1], p[2], p[4], p[6], p[8])
-
     elif len(p) == 8: 
         p[0] = ('classe_com_corpo_e_heranca', p[1], p[2], p[4], p[6])
-
     elif len(p) == 7: 
         p[0] = ('classe_subtipo_complexo', p[1], p[2], p[4], p[6])
-
     elif len(p) == 6:
-        p[0] = ('classe_com_corpo', p[1], p[2], p[4])
-    
+        if p[3] == 'of':
+             p[0] = ('classe_complexa_com_corpo', p[1], p[2], p[4], p[5])
+        else:
+             p[0] = ('classe_com_corpo', p[1], p[2], p[4])
     elif len(p) == 5:
-        p[0] = ('classe_especializada_simples', p[1], p[2], p[4]) 
-        
+        if p[3] == 'of':
+             p[0] = ('classe_complexa_simples', p[1], p[2], p[4])
+        else:
+             p[0] = ('classe_especializada_simples', p[1], p[2], p[4]) 
     else:
         p[0] = ('classe_simples', p[1], p[2])
 
@@ -87,12 +90,21 @@ def p_estereotipo_subtipo(p):
 def p_estereotipo_complexo(p):
     '''estereotipo_complexo : functional_complexes
                             | relators
-                            | intrinsic_modes'''
+                            | intrinsic_modes
+                            | collectives'''
     p[0] = p[1]
 
+def p_class_ref(p):
+    '''class_ref : CLASS_ID
+                 | CLASS_ID '.' CLASS_ID'''
+    if len(p) == 4:
+        p[0] = f"{p[1]}.{p[3]}"
+    else:
+        p[0] = p[1]
+
 def p_lista_ids(p):
-    """lista_ids : CLASS_ID ',' lista_ids
-                 | CLASS_ID"""
+    """lista_ids : class_ref ',' lista_ids
+                 | class_ref"""
     if len(p) == 4:
         p[0] = [p[1]] + p[3]
     else:
@@ -116,15 +128,31 @@ def p_membro_classe(p):
                      | declaracao_relacao_interna'''
     p[0] = p[1]
 
+def p_cardinality_opt(p):
+    '''cardinality_opt : CARDINALITY
+                       | empty'''
+    p[0] = p[1]
+
 def p_declaracao_atributo(p):
-    "declaracao_atributo : RELATION_ID ':' tipo meta_atributos_opt"
-    p[0] = ('atributo', p[1], p[3], p[4])
+    '''declaracao_atributo : RELATION_ID ':' tipo cardinality_opt meta_atributos_opt
+                           | number ':' tipo cardinality_opt meta_atributos_opt
+                           | string ':' tipo cardinality_opt meta_atributos_opt
+                           | boolean ':' tipo cardinality_opt meta_atributos_opt
+                           | date ':' tipo cardinality_opt meta_atributos_opt
+                           | time ':' tipo cardinality_opt meta_atributos_opt
+                           | datetime ':' tipo cardinality_opt meta_atributos_opt'''
+    p[0] = ('atributo', p[1], p[3], p[4], p[5])
 
 def p_tipo(p):
     '''tipo : dado_nativo
             | NEW_TYPE
-            | CLASS_ID'''
-    p[0] = p[1] 
+            | CLASS_ID
+            | RELATION_ID
+            | CLASS_ID '.' CLASS_ID'''
+    if len(p) == 4:
+        p[0] = f"{p[1]}.{p[3]}"
+    else:
+        p[0] = p[1] 
 
 def p_meta_atributos_opt(p):
     """meta_atributos_opt : '{' lista_meta_atributos '}'
@@ -140,8 +168,17 @@ def p_lista_meta_atributos(p):
     p[0] = p[1]
 
 def p_declaracao_tipo_dado(p):
-    "declaracao_tipo_dado : datatype CLASS_ID '{' corpo_classe '}'"
-    p[0] = ('datatype', p[2], p[4]) 
+    """declaracao_tipo_dado : datatype CLASS_ID '{' corpo_classe '}'
+                            | datatype CLASS_ID specializes lista_ids
+                            | datatype CLASS_ID specializes dado_nativo"""
+    
+    if len(p) == 6: 
+        p[0] = ('datatype', p[2], p[4])
+    elif len(p) == 5: 
+        pais = p[4]
+        if isinstance(pais, list):
+            pais = ", ".join(pais)
+        p[0] = ('datatype_specialized', p[2], pais)
 
 def p_declaracao_enum(p):
     "declaracao_enum : enum CLASS_ID '{' lista_instancias_enum '}'"
@@ -160,7 +197,8 @@ def p_declaracao_genset(p):
                          | genset_modifiers_opt genset CLASS_ID '{' genset_corpo '}'
                          | genset_modifiers_opt genset '{' genset_corpo '}'
                          | genset genset_modifiers_opt CLASS_ID '{' genset_corpo '}'
-                         | genset genset_modifiers_opt '{' genset_corpo '}'"""
+                         | genset genset_modifiers_opt '{' genset_corpo '}'
+                         | genset genset_modifiers_opt CLASS_ID where lista_classes_genset specializes CLASS_ID"""
     
     modifiers = None
     name = "Anônimo"
@@ -168,10 +206,16 @@ def p_declaracao_genset(p):
     specifics = []
 
     if len(p) == 8:
-        modifiers = p[1]
-        name = p[3]
-        specifics = p[5]
-        general = p[7]
+        if p[1] == 'genset': 
+             modifiers = p[2]
+             name = p[3]
+             specifics = p[5]
+             general = p[7]
+        else:
+             modifiers = p[1]
+             name = p[3]
+             specifics = p[5]
+             general = p[7]
         p[0] = ('genset_where', modifiers, name, specifics, general)
     
     elif len(p) == 7:
@@ -232,7 +276,6 @@ def p_genset_corpo(p):
     'genset_corpo : general CLASS_ID specifics lista_classes_genset'
     p[0] = ('corpo_genset', p[2], p[4])
 
-# --- REGRAS DE INVERSE OF ---
 def p_inverse_opt(p):
     '''inverse_opt : inverseOf CLASS_ID '.' RELATION_ID
                    | inverseOf CLASS_ID
@@ -244,43 +287,75 @@ def p_inverse_opt(p):
     else:
         p[0] = None
 
-# --- REGRAS DE RELAÇÃO INTERNA ---
+def p_id_dot_ref(p):
+    '''id_dot_ref : CLASS_ID '.' RELATION_ID
+                  | CLASS_ID'''
+    if len(p) == 4:
+        p[0] = f"{p[1]}.{p[3]}"
+    else:
+        p[0] = p[1]
+
+def p_relation_constraint_opt(p):
+    '''relation_constraint_opt : '(' '{' subsets id_dot_ref '}' ')'
+                               | '(' '{' redefines id_dot_ref '}' ')'
+                               | '(' '{' const '}' ')'
+                               | empty'''
+    if len(p) == 7: 
+        p[0] = f"{{{p[3]} {p[4]}}}"
+    elif len(p) == 6: 
+        p[0] = f"{{{p[3]}}}"
+    else:
+        p[0] = None
+
 def p_declaracao_relacao_interna(p):
-    '''declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY CLASS_ID inverse_opt
-                                  | '@' estereotipo_relacao link_nomeado CARDINALITY CLASS_ID inverse_opt
-                                  | link_nomeado CARDINALITY CLASS_ID inverse_opt
-                                  | CARDINALITY link_nomeado CARDINALITY CLASS_ID inverse_opt
-                                  | '@' estereotipo_relacao CARDINALITY link_nomeado CARDINALITY CLASS_ID inverse_opt
-                                  | CARDINALITY simbolo_associacao CARDINALITY CLASS_ID inverse_opt'''
+    '''declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
+                                  | '@' estereotipo_relacao link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
+                                  | link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
+                                  | CARDINALITY link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
+                                  | '@' estereotipo_relacao CARDINALITY link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
+                                  | CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
+                                  | '@' estereotipo_relacao relation_constraint_opt CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
+                                  | relation_constraint_opt CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
+                                  | CARDINALITY link_nomeado relation_constraint_opt class_ref inverse_opt'''
     
-    if len(p) == 8:
+    if len(p) == 10:
+        if p[1] == '@':
+             p[0] = ('relacao_interna', p[2], p[4], p[5], p[6], p[3], p[8], p[9])
+    
+    elif len(p) == 9:
         if p[1] == '@':
             if p[4] in ['--', '<>--', '--<>', '<o>--', '--<o>']:
-                 p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], p[6], p[7])
+                 p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], None, p[7], p[8]) 
             else:
-                 p[0] = ('relacao_interna_tag_full', p[2], p[4], p[3], p[5], p[6], p[7])
+                 p[0] = ('relacao_interna_tag_full', p[2], p[4], p[3], p[5], p[6], p[7], p[8])
+
+    elif len(p) == 8:
+        if isinstance(p[1], str) and p[1] != '@': 
+             p[0] = ('relacao_interna', None, p[2], p[3], p[4], p[1], p[6], p[7])
+        else:
+             p[0] = ('relacao_interna_nomeada', p[2], p[3], p[4], p[5], p[6], p[7])
     
     elif len(p) == 7:
-        p[0] = ('relacao_interna_nomeada', p[2], p[3], p[4], p[5], p[6])
+        if isinstance(p[2], str) and ('--' in p[2]):
+             p[0] = ('relacao_interna_full_sem_tag', p[2], p[1], p[3], p[4], p[5], p[6])
+        else:
+             p[0] = ('relacao_interna_simbolo_full', p[2], p[1], p[3], p[4], p[5], p[6])
     
     elif len(p) == 6:
-        if isinstance(p[2], str) and ('--' in p[2]):
-             p[0] = ('relacao_interna_full_sem_tag', p[2], p[1], p[3], p[4], p[5])
-        else:
-             p[0] = ('relacao_interna_simbolo_full', p[2], p[1], p[3], p[4], p[5])
-    
-    elif len(p) == 5:
-        p[0] = ('relacao_interna_sem_tag', None, p[1], p[2], p[3], p[4])
+        p[0] = ('relacao_interna_card_unica', p[2], p[1], p[3], p[4], p[5])
 
 def p_link_nomeado(p):
     '''link_nomeado : ASSOCIATION RELATION_ID ASSOCIATION
                     | COMPOSITION_L RELATION_ID ASSOCIATION
                     | COMPOSITION_R RELATION_ID ASSOCIATION
                     | COMPOSITION_LO RELATION_ID ASSOCIATION
-                    | COMPOSITION_RO RELATION_ID ASSOCIATION'''
+                    | COMPOSITION_RO RELATION_ID ASSOCIATION
+                    | ASSOCIATION RELATION_ID COMPOSITION_R
+                    | ASSOCIATION RELATION_ID COMPOSITION_RO
+                    | ASSOCIATION RELATION_ID COMPOSITION_L
+                    | ASSOCIATION RELATION_ID COMPOSITION_LO'''
     p[0] = p[2] 
 
-# --- REGRAS DE RELAÇÃO EXTERNA ---
 def p_specializes_rel_opt(p):
     '''specializes_rel_opt : specializes CLASS_ID '.' RELATION_ID
                            | specializes CLASS_ID
@@ -295,10 +370,15 @@ def p_specializes_rel_opt(p):
 def p_declaracao_relacao_externa(p):
     """declaracao_relacao_externa : '@' estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID specializes_rel_opt
                                   | relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID specializes_rel_opt
-                                  | relation CLASS_ID CARDINALITY link_nomeado CARDINALITY CLASS_ID specializes_rel_opt"""
+                                  | relation CLASS_ID CARDINALITY link_nomeado CARDINALITY CLASS_ID specializes_rel_opt
+                                  | '@' estereotipo_relacao relation CLASS_ID CARDINALITY link_nomeado CARDINALITY CLASS_ID specializes_rel_opt"""
     
     if len(p) == 10:
-        p[0] = ('relacao_externa', p[2], p[4], p[5], p[6], p[7], p[8], p[9])
+        if p[6] in ['--', '<>--', '--<>', '<o>--', '--<o>']:
+             p[0] = ('relacao_externa', p[2], p[4], p[5], p[6], p[7], p[8], p[9])
+        else:
+             p[0] = ('relacao_externa_link', p[2], p[4], p[5], p[6], p[7], p[8], p[9])
+
     elif len(p) == 8:
         if p[4] in ['--', '<>--', '--<>', '<o>--', '--<o>']:
             p[0] = ('relacao_externa_sem_tag', "relation", p[2], p[3], p[4], p[5], p[6], p[7])
@@ -330,7 +410,8 @@ def p_estereotipo_classe(p):
                           | intrinsicMode     
                           | extrinsicMode
                           | historicalRole
-                          | relator'''
+                          | relator
+                          | type'''
     p[0] = p[1]
 
 def p_estereotipo_relacao(p):
@@ -384,10 +465,6 @@ def p_error(p):
 parser = yacc.yacc(debug=False)
 
 def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tonto"):
-    """
-    Analisa o código, imprime a tabela no terminal e salva na pasta 'exports' 
-    dentro de 'syntactic_analyzer'.
-    """
     lexer.lineno = 1
     resultado = parser.parse(texto_codigo, lexer=lexer)
     
@@ -400,7 +477,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     
     tabela_dados = []
     
-    print(f"\nPacote Detectado: {pacote}\n")
+    print(f"\nPacote: {pacote}\n")
     
     if declaracoes:
         for decl in declaracoes:
@@ -438,6 +515,19 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 detalhes = f"of {tipo_complexo}\nSpecializes: {pais}"
                 tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
                 continue
+            elif tipo_decl == 'classe_complexa_com_corpo':
+                nome_classe = decl[2]
+                estereotipo = decl[1]
+                tipo_complexo = decl[3]
+                corpo = decl[4]
+                detalhes = f"of {tipo_complexo}"
+            elif tipo_decl == 'classe_complexa_simples':
+                nome_classe = decl[2]
+                estereotipo = decl[1]
+                tipo_complexo = decl[3]
+                detalhes = f"of {tipo_complexo}"
+                tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+                continue
             elif tipo_decl == 'classe_especializada_simples':
                 nome_classe = decl[2]
                 estereotipo = decl[1]
@@ -449,31 +539,42 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 tabela_dados.append([decl[2], decl[1], "-", "-", "-"])
                 continue
 
-            if nome_classe and corpo:
-                for membro in corpo:
-                    if membro[0] == 'atributo':
-                        attr_str = f"{membro[1]} : {membro[2]}"
-                        lista_atributos.append(attr_str)
-                    elif membro[0].startswith('relacao_interna'):
-                        inverse_str = f" (Inverse: {membro[-1]})" if membro[-1] else ""
-                        if membro[0] == 'relacao_interna':
-                            rel_str = f"-> {membro[5]} ({membro[1]}){inverse_str}"
-                            lista_relacoes.append(rel_str)
-                        elif membro[0] == 'relacao_interna_nomeada':
-                            rel_str = f"-> {membro[4]} ({membro[1]} - {membro[2]}){inverse_str}"
-                            lista_relacoes.append(rel_str)
-                        elif membro[0] == 'relacao_interna_sem_tag':
-                            rel_str = f"-> {membro[4]} ({membro[2]}){inverse_str}"
-                            lista_relacoes.append(rel_str)
-                        elif membro[0] == 'relacao_interna_full_sem_tag':
-                            rel_str = f"-> {membro[4]} ({membro[3]}) [{membro[1]} - {membro[0]}]{inverse_str}"
-                            lista_relacoes.append(rel_str)
-                        elif membro[0] == 'relacao_interna_tag_full':
-                            rel_str = f"-> {membro[5]} ({membro[4]}) [{membro[2]} - {membro[1]}]{inverse_str}"
-                            lista_relacoes.append(rel_str)
-                        elif membro[0] == 'relacao_interna_simbolo_full':
-                            rel_str = f"-> {membro[4]} ({membro[3]}) [Assoc: {membro[1]}]{inverse_str}"
-                            lista_relacoes.append(rel_str)
+            if nome_classe:
+                if corpo: 
+                    for membro in corpo:
+                        if membro[0] == 'atributo':
+                            card = f" {membro[3]}" if membro[3] else ""
+                            meta = f" {{ {membro[4]} }}" if membro[4] else ""
+                            attr_str = f"{membro[1]} : {membro[2]}{card}{meta}"
+                            lista_atributos.append(attr_str)
+                        elif membro[0].startswith('relacao_interna'):
+                            inverse = membro[-1]
+                            inverse_str = f" (Inverse: {inverse})" if inverse else ""
+                            target = membro[-2]
+                            constraint = membro[-3]
+                            const_str = f" {constraint}" if constraint else ""
+                            
+                            if membro[0] == 'relacao_interna':
+                                rel_str = f"-> {target} ({membro[4]}){const_str}{inverse_str}"
+                                lista_relacoes.append(rel_str)
+                            elif membro[0] == 'relacao_interna_nomeada':
+                                rel_str = f"-> {target} ({membro[1]} - {membro[2]}){const_str}{inverse_str}"
+                                lista_relacoes.append(rel_str)
+                            elif membro[0] == 'relacao_interna_sem_tag':
+                                rel_str = f"-> {target} ({membro[2]}){const_str}{inverse_str}"
+                                lista_relacoes.append(rel_str)
+                            elif membro[0] == 'relacao_interna_full_sem_tag':
+                                rel_str = f"-> {target} ({membro[3]}) [{membro[1]} - {membro[0]}]{const_str}{inverse_str}"
+                                lista_relacoes.append(rel_str)
+                            elif membro[0] == 'relacao_interna_tag_full':
+                                rel_str = f"-> {target} ({membro[4]}) [{membro[2]} - {membro[1]}]{const_str}{inverse_str}"
+                                lista_relacoes.append(rel_str)
+                            elif membro[0] == 'relacao_interna_simbolo_full':
+                                rel_str = f"-> {target} ({membro[3]}) [Assoc: {membro[1]}]{const_str}{inverse_str}"
+                                lista_relacoes.append(rel_str)
+                            elif membro[0] == 'relacao_interna_card_unica':
+                                rel_str = f"-> {target} ({membro[1]} - ...){const_str}{inverse_str} [Single Card: {membro[2]}]"
+                                lista_relacoes.append(rel_str)
 
                 atributos_formatados = "\n".join(lista_atributos) if lista_atributos else "-"
                 relacoes_formatadas = "\n".join(lista_relacoes) if lista_relacoes else "-"
@@ -487,10 +588,19 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 if corpo:
                     for membro in corpo:
                         if membro[0] == 'atributo':
-                            attr_str = f"{membro[1]} : {membro[2]}"
+                            card = f" {membro[3]}" if membro[3] else ""
+                            meta = f" {{ {membro[4]} }}" if membro[4] else ""
+                            attr_str = f"{membro[1]} : {membro[2]}{card}{meta}"
                             local_atributos.append(attr_str)
                 atributos_formatados = "\n".join(local_atributos) if local_atributos else "-"
                 tabela_dados.append([nome_classe, estereotipo, atributos_formatados, "-", "-"])
+
+            elif tipo_decl == 'datatype_specialized':
+                nome_classe = decl[1]
+                estereotipo = "datatype"
+                pais = decl[2]
+                detalhes = f"Specializes: {pais}"
+                tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
 
             elif tipo_decl == 'enum':
                 nome_enum = decl[1]
@@ -512,6 +622,10 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                     detalhes_str += f"\nSpecializes: {inverse}"
                 
                 tag_display = f"Relation ({estereotipo})" if estereotipo else "Relation"
+                
+                if tipo_decl == 'relacao_externa_link':
+                     relacao_str = f"-> {alvo} ({decl[5]}) [{decl[4]} - {card_destino}]"
+                
                 tabela_dados.append([nome_relacao, tag_display, "-", relacao_str, detalhes_str])
 
             elif tipo_decl == 'genset_completo':
@@ -556,7 +670,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     
     try:
         with open(caminho_completo, "w", encoding="utf-8") as f:
-            f.write(f"Pacote Detectado: {pacote}\n\n")
+            f.write(f"Pacote: {pacote}\n\n")
             f.write(tabela_string)
 
         print(f"\nTabela salva com sucesso em /syntatic_analyser/exports/")

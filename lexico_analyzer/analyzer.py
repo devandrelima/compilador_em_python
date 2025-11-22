@@ -82,13 +82,17 @@ classifications = {
 
 # palavras chave da linguagem, cujo valor dos tokens sao elas mesmas
 reserved = {
+    
     'import': 'import',
     'relator': 'relator',
     'specializes': 'specializes',
-    'functional-complexes': 'functional_complexes',
+    'of':'of',
     'event': 'event',
     'situation': 'situation',
     'process': 'process',
+    'datatype': 'datatype', 
+    'enum': 'enum',
+    'relation': 'relation',
     'category': 'category',
     'mixin': 'mixin',
     'phaseMixin': 'phaseMixin',
@@ -99,7 +103,7 @@ reserved = {
     'quantity': 'quantity',
     'quality': 'quality',
     'mode': 'mode',
-    'intrisicMode': 'intrisicMode',
+    'intrinsicMode': 'intrinsicMode', 
     'extrinsicMode': 'extrinsicMode',
     'subkind': 'subkind',
     'phase': 'phase',
@@ -148,6 +152,11 @@ reserved = {
     'derived': 'derived',
     'subsets': 'subsets',
     'redefines': 'redefines',
+    'relators': 'relators', 
+    'disjoint_complete': 'disjoint_complete',
+    'inverseOf': 'inverseOf',
+    'type': 'type',
+    'collectives': 'collectives'
 }
 
 tokens = [

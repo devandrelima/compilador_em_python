@@ -1,4 +1,4 @@
-Pacote Detectado: Alergiaalimentar
+Pacote: Alergiaalimentar
 
 +-----------------------------+--------------------------+----------------------+------------+---------------------------------------------------------------------------------+
 | Classe                      | Estereótipo              | Atributos Internos   | Relações   | Detalhes (Herança ou Generalização)                                             |

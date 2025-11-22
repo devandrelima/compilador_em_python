@@ -73,7 +73,9 @@ reserved = {
     'redefines': 'redefines',
     'relators': 'relators', 
     'disjoint_complete': 'disjoint_complete',
-    'inverseOf': 'inverseOf' 
+    'inverseOf': 'inverseOf',
+    'type': 'type',
+    'collectives': 'collectives'
 }
 
 tokens = [
