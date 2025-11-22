@@ -62,8 +62,10 @@ if __name__ == "__main__":
         codigo_fonte = importar_codigo(caminho_do_arquivo_escolhido)
 
         main_analyser(caminho_do_arquivo_escolhido, codigo_fonte)
-
-        analisar_sintaxe(codigo_fonte)
+        
+        nome_exemplo = caminho_do_arquivo_escolhido.stem
+        
+        analisar_sintaxe(codigo_fonte, nome_exemplo)
 
     else:
         print(f"ERRO: Opção '{escolha}' inválida.")

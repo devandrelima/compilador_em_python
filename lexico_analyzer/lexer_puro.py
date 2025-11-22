@@ -72,7 +72,8 @@ reserved = {
     'subsets': 'subsets',
     'redefines': 'redefines',
     'relators': 'relators', 
-    'disjoint_complete': 'disjoint_complete'
+    'disjoint_complete': 'disjoint_complete',
+    'inverseOf': 'inverseOf' 
 }
 
 tokens = [
@@ -85,9 +86,7 @@ literals = ['(', ')', '{', '}', '.', ',', '+', '<', '>', '@', '-',
              '*', ':']
 
 t_ignore = ' \t'
-
 t_ignore_COMMENT = r'\#.*'
-
 t_ignore_CPP_COMMENT = r'//.*'
 
 def t_FUNCTIONAL_COMPLEXES(t):
