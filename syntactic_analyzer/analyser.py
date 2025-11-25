@@ -636,21 +636,21 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 if inverse:
                     detalhes_str += f"\nSpecializes: {inverse}"
                 
-                tag_display = f"Relation ({estereotipo})" if estereotipo else "Relation"
+                tag_display = f"relation ({estereotipo})" if estereotipo else "relation"
                 
                 relacao_str = ""
                 if tipo_decl == 'relacao_externa':
-                     relacao_str = f"[{card_origem}] {decl[4]} [{card_destino}] {alvo}"
+                     relacao_str = f"{card_origem} {decl[4]} {card_destino} {alvo}"
                 elif tipo_decl == 'relacao_externa_link':
                      link = decl[4]
                      link_str = f"{link[0]} {link[1]} {link[2]}"
-                     relacao_str = f"({tag_display}) [{card_origem}] {link_str} [{card_destino}] {alvo}"
+                     relacao_str = f"({tag_display}) {card_origem} {link_str} {card_destino} {alvo}"
                 elif tipo_decl == 'relacao_externa_sem_tag':
-                     relacao_str = f"[{card_origem}] {decl[4]} [{card_destino}] {alvo}"
+                     relacao_str = f"{card_origem} {decl[4]} {card_destino} {alvo}"
                 elif tipo_decl == 'relacao_externa_sem_tag_link':
                      link = decl[4]
                      link_str = f"{link[0]} {link[1]} {link[2]}"
-                     relacao_str = f"[{card_origem}] {link_str} [{card_destino}] {alvo}"
+                     relacao_str = f"{card_origem} {link_str} {card_destino} {alvo}"
 
                 tabela_dados.append([nome_relacao, tag_display, "-", relacao_str, detalhes_str])
                 continue
