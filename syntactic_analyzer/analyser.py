@@ -470,7 +470,6 @@ def p_error(p):
                  suggestion = f"O identificador '{p.value}' não é um tipo válido. Use um tipo Nativo ou um DataType (Maiúsculo)."
         
         elif p.type == 'CLASS_ID':
-             # Se deu erro com CLASS_ID logo após 'datatype', é porque falta o sufixo
              suggestion = f"O nome '{p.value}' para datatype deve terminar com o sufixo 'DataType'."
 
         elif p.type in ['kind', 'phase', 'role', 'category', 'mixin', 'subkind', 'relator']:
@@ -695,31 +694,31 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                             if membro[0] == 'relacao_interna':
                                 stereo_str = f"({membro[1]}) " if membro[1] else ""
                                 const_init = f"{membro[5]} " if len(membro) == 8 and membro[5] else ""
-                                rel_str = f"{stereo_str}{const_init}[{membro[2]}] {membro[3]} [{membro[4]}] {const_str}{target}{inverse_str}"
+                                rel_str = f"{stereo_str}{const_init}{membro[2]} {membro[3]} {membro[4]} {const_str}{target}{inverse_str}"
 
                             elif membro[0] == 'relacao_interna_tag_full':
                                 link = membro[2] 
                                 link_str = f"{link[0]} {link[1]} {link[2]}"
-                                rel_str = f"({membro[1]}) [{membro[3]}] {link_str} [{membro[4]}] {const_str}{target}{inverse_str}"
+                                rel_str = f"({membro[1]}) {membro[3]} {link_str} {membro[4]} {const_str}{target}{inverse_str}"
 
                             elif membro[0] == 'relacao_interna_full_sem_tag':
                                 link = membro[1]
                                 link_str = f"{link[0]} {link[1]} {link[2]}"
-                                rel_str = f"[{membro[2]}] {link_str} [{membro[3]}] {const_str}{target}{inverse_str}"
+                                rel_str = f"{membro[2]} {link_str} {membro[3]} {const_str}{target}{inverse_str}"
 
                             elif membro[0] == 'relacao_interna_simbolo_full':
-                                rel_str = f"[{membro[2]}] {membro[1]} [{membro[3]}] {const_str}{target}{inverse_str}"
+                                rel_str = f"{membro[2]} {membro[1]} {membro[3]} {const_str}{target}{inverse_str}"
 
                             elif membro[0] == 'relacao_interna_card_unica':
                                 link = membro[1]
                                 link_str = f"{link[0]} {link[1]} {link[2]}"
-                                rel_str = f"[{membro[2]}] {link_str} {const_str}{target}{inverse_str}"
+                                rel_str = f"{membro[2]} {link_str} {const_str}{target}{inverse_str}"
                             
                             elif membro[0] == 'relacao_interna_nomeada':
-                                 rel_str = f"({membro[1]}) [1] -- {membro[2]} -- [1] {const_str}{target}{inverse_str}"
+                                 rel_str = f"({membro[1]}) [1] {membro[2]} [1] {const_str}{target}{inverse_str}"
 
                             elif membro[0] == 'relacao_interna_sem_tag':
-                                 rel_str = f"[1] -- {membro[2]} -- [1] {const_str}{target}{inverse_str}"
+                                 rel_str = f"[1] {membro[2]} [1] {const_str}{target}{inverse_str}"
 
                             if rel_str:
                                 lista_relacoes.append(rel_str)
