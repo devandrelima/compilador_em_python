@@ -1,88 +1,7 @@
 import ply.lex as lex
-from pathlib import Path
-from tabulate import tabulate
-import json
 import re
-import os
 
-# Classificatios sao as classificacoes das palavras chaves a depender do seu
-# proposito na analise sintatica. Como temos as informacoes suficientes para
-# inferir no analisador lexico, passamos para o sintatico.
-classifications = {
-    'event': 'estereotipo_classe',
-    'situation': 'estereotipo_classe',
-    'process': 'estereotipo_classe',
-    'category': 'estereotipo_classe',
-    'mixin': 'estereotipo_classe',
-    'phaseMixin': 'estereotipo_classe',
-    'roleMixin': 'estereotipo_classe',
-    'historicalRoleMixin': 'estereotipo_classe',
-    'kind': 'estereotipo_classe',
-    'collective': 'estereotipo_classe',
-    'quantity': 'estereotipo_classe',
-    'quality': 'estereotipo_classe',
-    'mode': 'estereotipo_classe',
-    'intrisicMode': 'estereotipo_classe',
-    'extrinsicMode': 'estereotipo_classe',
-    'subkind': 'estereotipo_classe',
-    'phase': 'estereotipo_classe',
-    'role': 'estereotipo_classe',
-    'historicalRole': 'estereotipo_classe',
-
-    'material': 'estereotipo_relacao',
-    'derivation': 'estereotipo_relacao',
-    'comparative': 'estereotipo_relacao',
-    'mediation': 'estereotipo_relacao',
-    'characterization': 'estereotipo_relacao',
-    'externalDependence': 'estereotipo_relacao',
-    'componentOf': 'estereotipo_relacao',
-    'memberOf': 'estereotipo_relacao',
-    'subCollectionOf': 'estereotipo_relacao',
-    'subQualityOf': 'estereotipo_relacao',
-    'instantiation': 'estereotipo_relacao',
-    'termination': 'estereotipo_relacao',
-    'participational': 'estereotipo_relacao',
-    'participation': 'estereotipo_relacao',
-    'historicalDependence': 'estereotipo_relacao',
-    'creation': 'estereotipo_relacao',
-    'manifestation': 'estereotipo_relacao',
-    'bringsAbout': 'estereotipo_relacao',
-    'triggers': 'estereotipo_relacao',
-    'composition': 'estereotipo_relacao',
-    'aggregation': 'estereotipo_relacao',
-    'inherence': 'estereotipo_relacao',
-    'value': 'estereotipo_relacao',
-    'formal': 'estereotipo_relacao',
-    'constitution': 'estereotipo_relacao',
-
-    'genset': 'palavra_reservada',
-    'disjoint': 'palavra_reservada',
-    'complete': 'palavra_reservada',
-    'general': 'palavra_reservada',
-    'specifics': 'palavra_reservada',
-    'where': 'palavra_reservada',
-    'package': 'palavra_reservada',
-    'import': 'palavra_reservada',
-    'functional-complexes': 'palavra_reservada',
-    'specializes': 'palavra_reservada',
-
-    'number': 'dado_nativo',
-    'string': 'dado_nativo',
-    'boolean': 'dado_nativo',
-    'date': 'dado_nativo',
-    'time': 'dado_nativo',
-    'datetime': 'dado_nativo',
-
-    'ordered': 'meta_atributo',
-    'const': 'meta_atributo',
-    'derived': 'meta_atributo',
-    'subsets': 'meta_atributo',
-    'redefines': 'meta_atributo'
-}
-
-# palavras chave da linguagem, cujo valor dos tokens sao elas mesmas
 reserved = {
-    
     'import': 'import',
     'relator': 'relator',
     'specializes': 'specializes',
@@ -161,246 +80,86 @@ reserved = {
 
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
-    'ASSOCIATION', 'DOTDOT', 'CLASS_NAME', 'NEW_TYPE', 'ID', 'CLASS_ID',
-    'RELATION_ID', 'INSTANCE_ID', 'CARDINALITY', 'ERROR', 'NEWLINE', 'NUMBER', 'functional_complexes'
-] + list(reserved.values())
+    'ASSOCIATION', 'NEW_TYPE', 'CLASS_ID', 'RELATION_ID', 'INSTANCE_ID', 
+    'CARDINALITY', 'ERROR', 'functional_complexes', 'intrinsic_modes'
+] + list(set(reserved.values())) 
 
-# caracteres cujo valor sao eles mesmos e nao ha nenhum significado especial
-# como os tokens
 literals = ['(', ')', '{', '}', '.', ',', '+', '<', '>', '@', '-',
-            '*', ':']
+             '*', ':']
 
-t_DOTDOT = r'\.\.'
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
 t_ignore_CPP_COMMENT = r'//.*'
 
-
 def t_FUNCTIONAL_COMPLEXES(t):
     r'functional-complexes'
     t.type = 'functional_complexes'
-    t.value = {'value': t.value, 'type': classifications.get(
-        t.value, 'palavra_reservada')}
     return t
 
-
-def t_CARDINALITY(t):
-    r'\[[\d\*\.]+\]'
+def t_INTRINSIC_MODES(t):
+    r'intrinsic-modes'
+    t.type = 'intrinsic_modes'
     return t
-
-
-def t_NEW_TYPE(t):
-    r'[a-zA-Z]+DataType'
-    # trocamos o valor de t.value para carregar tambem a classificacao, pois
-    # apenas o t.value guarda valores customizados que serao lidos pelo
-    # analisador sintatico
-    t.value = {'value': t.value,
-               'type': classifications.get(t.value, 'new_type')}
-    return t
-
-
-def t_INSTANCE_ID(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*[0-9]'
-    t.type = reserved.get(t.value, 'INSTANCE_ID')
-    t.value = {'value': t.value,
-               'type': classifications.get(t.value, 'instancia')}
-    if (t.type == 'INSTANCE_ID'):
-        t.lexer.instance_set.add(t.value['value'])
-    return t
-
-
-def t_CLASS_ID(t):
-    r'[A-Z_][a-zA-Z_]*'
-    # para nao classificar palavras reservadas como class_id
-    t.type = reserved.get(t.value, 'CLASS_ID')
-    t.value = {'value': t.value,
-               'type': classifications.get(t.value, 'classe')}
-    if (t.type == 'CLASS_ID'):
-        t.lexer.class_set.add(t.value['value'])
-    return t
-
-
-def t_RELATION_ID(t):
-    r'[a-z_][a-zA-Z_]*'
-    t.type = reserved.get(t.value, 'RELATION_ID')
-    t.value = {'value': t.value,
-               'type': classifications.get(t.value, 'relacao')}
-    if (t.type == 'RELATION_ID'):
-        t.lexer.relation_set.add(t.value['value'])
-    return t
-
-
-def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*'
-    t.type = reserved.get(t.value, 'ID')
-    t.value = {'value': t.value, 'type': classifications.get(t.value, 'id')}
-    return t
-
-
-def t_NEWLINE(t):
-    r'\n+'
-    t.lexer.lineno += len(t.value)
-
-
-def t_NUMBER(t):
-    r'\d+'
-    t.value = {'value': int(
-        t.value), 'type': classifications.get(t.value, 'number')}
-    return t
-
 
 def t_COMPOSITION_L(t):
     r'<>--'
     return t
 
-
 def t_COMPOSITION_R(t):
     r'--<>'
     return t
-
 
 def t_COMPOSITION_LO(t):
     r'<o>--'
     return t
 
-
 def t_COMPOSITION_RO(t):
     r'--<o>'
     return t
-
 
 def t_ASSOCIATION(t):
     r'--'
     return t
 
+def t_CARDINALITY(t):
+    r'\[[\d\*\.]+\]' 
+    return t
+
+def t_NEW_TYPE(t):
+    r'[a-zA-Z]+DataType'
+    return t
+
+def t_INSTANCE_ID(t):
+    r'[a-zA-Z][a-zA-Z0-9_]*\d+' 
+    
+    t.type = 'INSTANCE_ID' 
+    return t
+
+def t_CLASS_ID(t):
+    r'[A-Z_][a-zA-Z0-9_]*'
+    t.type = reserved.get(t.value, 'CLASS_ID')
+    return t
+
+def t_RELATION_ID(t):
+    r'[a-z_][a-zA-Z0-9_]*'
+    t.type = reserved.get(t.value, 'RELATION_ID')
+    return t
+
+def t_NEWLINE(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
 
 def t_error(t):
     illegal_char = t.value[0]
-    print(f"Erro Léxico: Caractere '{
-          illegal_char}' não reconhecido na linha {t.lexer.lineno}")
-
+    print(f"Erro Léxico (Puro): Caractere '{illegal_char}' não reconhecido na linha {t.lexer.lineno}")
+    
     tok = lex.LexToken()
     tok.type = 'ERROR'
-    tok.value = {'value': illegal_char, 'type': 'error'}
+    tok.value = illegal_char
     tok.lineno = t.lexer.lineno
     tok.lexpos = t.lexer.lexpos
-
+    
     t.lexer.skip(1)
-    return tok
-
+    return tok 
 
 lexer = lex.lex(reflags=re.UNICODE)
-lexer.class_set = set()
-lexer.relation_set = set()
-lexer.instance_set = set()
-
-classification_count = {}
-
-
-def main_analyser(caminho_codigo_fonte: Path, code_example: str):
-    token_list = get_token_list(code_example)
-    print_token_list(token_list)
-
-    classification_count_list = get_classification_count()
-    print(tabulate(classification_count_list, headers="keys", tablefmt="grid"))
-
-    export_to_json(caminho_codigo_fonte, token_list, classification_count_list)
-
-    return token_list
-
-
-def get_token_list(code_example):
-    lexer.input(code_example)
-    token_list = []
-    count = 1
-
-    while True:
-        tok = lexer.token()
-
-        if not tok:
-            break
-        val, classification = count_classifications(tok)
-
-        last_newline = code_example.rfind('\n', 0, tok.lexpos)
-        column = (tok.lexpos - last_newline)
-
-        token_list.append({
-            'id': count,
-            'value': val,
-            'type': tok.type,
-            'line': tok.lineno,
-            'column': column,
-            'classification': classification
-        })
-        count += 1
-
-    return token_list
-
-
-def print_token_list(token_list):
-    print("Análise Léxica concluída")
-    print("\n--- Tabela de Tokens ---")
-    print(tabulate(token_list, headers="keys", tablefmt="grid"))
-
-
-def get_classification_count():
-    classification_count_list = []
-
-    for key, value in classification_count.items():
-        classification_count_list.append(
-            {'classification': key, 'quantity': value['contador']})
-
-    return classification_count_list
-
-def count_classifications(tok):
-    """
-    Conta todas as ocorrências de cada classificaçãO
-    """
-    val = tok.value
-    classification = ''
-    
-    if isinstance(tok.value, dict):
-        val = tok.value['value']
-        classification = tok.value['type']
-        
-        if classification in classification_count:
-            classification_count[classification]['contador'] += 1
-
-        else:
-            classification_count[classification] = {
-                'contador': 1
-            }
-            
-    return val, classification
-
-
-def export_to_json(caminho_codigo_fonte, token_list, type_count_list):
-    """
-    Exporta tokens e contagem de classificacoes para json no diretorio
-    lexico_analyzer/exports com arquivo com nome do exemplo escolhido
-    """
-    # Nome do arquivo antigo, trocando a extensao por .json
-    output_filename = ".".join(
-        caminho_codigo_fonte.name.split(".")[:-1]) + ".json"
-    output_dir = "lexico_analyzer/exports"
-    output_filepath = os.path.join(output_dir, output_filename)
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    try:
-        with open(output_filepath, 'w', encoding='utf-8') as json_file:
-            """
-            json.dump() escreve a lista de dicionários diretamente no arquivo
-            indent=4 formata o JSON para ficar legível (pretty-print)
-            ensure_ascii=False garante que caracteres como 'ç' ou 'ã' sejam
-            salvos corretamente
-            """
-            json.dump({
-                "tokens": token_list,
-                "count": type_count_list,
-            }, json_file, indent=4, ensure_ascii=False)
-
-        print(f"\nTabela de tokens salva com sucesso em: {output_filename}")
-
-    except IOError as e:
-        print(f"\nERRO ao salvar o arquivo JSON: {e}")

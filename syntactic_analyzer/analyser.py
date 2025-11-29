@@ -1,6 +1,6 @@
 import ply.yacc as yacc
 import os  
-from lexico_analyzer.lexer_puro import tokens, lexer
+from lexico_analyzer.analyzer import tokens, lexer
 from tabulate import tabulate
 
 erros_sintaticos = []
@@ -345,7 +345,7 @@ def p_declaracao_relacao_interna(p):
     else:
         # Fallback seguro
         p[0] = ('relacao_desconhecida',)
-        
+
 def p_link_nomeado(p):
     '''link_nomeado : ASSOCIATION RELATION_ID ASSOCIATION
                     | COMPOSITION_L RELATION_ID ASSOCIATION

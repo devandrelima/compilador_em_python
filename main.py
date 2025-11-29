@@ -1,5 +1,5 @@
 from pathlib import Path
-from lexico_analyzer.analyzer import main_analyser
+from lexico_analyzer.lexical_counter import main_analyser
 from syntactic_analyzer.analyser import analisar_sintaxe
 
 def importar_codigo(caminho_codigo_fonte):
