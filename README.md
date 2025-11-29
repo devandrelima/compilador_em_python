@@ -34,8 +34,8 @@ COMPILADOR_EM_PYTHON/
 │
 ├── lexico_analyzer/
 │   ├── __init__.py
-│   ├── analyzer.py   (Léxico para relatórios/JSON)
-│   ├── lexer_puro.py (Léxico otimizado para o sintático)
+│   ├── lexical_counter.py   (Léxico para relatórios/JSON)
+│   ├── analyzer.py (Léxico otimizado para o sintático)
 │   ├── exports/      (arquivos .json exportados)
 │   └── __pycache__/  (arquivos de cache, desconsiderar)
 │
