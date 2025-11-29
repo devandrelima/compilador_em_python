@@ -309,42 +309,43 @@ def p_relation_constraint_opt(p):
         p[0] = None
 
 def p_declaracao_relacao_interna(p):
-    '''declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
-                                  | '@' estereotipo_relacao link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
-                                  | link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
-                                  | CARDINALITY link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
-                                  | '@' estereotipo_relacao CARDINALITY link_nomeado CARDINALITY relation_constraint_opt class_ref inverse_opt
-                                  | CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
-                                  | '@' estereotipo_relacao relation_constraint_opt CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
-                                  | relation_constraint_opt CARDINALITY simbolo_associacao CARDINALITY relation_constraint_opt class_ref inverse_opt
-                                  | CARDINALITY link_nomeado relation_constraint_opt class_ref inverse_opt'''
+    """declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY class_ref inverse_opt
+                                  | '@' estereotipo_relacao link_nomeado CARDINALITY class_ref inverse_opt
+                                  | link_nomeado CARDINALITY class_ref inverse_opt
+                                  | CARDINALITY link_nomeado CARDINALITY class_ref inverse_opt
+                                  | '@' estereotipo_relacao CARDINALITY link_nomeado CARDINALITY class_ref inverse_opt
+                                  | CARDINALITY simbolo_associacao CARDINALITY class_ref inverse_opt"""
     
-    if len(p) == 10:
-        if p[1] == '@':
-             p[0] = ('relacao_interna', p[2], p[4], p[5], p[6], p[3], p[8], p[9])
-    
-    elif len(p) == 9:
-        if p[1] == '@':
-            if isinstance(p[4], tuple) == False and p[4] in ['--', '<>--', '--<>', '<o>--', '--<o>']:
-                 p[0] = ('relacao_interna', p[2], p[3], p[4], p[5], None, p[6], p[7], p[8])
-            else:
-                 p[0] = ('relacao_interna_tag_full', p[2], p[4], p[3], p[5], p[6], p[7], p[8])
+    # Caso 1: @stereo [1] -- [1] Class (7 elementos)
+    if len(p) == 8 and p[1] == '@':
+        p[0] = ('relacao_interna_padrao', p[2], p[3], p[4], p[5], p[6])
 
-    elif len(p) == 8:
-        if isinstance(p[1], str) and p[1] != '@': 
-             p[0] = ('relacao_interna', None, p[2], p[3], p[4], p[1], p[6], p[7])
-        else:
-             p[0] = ('relacao_interna_nomeada', p[2], p[3], p[4], p[5], p[6], p[7])
+    # Caso 2: @stereo --link-- [1] Class (7 elementos - Link Nomeado)
+    # Atenção: p[3] é o link (tupla)
+    elif len(p) == 7 and p[1] == '@' and isinstance(p[3], tuple):
+         p[0] = ('relacao_interna_tag_link', p[2], p[3], p[4], p[5])
     
-    elif len(p) == 7:
-        if isinstance(p[2], tuple): 
-             p[0] = ('relacao_interna_full_sem_tag', p[2], p[1], p[3], p[4], p[5], p[6])
-        else:
-             p[0] = ('relacao_interna_simbolo_full', p[2], p[1], p[3], p[4], p[5], p[6])
+    # Caso 3: --link-- [1] Class (5 elementos)
+    # Não tem @, não tem card inicial.
+    elif len(p) == 5 and isinstance(p[1], tuple):
+         p[0] = ('relacao_interna_link_simples', p[1], p[2], p[3])
+
+    # Caso 4: [1] --link-- [1] Class (6 elementos)
+    elif len(p) == 6 and isinstance(p[2], tuple):
+         p[0] = ('relacao_interna_link_duplo', p[1], p[2], p[3], p[4])
     
+    # Caso 5: @stereo [1] --link-- [1] Class (8 elementos)
+    elif len(p) == 8 and p[1] == '@' and isinstance(p[4], tuple):
+        p[0] = ('relacao_interna_tag_link_duplo', p[2], p[3], p[4], p[5], p[6])
+
+    # Caso 6: [1] -- [1] Class (6 elementos - Simbolo normal)
     elif len(p) == 6:
-        p[0] = ('relacao_interna_card_unica', p[2], p[1], p[3], p[4], p[5])
-
+         p[0] = ('relacao_interna_sem_tag', p[1], p[2], p[3], p[4])
+    
+    else:
+        # Fallback seguro
+        p[0] = ('relacao_desconhecida',)
+        
 def p_link_nomeado(p):
     '''link_nomeado : ASSOCIATION RELATION_ID ASSOCIATION
                     | COMPOSITION_L RELATION_ID ASSOCIATION
@@ -690,34 +691,40 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                             const_str = f" {constraint}" if constraint else ""
                             
                             rel_str = ""
-                            if membro[0] == 'relacao_interna':
-                                stereo_str = f"({membro[1]}) " if membro[1] else ""
-                                const_init = f"{membro[5]} " if len(membro) == 8 and membro[5] else ""
-                                rel_str = f"{stereo_str}{const_init}{membro[2]} {membro[3]} {membro[4]} {const_str}{target}{inverse_str}"
+                            if membro[0] == 'relacao_interna_padrao':
+                                # @stereo [1] -- [1] Class
+                                rel_str = f"({membro[1]}) {membro[2]} {membro[3]} {membro[4]} {membro[5]}"
 
-                            elif membro[0] == 'relacao_interna_tag_full':
+                            elif membro[0] == 'relacao_interna_tag_link':
+                                # @stereo --link-- [1] Class (SEM CARD INICIAL)
                                 link = membro[2] 
                                 link_str = f"{link[0]} {link[1]} {link[2]}"
-                                rel_str = f"({membro[1]}) {membro[3]} {link_str} {membro[4]} {const_str}{target}{inverse_str}"
+                                rel_str = f"({membro[1]}) {link_str} {membro[3]} {membro[4]}"
 
-                            elif membro[0] == 'relacao_interna_full_sem_tag':
+                            elif membro[0] == 'relacao_interna_link_simples':
+                                # --link-- [1] Class
                                 link = membro[1]
                                 link_str = f"{link[0]} {link[1]} {link[2]}"
-                                rel_str = f"{membro[2]} {link_str} {membro[3]} {const_str}{target}{inverse_str}"
-
-                            elif membro[0] == 'relacao_interna_simbolo_full':
-                                rel_str = f"{membro[2]} {membro[1]} {membro[3]} {const_str}{target}{inverse_str}"
-
-                            elif membro[0] == 'relacao_interna_card_unica':
-                                link = membro[1]
-                                link_str = f"{link[0]} {link[1]} {link[2]}"
-                                rel_str = f"{membro[2]} {link_str} {const_str}{target}{inverse_str}"
+                                rel_str = f"{link_str} {membro[2]} {membro[3]}"
                             
-                            elif membro[0] == 'relacao_interna_nomeada':
-                                 rel_str = f"({membro[1]}) [1] {membro[2]} [1] {const_str}{target}{inverse_str}"
+                            elif membro[0] == 'relacao_interna_link_duplo':
+                                # [1] --link-- [1] Class
+                                link = membro[2]
+                                link_str = f"{link[0]} {link[1]} {link[2]}"
+                                rel_str = f"{membro[1]} {link_str} {membro[3]} {membro[4]}"
 
+                            elif membro[0] == 'relacao_interna_tag_link_duplo':
+                                # @stereo [1] --link-- [1] Class
+                                link = membro[3]
+                                link_str = f"{link[0]} {link[1]} {link[2]}"
+                                rel_str = f"({membro[1]}) {membro[2]} {link_str} {membro[4]} {membro[5]}"
+                                
                             elif membro[0] == 'relacao_interna_sem_tag':
-                                 rel_str = f"[1] {membro[2]} [1] {const_str}{target}{inverse_str}"
+                                # [1] -- [1] Class
+                                rel_str = f"{membro[1]} {membro[2]} {membro[3]} {membro[4]}"
+                            
+                            else: # Fallback para compatibilidade
+                                rel_str = "Relacao complexa"
 
                             if rel_str:
                                 lista_relacoes.append(rel_str)
