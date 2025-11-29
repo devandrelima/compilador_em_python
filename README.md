@@ -21,31 +21,33 @@
 ### <a name="organizacao-das-pastas"></a> Organização das pastas
 
 ```
-COMPILADOR\_EM\_PYTHON/
+COMPILADOR_EM_PYTHON/
 │
 ├── .gitignore
 ├── main.py
 ├── README.md
 │
-├── images_documentation
-│   ├── exemplos\_enumerados.png
+├── images_documentation/
+│   ├── exemplos_enumerados.png
+│   ├── exercutando_codigo_ide_vs_code.png
 │   └──...todas as imagens utilizadas na documentação
 │
-├── lexico_analyzer
-│   ├── init.py
-│   ├── lexical_counter.py (Léxico para relatórios/JSON)
-│   ├── analyzer.py (Léxico otimizado para o sintático)
+├── lexico_analyzer/
+│   ├── __init__.py
+│   ├── analyzer.py   (Léxico para relatórios/JSON)
+│   ├── lexer_puro.py (Léxico otimizado para o sintático)
 │   ├── exports/      (arquivos .json exportados)
-│   └── pycache/  (arquivos de cache, desconsiderar)
+│   └── __pycache__/  (arquivos de cache, desconsiderar)
 │
-├── syntactic_analyzer
-│   ├── init.py
+├── syntactic_analyzer/
+│   ├── __init__.py
 │   ├── analyser.py   (Lógica do Analisador Sintático)
-│   ├── parsetab.py   (Tabela de parser gerada pelo PLY)
+│   ├── parser.out    (Log de depuração da gramática gerado pelo PLY)
+│   ├── parsetab.py   (Tabela de otimização do parser gerada pelo PLY)
 │   ├── exports/      (relatórios .txt exportados)
-│   └── pycache/  (arquivos de cache, desconsiderar)
+│   └── __pycache__/  (arquivos de cache, desconsiderar)
 │
-└── tonto_examples
+└── tonto_examples/
     ├── alergiaalimentar.tonto
     ├── car.tonto
     └── ...todos os exemplos utilizados no código
@@ -87,6 +89,7 @@ COMPILADOR\_EM\_PYTHON/
       * `__init__.py`: Arquivo que torna o diretório um módulo Python importável.
       * `analyser.py`: Contém as regras gramaticais da linguagem TONTO implementadas. Ele valida a estrutura do código, detecta erros de sintaxe e gera os relatórios estruturais.
       * `parsetab.py`: Arquivo de cache gerado automaticamente pelo PLY para otimizar a execução da gramática. Pode ser excluído e regenerado automaticamente.
+      * `parser.out`: Arquivo de log gerado automaticamente pelo PLY em modo de depuração. Ele detalha os estados do autômato e conflitos da gramática, útil para desenvolvimento.
       * `exports/`: Pasta onde são salvos os relatórios de análise sintática (arquivos `.txt`), contendo tabelas detalhadas das estruturas encontradas e relatórios de erros.
 
   * `tonto_examples/` (Diretório)
