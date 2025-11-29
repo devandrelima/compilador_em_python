@@ -519,7 +519,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
 
     tabela_dados = []
     
-    print(f"\n--- Iniciando Análise do Pacote: {pacote} ---\n")
+    print(f"\n=== Análise sintática do pacote: {pacote} ===\n")
     
     if declaracoes:
         for decl in declaracoes:
@@ -750,14 +750,14 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
 
     relatorio_erros = ""
     if erros_sintaticos:
-        relatorio_erros = "\n\n=== RELATÓRIO DE ERROS ===\n"
+        relatorio_erros = "\n\n=== Relatório de Erros ===\n"
         for i, erro in enumerate(erros_sintaticos, 1):
             relatorio_erros += f"{i}. {erro}\n"
     else:
         relatorio_erros = "\n\n=== Nenhum erro sintático encontrado. ===\n"
 
     print(tabela_string_det)
-    print("\n=== TABELA DE SÍNTESE ===")
+    print("\n=== Tabela de Contagens ===")
     print(tabela_string_sum)
     print(relatorio_erros)
     
@@ -769,14 +769,14 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     
     try:
         with open(caminho_completo, "w", encoding="utf-8") as f:
-            f.write(f"ANÁLISE DO PACOTE: {pacote}\n\n")
-            f.write("=== 1. VISUALIZAÇÃO DETALHADA ===\n")
+            f.write(f"Análise sintática do pacote: {pacote}\n\n")
+            f.write("=== Visualização detalhada ===\n")
             f.write(tabela_string_det)
-            f.write("\n\n=== 2. TABELA DE SÍNTESE ===\n")
+            f.write("\n\n=== Tabela de Contagens ===\n")
             f.write(tabela_string_sum)
             f.write(relatorio_erros)
 
-        print(f"\n[INFO] Análise completa salva em: {caminho_completo}")
+        print(f"\nAnálise completa salva em: {caminho_completo}")
 
     except Exception as e:
         print(f"\n[ERRO] Não foi possível salvar o arquivo: {e}")

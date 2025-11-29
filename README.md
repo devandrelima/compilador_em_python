@@ -21,24 +21,31 @@
 ### <a name="organizacao-das-pastas"></a> Organização das pastas
 
 ```
-COMPILADOR_EM_PYTHON/
+COMPILADOR\_EM\_PYTHON/
 │
 ├── .gitignore
 ├── main.py
 ├── README.md
 │
-├── images_documentation/
-│   ├── exemplos_enumerados.png
-│   ├── exercutando_codigo_ide_vs_code.png
+├── images_documentation
+│   ├── exemplos\_enumerados.png
 │   └──...todas as imagens utilizadas na documentação
 │
-├── lexico_analyzer/
-│   ├── __init__.py
-│   ├── analyzer.py
-│   ├── exports/ (arquivos json exportados)
-│   └── pycache/ (arquivos de cache, por favor, desconsiderar)
+├── lexico_analyzer
+│   ├── init.py
+│   ├── lexical_counter.py (Léxico para relatórios/JSON)
+│   ├── analyzer.py (Léxico otimizado para o sintático)
+│   ├── exports/      (arquivos .json exportados)
+│   └── pycache/  (arquivos de cache, desconsiderar)
 │
-└── tonto_examples/
+├── syntactic_analyzer
+│   ├── init.py
+│   ├── analyser.py   (Lógica do Analisador Sintático)
+│   ├── parsetab.py   (Tabela de parser gerada pelo PLY)
+│   ├── exports/      (relatórios .txt exportados)
+│   └── pycache/  (arquivos de cache, desconsiderar)
+│
+└── tonto_examples
     ├── alergiaalimentar.tonto
     ├── car.tonto
     └── ...todos os exemplos utilizados no código
@@ -69,14 +76,23 @@ COMPILADOR_EM_PYTHON/
 
       * Este é um pacote Python que encapsula toda a lógica do **Analisador Léxico**.
       * `__init__.py`: Este arquivo, mesmo que vazio, sinaliza ao Python que o diretório 'lexico_analyzer' pode ser importado como um módulo. É o que permite que o 'main.py' execute 'from lexico_analyzer.analyzer import main_analyser'.
-      * `analyzer.py`: Contém todo o código-fonte do analisador léxico, construído com a biblioteca PLY. Ele define os tokens, as regras de reconhecimento e a função principal que processa um arquivo '.tonto'.
+      * `analyzer.py`: Contém todo o código-fonte do analisador léxico, construído com a biblioteca PLY. Ele define os tokens, as regras de reconhecimento e a função principal que processa um arquivo '.tonto', ela quem é usada do analisador sintático.
+      * `lexical_counter.py`: Contém a análise léxica responsável pela contagens e classificação de tokens, ela é a versão feita na Unidade 1 da matéria de compiladores, mas que a partir da Unidade 2 funciona mais como um classificador e contador.
       * `exports/`: Uma pasta que irá conter os arquivos json exportados para quando um arquivo .tonto é analisado pelo analisador léxico.
       * `pycache/`: Uma pasta gerada automaticamente pelo Python. Ela armazena versões compiladas (bytecode) do código '.pyc' para acelerar a inicialização do programa. Esta pasta pode ser ignorada e excluída com segurança.
+  
+  * `syntactic_analyzer/` (Diretório)
+
+      * Este é um pacote Python que encapsula toda a lógica do Analisador Sintático.
+      * `__init__.py`: Arquivo que torna o diretório um módulo Python importável.
+      * `analyser.py`: Contém as regras gramaticais da linguagem TONTO implementadas. Ele valida a estrutura do código, detecta erros de sintaxe e gera os relatórios estruturais.
+      * `parsetab.py`: Arquivo de cache gerado automaticamente pelo PLY para otimizar a execução da gramática. Pode ser excluído e regenerado automaticamente.
+      * `exports/`: Pasta onde são salvos os relatórios de análise sintática (arquivos `.txt`), contendo tabelas detalhadas das estruturas encontradas e relatórios de erros.
 
   * `tonto_examples/` (Diretório)
 
-      * Este diretório armazena todos os arquivos de código-fonte na linguagem **Tonto** que servem como exemplos e casos de teste para o compilador.
-      * `alergiaalimentar.tonto`, `car.tonto`, `carRentail.tonto`, entre outros arquivos '.tonto': Cada um desses arquivos pode ser lido pelo `main.py` para testar o funcionamento do analisador léxico.
+      * Este diretório armazena todos os arquivos de código-fonte na linguagem Tonto que servem como exemplos e casos de teste para o compilador.
+      * `alergiaalimentar.tonto`, `car.tonto`, `carRentail.tonto`, entre outros arquivos '.tonto': Cada um desses arquivos pode ser lido pelo `main.py` para testar o funcionamento do analisador léxico e sintático.
 
 # <a name="instalacoes-necessarias"></a> **Instalações necessárias para executar o projeto**:
 
@@ -164,11 +180,15 @@ Para executar o compilador no exemplo escolhido basta digitar o respectivo núme
     - Classificação conforme o que foi dado no arquivo (classes, relações, palavras-chave, indivíduos (instâncias, se houver), 
 palavras reservadas e meta-atributos)
 
-- Tabela de contagem das classificações.
+- Tabela de contagem das classificações,
+- Tabela sintática mostrando as relaçõe,
+- Tabela de contagem de classificações sintáticas, 
 
 ![exemplos_tabela_tokens](./images_documentation/saida_tabela_tokens.png)
 
 ![exemplos_contagem_classificacao](./images_documentation/tabela_contagem_classificacao.png)
+
+![exemplos_classificacao_sintatico](./images_documentation/saida_sintatico.png)
 
 - Arquivo json no diretório lexico_analyzer/exports/
 
@@ -176,6 +196,12 @@ palavras reservadas e meta-atributos)
 ![exemplos_tabela_tokens_json](./images_documentation/json_tabela_tokens.png)
 
 ![exemplos_contagem_classificacao_json](./images_documentation/json_parte_das_contagens.png)
+
+
+- Arquivo txt no diretório syntatic_analyzer/exports/
+
+
+![exemplos_contagem_sintatico](./images_documentation/export_sintatico.png)
 
 # <a name="apresentacao"></a> Apresentação 1 no youtube (Analizador Léxico)
 

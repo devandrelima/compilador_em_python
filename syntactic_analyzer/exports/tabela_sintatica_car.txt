@@ -1,6 +1,6 @@
-ANÁLISE DO PACOTE: CarOwnership
+Análise sintática do pacote: CarOwnership
 
-=== 1. VISUALIZAÇÃO DETALHADA ===
+=== Visualização detalhada ===
 +-------------------+---------------+-------------+-----------------------------------------------+---------------------------+
 | Classe/Entidade   | Estereótipo   | Atributos   | Relações                                      | Detalhes                  |
 +===================+===============+=============+===============================================+===========================+
@@ -14,7 +14,7 @@ ANÁLISE DO PACOTE: CarOwnership
 |                   |               |             | (mediation) -- involvesProperty -- [1] Car    |                           |
 +-------------------+---------------+-------------+-----------------------------------------------+---------------------------+
 
-=== 2. TABELA DE SÍNTESE ===
+=== Tabela de Contagens ===
 +-------------------+--------------+
 | Pacote            | CarOwnership |
 +-------------------+--------------+
