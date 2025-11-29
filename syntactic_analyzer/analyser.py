@@ -522,8 +522,7 @@ def p_error(p):
         erros_sintaticos.append("Erro Sintático: Fim inesperado do arquivo! (Verifique se fechou todos os blocos com '}')")
         print("Erro Sintático: Fim inesperado do arquivo!")
 
-# Constrói o analisador sintático (Parser)
-parser = yacc.yacc(debug=False)
+parser = yacc.yacc(debug=False) # Constrói o analisador sintático
 
 def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tonto"):
     """
@@ -550,11 +549,13 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     }
 
     pacote = "Desconhecido"
+
     if resultado and resultado[2]:
         pacote = resultado[2][1]
         stats['pacote'] = pacote
 
     declaracoes = []
+    
     if resultado and resultado[3]:
         declaracoes = resultado[3]
 
@@ -563,9 +564,9 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     print(f"\n=== Análise sintática do pacote: {pacote} ===\n")
     
     if declaracoes:
+    
         for decl in declaracoes:
             tipo_decl = decl[0]
-            
             nome_classe = None
             estereotipo = None
             lista_atributos = []
@@ -580,12 +581,16 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                     nome_classe = decl[2]
                     estereotipo = decl[1]
                     corpo = decl[3]
+                
                 elif tipo_decl == 'classe_com_corpo_e_heranca':
                     nome_classe = decl[2]
                     estereotipo = decl[1]
+                
                     pais = ", ".join(decl[3]) if isinstance(decl[3], list) else decl[3]
+                
                     corpo = decl[4]
                     detalhes = f"Specializes: {pais}"
+                
                 elif tipo_decl == 'classe_subtipo_complexo_com_corpo':
                     nome_classe = decl[2]
                     estereotipo = decl[1]
@@ -593,6 +598,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                     pais = ", ".join(decl[4]) if isinstance(decl[4], list) else decl[4]
                     corpo = decl[5]
                     detalhes = f"of {tipo_complexo}\nSpecializes: {pais}"
+                
                 elif tipo_decl == 'classe_subtipo_complexo':
                     nome_classe = decl[2]
                     estereotipo = decl[1]
@@ -601,13 +607,16 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                     detalhes = f"of {tipo_complexo}\nSpecializes: {pais}"
                     stats['classes_por_pacote'].append(nome_classe)
                     tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+                
                     continue
+                
                 elif tipo_decl == 'classe_complexa_com_corpo':
                     nome_classe = decl[2]
                     estereotipo = decl[1]
                     tipo_complexo = decl[3]
                     corpo = decl[4]
                     detalhes = f"of {tipo_complexo}"
+                
                 elif tipo_decl == 'classe_complexa_simples':
                     nome_classe = decl[2]
                     estereotipo = decl[1]
@@ -615,7 +624,9 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                     detalhes = f"of {tipo_complexo}"
                     stats['classes_por_pacote'].append(nome_classe)
                     tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+                
                     continue
+
                 elif tipo_decl == 'classe_especializada_simples':
                     nome_classe = decl[2]
                     estereotipo = decl[1]
@@ -623,10 +634,13 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                     detalhes = f"Specializes: {pais}"
                     stats['classes_por_pacote'].append(nome_classe)
                     tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+                
                     continue
+                
                 elif tipo_decl == 'classe_simples':
                     stats['classes_por_pacote'].append(decl[2])
                     tabela_dados.append([decl[2], decl[1], "-", "-", "-"])
+                
                     continue
                 
                 if nome_classe:
@@ -634,11 +648,13 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
 
             elif tipo_decl.startswith('datatype'):
                 stats['qtd_datatypes'] += 1
+                
                 if tipo_decl == 'datatype':
                     nome_classe = decl[1]
                     estereotipo = "datatype"
                     corpo = decl[2]
                     local_atributos = []
+                
                     if corpo:
                         for membro in corpo:
                             if membro[0] == 'atributo':
@@ -646,14 +662,17 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                                 meta = f" {{ {membro[4]} }}" if membro[4] else ""
                                 attr_str = f"{membro[1]} : {membro[2]}{card}{meta}"
                                 local_atributos.append(attr_str)
+                
                     atributos_formatados = "\n".join(local_atributos) if local_atributos else "-"
                     tabela_dados.append([nome_classe, estereotipo, atributos_formatados, "-", "-"])
+                
                 elif tipo_decl == 'datatype_specialized':
                     nome_classe = decl[1]
                     estereotipo = "datatype"
                     pais = decl[2]
                     detalhes = f"Specializes: {pais}"
                     tabela_dados.append([nome_classe, estereotipo, "-", "-", detalhes])
+                
                 continue
 
             elif tipo_decl == 'enum':
@@ -662,6 +681,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 valores = decl[2]
                 valores_formatados = ", ".join(valores) if isinstance(valores, list) else str(valores)
                 tabela_dados.append([nome_enum, "enum", valores_formatados, "-", "-"])
+                
                 continue
 
             elif tipo_decl.startswith('relacao_externa'):
@@ -674,30 +694,37 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 inverse = decl[7] 
                 
                 detalhes_str = "-"
+                
                 if inverse:
                     detalhes_str = f"Specializes: {inverse}"
                 
                 tag_display = f"relation ({estereotipo})" if estereotipo else "relation"
                 
                 relacao_str = ""
+                
                 if tipo_decl == 'relacao_externa':
                      relacao_str = f"{card_origem} {decl[4]} {card_destino} {alvo}"
+                
                 elif tipo_decl == 'relacao_externa_link':
                      link = decl[4]
                      link_str = f"{link[0]} {link[1]} {link[2]}"
                      relacao_str = f"({tag_display}) {card_origem} {link_str} {card_destino} {alvo}"
+                
                 elif tipo_decl == 'relacao_externa_sem_tag':
                      relacao_str = f"{card_origem} {decl[4]} {card_destino} {alvo}"
+                
                 elif tipo_decl == 'relacao_externa_sem_tag_link':
                      link = decl[4]
                      link_str = f"{link[0]} {link[1]} {link[2]}"
                      relacao_str = f"{card_origem} {link_str} {card_destino} {alvo}"
 
                 tabela_dados.append([nome_relacao, tag_display, "-", relacao_str, detalhes_str])
+                
                 continue
 
             elif tipo_decl.startswith('genset'):
                 stats['qtd_gensets'] += 1
+                
                 if tipo_decl == 'genset_completo' or tipo_decl == 'genset_where':
                     modifiers = decl[1]
                     name = decl[2]
@@ -706,12 +733,15 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                     specifics = ", ".join(specifics_raw) if isinstance(specifics_raw, list) else str(specifics_raw)
                     
                     mods_str = ""
+                
                     if isinstance(modifiers, tuple):
                         mods_str = " ".join(modifiers)
+                
                     elif modifiers:
                         mods_str = str(modifiers)
                     tipo_genset = f"{mods_str} genset".strip()
                     tabela_dados.append([f"{name}", tipo_genset, "-", "-", f"General: {general} \nSpecifics: {specifics}"])
+                
                 continue
 
             if nome_classe:
@@ -721,7 +751,9 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                             card = f" {membro[3]}" if membro[3] else ""
                             meta = f" {{ {membro[4]} }}" if membro[4] else ""
                             attr_str = f"{membro[1]} : {membro[2]}{card}{meta}"
+                        
                             lista_atributos.append(attr_str)
+                        
                         elif membro[0].startswith('relacao_interna'):
                             stats['qtd_relacoes_internas'] += 1
                             
@@ -732,47 +764,44 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                             const_str = f" {constraint}" if constraint else ""
                             
                             rel_str = ""
+                        
                             if membro[0] == 'relacao_interna_padrao':
-                                # @stereo [1] -- [1] Class
                                 rel_str = f"({membro[1]}) {membro[2]} {membro[3]} {membro[4]} {membro[5]}"
 
                             elif membro[0] == 'relacao_interna_tag_link':
-                                # @stereo --link-- [1] Class (SEM CARD INICIAL)
                                 link = membro[2] 
                                 link_str = f"{link[0]} {link[1]} {link[2]}"
                                 rel_str = f"({membro[1]}) {link_str} {membro[3]} {membro[4]}"
 
                             elif membro[0] == 'relacao_interna_link_simples':
-                                # --link-- [1] Class
                                 link = membro[1]
                                 link_str = f"{link[0]} {link[1]} {link[2]}"
                                 rel_str = f"{link_str} {membro[2]} {membro[3]}"
                             
                             elif membro[0] == 'relacao_interna_link_duplo':
-                                # [1] --link-- [1] Class
                                 link = membro[2]
                                 link_str = f"{link[0]} {link[1]} {link[2]}"
                                 rel_str = f"{membro[1]} {link_str} {membro[3]} {membro[4]}"
 
                             elif membro[0] == 'relacao_interna_tag_link_duplo':
-                                # @stereo [1] --link-- [1] Class
                                 link = membro[3]
                                 link_str = f"{link[0]} {link[1]} {link[2]}"
                                 rel_str = f"({membro[1]}) {membro[2]} {link_str} {membro[4]} {membro[5]}"
                                 
                             elif membro[0] == 'relacao_interna_sem_tag':
-                                # [1] -- [1] Class
                                 rel_str = f"{membro[1]} {membro[2]} {membro[3]} {membro[4]}"
                             
-                            else: # Fallback para compatibilidade
+                            else:
                                 rel_str = "Relacao complexa"
 
                             if rel_str:
                                 lista_relacoes.append(rel_str)
 
+
                 atributos_formatados = "\n".join(lista_atributos) if lista_atributos else "-"
                 relacoes_formatadas = "\n".join(lista_relacoes) if lista_relacoes else "-"
                 tabela_dados.append([nome_classe, estereotipo, atributos_formatados, relacoes_formatadas, detalhes])
+
 
     headers_det = ["Classe/Entidade", "Estereótipo", "Atributos", "Relações", "Detalhes"]
     tabela_string_det = tabulate(tabela_dados, headers=headers_det, tablefmt="grid")
@@ -792,6 +821,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     relatorio_erros = ""
     if erros_sintaticos:
         relatorio_erros = "\n\n=== Relatório de Erros ===\n"
+
         for i, erro in enumerate(erros_sintaticos, 1):
             relatorio_erros += f"{i}. {erro}\n"
     else:
@@ -805,6 +835,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     diretorio_atual = os.path.dirname(__file__)  
     pasta_exports = os.path.join(diretorio_atual, 'exports')
     os.makedirs(pasta_exports, exist_ok=True)
+
     nome_arquivo_saida = f"tabela_sintatica_{nome_arquivo_origem}.txt"
     caminho_completo = os.path.join(pasta_exports, nome_arquivo_saida)
     
