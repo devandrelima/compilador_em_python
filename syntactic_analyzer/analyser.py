@@ -3,35 +3,41 @@ import os
 from lexico_analyzer.analyzer import tokens, lexer
 from tabulate import tabulate
 
-erros_sintaticos = []
+erros_sintaticos = [] # Lista global para acumular erros de sintaxe encontrados durante a análise
 
 def p_programa(p):
+    # Regra Raiz: Um programa é composto por imports, um pacote e declarações
     'programa : lista_imports_opt declaracao_pacote lista_declaracoes_opt'
     p[0] = ('programa', p[1], p[2], p[3])
 
 def p_lista_imports_opt(p):
+    # Define que a lista de imports é opcional (pode ser uma lista ou vazio)
     '''lista_imports_opt : lista_imports
                          | empty'''
     p[0] = p[1]
 
 def p_lista_imports(p):
+    # Faz com que possa ter múltiplos imports em sequência
     '''lista_imports : declaracao_import lista_imports
                      | declaracao_import'''
     if len(p) == 3:
-        p[0] = [p[1]] + p[2]
+        p[0] = [p[1]] + p[2] 
     else:
-        p[0] = [p[1]]
+        p[0] = [p[1]] 
 
 def p_declaracao_import(p):
+    # Define a sintaxe de um import: palavra-chave 'import' seguida de um ID de classe
     'declaracao_import : import CLASS_ID'
     p[0] = ('import', p[2])
 
 def p_lista_declaracoes_opt(p):
+    # Define que a lista de declarações do corpo do programa é opcional
     '''lista_declaracoes_opt : lista_declaracoes
                              | empty'''
     p[0] = p[1]
 
 def p_lista_declaracoes(p):
+    # Permite múltiplas declarações (classes, enums, etc.) em sequência
     '''lista_declaracoes : declaracao lista_declaracoes
                          | declaracao'''
     if len(p) == 3:
@@ -40,6 +46,7 @@ def p_lista_declaracoes(p):
         p[0] = [p[1]] 
 
 def p_declaracao(p):
+    # Centraliza todos os tipos possíveis de declarações principais
     '''declaracao : declaracao_classe
                   | declaracao_tipo_dado
                   | declaracao_enum
@@ -48,10 +55,12 @@ def p_declaracao(p):
     p[0] = p[1]
 
 def p_declaracao_pacote(p):
+    # Define a declaração de pacote: 'package' seguido do nome
     'declaracao_pacote : package CLASS_ID'
     p[0] = ('pacote', p[2])
 
 def p_declaracao_classe(p):
+    # Lógica para diferenciar as várias formas de declarar uma classe
     """declaracao_classe : estereotipo_classe CLASS_ID '{' corpo_classe '}'
                          | estereotipo_classe CLASS_ID specializes lista_ids
                          | estereotipo_classe CLASS_ID specializes lista_ids '{' corpo_classe '}'
@@ -84,12 +93,14 @@ def p_declaracao_classe(p):
         p[0] = ('classe_simples', p[1], p[2])
 
 def p_estereotipo_subtipo(p):
+    # Agrupa estereótipos que obrigatoriamente especializam outros
     '''estereotipo_subtipo : subkind
                            | phase
                            | role'''
     p[0] = p[1]
 
 def p_estereotipo_complexo(p):
+    # Define os tipos complexos que podem ser referenciados com 'of'
     '''estereotipo_complexo : functional_complexes
                             | relators
                             | intrinsic_modes
@@ -97,6 +108,7 @@ def p_estereotipo_complexo(p):
     p[0] = p[1]
 
 def p_class_ref(p):
+    # Permite referenciar uma classe simples ou aninhada (ex: Pacote.Classe)
     '''class_ref : CLASS_ID
                  | CLASS_ID '.' CLASS_ID'''
     if len(p) == 4:
@@ -105,6 +117,7 @@ def p_class_ref(p):
         p[0] = p[1]
 
 def p_lista_ids(p):
+    # Regra recursiva para listas de identificadores separadas por vírgula
     """lista_ids : class_ref ',' lista_ids
                  | class_ref"""
     if len(p) == 4:
@@ -113,11 +126,13 @@ def p_lista_ids(p):
         p[0] = [p[1]]
 
 def p_corpo_classe(p):
+    # O corpo da classe pode ter membros ou ser vazio
     '''corpo_classe : lista_membros_classe
                     | empty'''
     p[0] = p[1]
 
 def p_lista_membros_classe(p):
+    # Regra recursiva para listar múltiplos membros dentro de uma classe
     '''lista_membros_classe : membro_classe lista_membros_classe
                             | membro_classe'''
     if len(p) == 3:
@@ -126,16 +141,19 @@ def p_lista_membros_classe(p):
         p[0] = [p[1]]
 
 def p_membro_classe(p):
+    # Um membro pode ser um atributo ou uma relação definida internamente
     '''membro_classe : declaracao_atributo
                      | declaracao_relacao_interna'''
     p[0] = p[1]
 
 def p_cardinality_opt(p):
+    # Cardinalidade é opcional em alguns contextos
     '''cardinality_opt : CARDINALITY
                        | empty'''
     p[0] = p[1]
 
 def p_declaracao_atributo(p):
+    # Define a sintaxe de um atributo
     '''declaracao_atributo : RELATION_ID ':' tipo cardinality_opt meta_atributos_opt
                            | number ':' tipo cardinality_opt meta_atributos_opt
                            | string ':' tipo cardinality_opt meta_atributos_opt
@@ -146,6 +164,7 @@ def p_declaracao_atributo(p):
     p[0] = ('atributo', p[1], p[3], p[4], p[5])
 
 def p_tipo(p):
+    # Tipos de dados podem ser nativos, customizados (datatype) ou classes (enums)
     '''tipo : dado_nativo
             | NEW_TYPE
             | CLASS_ID
@@ -156,11 +175,13 @@ def p_tipo(p):
         p[0] = p[1] 
 
 def p_meta_atributos_opt(p):
+    # Meta-atributos são opcionais e ficam entre chaves
     """meta_atributos_opt : '{' lista_meta_atributos '}'
                           | empty"""
     p[0] = p[2] if len(p) == 4 else None
 
 def p_lista_meta_atributos(p):
+    # Lista de palavras-chave permitidas como meta-atributos
     '''lista_meta_atributos : const
                             | ordered
                             | derived
@@ -169,23 +190,26 @@ def p_lista_meta_atributos(p):
     p[0] = p[1]
 
 def p_declaracao_tipo_dado(p):
+    # Define 'datatype', que pode ter corpo ou especializar outro tipo
     """declaracao_tipo_dado : datatype NEW_TYPE '{' corpo_classe '}'
                             | datatype NEW_TYPE specializes lista_ids
                             | datatype NEW_TYPE specializes dado_nativo"""
     
     if len(p) == 6: 
         p[0] = ('datatype', p[2], p[4])
-    elif len(p) == 5: # Com especialização
+    elif len(p) == 5:
         pais = p[4]
         if isinstance(pais, list):
             pais = ", ".join(pais)
         p[0] = ('datatype_specialized', p[2], pais)
 
 def p_declaracao_enum(p):
+    # Define enumerações
     "declaracao_enum : enum CLASS_ID '{' lista_instancias_enum '}'"
     p[0] = ('enum', p[2], p[4]) 
 
 def p_lista_instancias_enum(p):
+    # Lista de valores do enum, exigindo que sejam INSTANCE_ID
     """lista_instancias_enum : INSTANCE_ID ',' lista_instancias_enum
                              | INSTANCE_ID"""
     if len(p) == 4:
@@ -194,6 +218,7 @@ def p_lista_instancias_enum(p):
         p[0] = [p[1]]
 
 def p_declaracao_genset(p):
+    # Regra complexa para Generalization gensets, suportando várias ordens de modificadores e sintaxes (bloco ou linha)
     """declaracao_genset : genset_modifiers_opt genset CLASS_ID where lista_classes_genset specializes CLASS_ID
                          | genset_modifiers_opt genset CLASS_ID '{' genset_corpo '}'
                          | genset_modifiers_opt genset '{' genset_corpo '}'
@@ -250,6 +275,7 @@ def p_declaracao_genset(p):
         p[0] = ('genset_completo', modifiers, name, general, specifics)
 
 def p_genset_modifiers_opt(p):
+    # Modificadores opcionais para genset: disjoint, complete ou ambos
     '''genset_modifiers_opt : disjoint complete 
                             | disjoint_complete
                             | disjoint
@@ -266,6 +292,7 @@ def p_genset_modifiers_opt(p):
         p[0] = None
 
 def p_lista_classes_genset(p):
+    # Lista de classes específicas do genset
     """lista_classes_genset : CLASS_ID ',' lista_classes_genset
                             | CLASS_ID"""
     if len(p) == 4:
@@ -274,10 +301,12 @@ def p_lista_classes_genset(p):
         p[0] = [p[1]]
 
 def p_genset_corpo(p):
+    # Corpo do genset dentro de chaves: define a classe geral e as específicas
     'genset_corpo : general CLASS_ID specifics lista_classes_genset'
     p[0] = ('corpo_genset', p[2], p[4])
 
 def p_inverse_opt(p):
+    # Suporte para 'inverseOf', apareceu em alguns exemplos do Mateus Lenke
     '''inverse_opt : inverseOf CLASS_ID '.' RELATION_ID
                    | inverseOf CLASS_ID
                    | empty'''
@@ -289,6 +318,7 @@ def p_inverse_opt(p):
         p[0] = None
 
 def p_id_dot_ref(p):
+    # Regra para referências de identificadores tipo Person.age, apareceram alguns nos exemplos do Mateus Lenke
     '''id_dot_ref : CLASS_ID '.' RELATION_ID
                   | CLASS_ID'''
     if len(p) == 4:
@@ -297,6 +327,7 @@ def p_id_dot_ref(p):
         p[0] = p[1]
 
 def p_relation_constraint_opt(p):
+    # Regra para restrições opcionais em constraints
     '''relation_constraint_opt : '(' '{' subsets id_dot_ref '}' ')'
                                | '(' '{' redefines id_dot_ref '}' ')'
                                | '(' '{' const '}' ')'
@@ -309,6 +340,7 @@ def p_relation_constraint_opt(p):
         p[0] = None
 
 def p_declaracao_relacao_interna(p):
+    # Define relações declaradas dentro de uma classe
     """declaracao_relacao_interna : '@' estereotipo_relacao CARDINALITY simbolo_associacao CARDINALITY class_ref inverse_opt
                                   | '@' estereotipo_relacao link_nomeado CARDINALITY class_ref inverse_opt
                                   | link_nomeado CARDINALITY class_ref inverse_opt
@@ -316,37 +348,29 @@ def p_declaracao_relacao_interna(p):
                                   | '@' estereotipo_relacao CARDINALITY link_nomeado CARDINALITY class_ref inverse_opt
                                   | CARDINALITY simbolo_associacao CARDINALITY class_ref inverse_opt"""
     
-    # Caso 1: @stereo [1] -- [1] Class (7 elementos)
     if len(p) == 8 and p[1] == '@':
         p[0] = ('relacao_interna_padrao', p[2], p[3], p[4], p[5], p[6])
 
-    # Caso 2: @stereo --link-- [1] Class (7 elementos - Link Nomeado)
-    # Atenção: p[3] é o link (tupla)
     elif len(p) == 7 and p[1] == '@' and isinstance(p[3], tuple):
          p[0] = ('relacao_interna_tag_link', p[2], p[3], p[4], p[5])
     
-    # Caso 3: --link-- [1] Class (5 elementos)
-    # Não tem @, não tem card inicial.
     elif len(p) == 5 and isinstance(p[1], tuple):
          p[0] = ('relacao_interna_link_simples', p[1], p[2], p[3])
 
-    # Caso 4: [1] --link-- [1] Class (6 elementos)
     elif len(p) == 6 and isinstance(p[2], tuple):
          p[0] = ('relacao_interna_link_duplo', p[1], p[2], p[3], p[4])
     
-    # Caso 5: @stereo [1] --link-- [1] Class (8 elementos)
     elif len(p) == 8 and p[1] == '@' and isinstance(p[4], tuple):
         p[0] = ('relacao_interna_tag_link_duplo', p[2], p[3], p[4], p[5], p[6])
 
-    # Caso 6: [1] -- [1] Class (6 elementos - Simbolo normal)
     elif len(p) == 6:
          p[0] = ('relacao_interna_sem_tag', p[1], p[2], p[3], p[4])
     
     else:
-        # Fallback seguro
         p[0] = ('relacao_desconhecida',)
 
 def p_link_nomeado(p):
+    # Define links com nome no meio, ex: -- nome --
     '''link_nomeado : ASSOCIATION RELATION_ID ASSOCIATION
                     | COMPOSITION_L RELATION_ID ASSOCIATION
                     | COMPOSITION_R RELATION_ID ASSOCIATION
@@ -359,6 +383,7 @@ def p_link_nomeado(p):
     p[0] = (p[1], p[2], p[3]) 
 
 def p_specializes_rel_opt(p):
+    # Especialização de relações
     '''specializes_rel_opt : specializes CLASS_ID '.' RELATION_ID
                            | specializes CLASS_ID
                            | empty'''
@@ -370,6 +395,7 @@ def p_specializes_rel_opt(p):
         p[0] = None
 
 def p_declaracao_relacao_externa(p):
+    # Define relações declaradas fora de classes
     """declaracao_relacao_externa : '@' estereotipo_relacao relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID specializes_rel_opt
                                   | relation CLASS_ID CARDINALITY simbolo_associacao CARDINALITY CLASS_ID specializes_rel_opt
                                   | relation CLASS_ID CARDINALITY link_nomeado CARDINALITY CLASS_ID specializes_rel_opt
@@ -388,6 +414,7 @@ def p_declaracao_relacao_externa(p):
             p[0] = ('relacao_externa_sem_tag', "relation", p[2], p[3], p[4], p[5], p[6], p[7])
 
 def p_simbolo_associacao(p):
+    # Agrupa todos os símbolos gráficos de associação (<>--, --, etc)
     '''simbolo_associacao : ASSOCIATION
                           | COMPOSITION_L
                           | COMPOSITION_R
@@ -396,6 +423,7 @@ def p_simbolo_associacao(p):
     p[0] = p[1]
 
 def p_estereotipo_classe(p):
+    # Lista dos estereótipos de classe permitidos
     '''estereotipo_classe : event
                           | situation
                           | process
@@ -417,6 +445,7 @@ def p_estereotipo_classe(p):
     p[0] = p[1]
 
 def p_estereotipo_relacao(p):
+    # Lista dos estereótipos de relação permitidos
     '''estereotipo_relacao : material
                            | derivation
                            | comparative
@@ -445,6 +474,7 @@ def p_estereotipo_relacao(p):
     p[0] = p[1]
 
 def p_dado_nativo(p):
+    # Lista dos tipos primitivos
     '''dado_nativo : number
                    | string
                    | boolean
@@ -459,6 +489,7 @@ def p_empty(p):
     pass
 
 def p_error(p):
+    # Função de tratamento de erro sintático
     if p:
         error_msg = f"Erro Sintático: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}"
         
@@ -472,6 +503,7 @@ def p_error(p):
 
         elif p.value == '-':
              suggestion = "Hífens ('-') não são permitidos dentro de nomes de classes, atributos ou enums."
+
         elif p.type in ['kind', 'phase', 'role', 'category', 'mixin', 'subkind', 'relator']:
             suggestion = f"A palavra reservada '{p.value}' apareceu onde não devia. Verifique se você fechou '}}' da classe anterior."
 
@@ -483,15 +515,24 @@ def p_error(p):
         elif p.value in ['--', '<>--', '--<>', '<o>--', '--<o>']:
             suggestion = "Problema na definição da relação. Verifique cardinalidades [1..*] e a ordem dos elementos."
 
-        erros_sintaticos.append(f"{error_msg}\n   -> Sugestão: {suggestion}")
+        erros_sintaticos.append(f"{error_msg}\n -> Sugestão: {suggestion}")
         print(error_msg)
+
     else:
         erros_sintaticos.append("Erro Sintático: Fim inesperado do arquivo! (Verifique se fechou todos os blocos com '}')")
         print("Erro Sintático: Fim inesperado do arquivo!")
 
+# Constrói o analisador sintático (Parser)
 parser = yacc.yacc(debug=False)
 
 def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tonto"):
+    """
+    Função principal de entrada para a análise sintática.
+    1. Executa o parser.
+    2. Gera as tabelas.
+    5. Salva em arquivo.
+    """
+    
     erros_sintaticos.clear()
     
     lexer.lineno = 1
