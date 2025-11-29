@@ -17,7 +17,7 @@ relator Consulta_Medica {
 
 enum Tipo_De_Consulta {
     Acompanhamento_Pediatrico01,
-    Atendimento_Pre-Natal02,
+    Atendimento_Pre_Natal02,
     Atendimento_Odontologico03,
     Consulta_Clinica_Geral04
 }

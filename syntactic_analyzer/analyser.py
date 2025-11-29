@@ -168,13 +168,12 @@ def p_lista_meta_atributos(p):
                             | redefines'''
     p[0] = p[1]
 
-# MODIFICADO: Agora exige NEW_TYPE (Sufixo 'DataType')
 def p_declaracao_tipo_dado(p):
     """declaracao_tipo_dado : datatype NEW_TYPE '{' corpo_classe '}'
                             | datatype NEW_TYPE specializes lista_ids
                             | datatype NEW_TYPE specializes dado_nativo"""
     
-    if len(p) == 6: # Com corpo
+    if len(p) == 6: 
         p[0] = ('datatype', p[2], p[4])
     elif len(p) == 5: # Com especialização
         pais = p[4]
@@ -461,17 +460,17 @@ def p_empty(p):
 def p_error(p):
     if p:
         error_msg = f"Erro Sintático: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}"
-        suggestion = "Verifique se você esqueceu um fechamento '}', se usou uma palavra reservada como nome, ou se a estrutura da relação está correta."
         
-        if p.type == 'RELATION_ID':
-             if 'datatype' in str(parser.symstack):
-                 suggestion = "Nomes de Datatypes devem começar com Maiúscula e podem precisar do sufixo 'DataType'."
-             else:
-                 suggestion = f"O identificador '{p.value}' não é um tipo válido. Use um tipo Nativo ou um DataType (Maiúsculo)."
-        
-        elif p.type == 'CLASS_ID':
-             suggestion = f"O nome '{p.value}' para datatype deve terminar com o sufixo 'DataType'."
+        suggestion = "Erro de sintaxe geral."
 
+        if p.type == 'CLASS_ID':
+             if 'datatype' in str(p.value).lower() and not str(p.value).endswith('DataType'):
+                 suggestion = f"Se isso for um Datatype, o nome '{p.value}' deve terminar com 'DataType'."
+             else:
+                 suggestion = "Este nome apareceu em um lugar inesperado. Verifique pontuação anterior (hífens não são permitidos em nomes) ou se falta fechar chaves."
+
+        elif p.value == '-':
+             suggestion = "Hífens ('-') não são permitidos dentro de nomes de classes, atributos ou enums."
         elif p.type in ['kind', 'phase', 'role', 'category', 'mixin', 'subkind', 'relator']:
             suggestion = f"A palavra reservada '{p.value}' apareceu onde não devia. Verifique se você fechou '}}' da classe anterior."
 
@@ -632,9 +631,9 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 alvo = decl[6]
                 inverse = decl[7] 
                 
-                detalhes_str = f"Card. Origem: {card_origem}"
+                detalhes_str = "-"
                 if inverse:
-                    detalhes_str += f"\nSpecializes: {inverse}"
+                    detalhes_str = f"Specializes: {inverse}"
                 
                 tag_display = f"relation ({estereotipo})" if estereotipo else "relation"
                 

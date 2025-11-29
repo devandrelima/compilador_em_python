@@ -52,47 +52,47 @@ ANÁLISE DO PACOTE: TDAH
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
 | Criterion_E                    | kind                     | -           | -          | -                                                     |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1a                  | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
+| Criterion_Aa                   | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1b                  | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
+| Criterion_Ab                   | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1c                  | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
+| Criterion_Ac                   | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1d                  | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
+| Criterion_Ad                   | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1e                  | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
+| Criterion_Ae                   | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1f                  | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
+| Criterion_Af                   | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1g                  | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
+| Criterion_Ag                   | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1h                  | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
+| Criterion_Ah                   | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1i                  | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
+| Criterion_Ai                   | kind                     | -           | -          | Specializes: Hyperactivity_Symptom                    |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2a                  | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
+| Criterion_Aa                   | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2b                  | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
+| Criterion_Ab                   | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2c                  | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
+| Criterion_Ac                   | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2d                  | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
+| Criterion_Ad                   | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2e                  | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
+| Criterion_Ae                   | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2f                  | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
+| Criterion_Af                   | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2g                  | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
+| Criterion_Ag                   | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2h                  | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
+| Criterion_Ah                   | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2i                  | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
+| Criterion_Ai                   | kind                     | -           | -          | Specializes: Inattention_Symptom                      |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
 | Severity                       | quality                  | -           | -          | -                                                     |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A1                   | subkind                  | -           | -          | Specializes: Criterion_A                              |
+| Criterion_A                    | subkind                  | -           | -          | Specializes: Criterion_A                              |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
-| Criterion_A2                   | subkind                  | -           | -          | Specializes: Criterion_A                              |
+| Criterion_A                    | subkind                  | -           | -          | Specializes: Criterion_A                              |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
 | Criterion_A                    | kind                     | -           | -          | -                                                     |
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
@@ -106,20 +106,20 @@ ANÁLISE DO PACOTE: TDAH
 +--------------------------------+--------------------------+-------------+------------+-------------------------------------------------------+
 
 === 2. TABELA DE SÍNTESE ===
-┌───────────────────┬──────┐
-│ Pacote            │ TDAH │
-├───────────────────┼──────┤
-│ Total de Classes  │ 47   │
-├───────────────────┼──────┤
-│ Relações Internas │ 0    │
-├───────────────────┼──────┤
-│ Relações Externas │ 0    │
-├───────────────────┼──────┤
-│ Datatypes         │ 0    │
-├───────────────────┼──────┤
-│ Enums             │ 0    │
-├───────────────────┼──────┤
-│ Gensets           │ 2    │
-└───────────────────┴──────┘
++-------------------+------+
+| Pacote            | TDAH |
++-------------------+------+
+| Total de Classes  | 47   |
++-------------------+------+
+| Relações Internas | 0    |
++-------------------+------+
+| Relações Externas | 0    |
++-------------------+------+
+| Datatypes         | 0    |
++-------------------+------+
+| Enums             | 0    |
++-------------------+------+
+| Gensets           | 2    |
++-------------------+------+
 
 === Nenhum erro sintático encontrado. ===

@@ -173,6 +173,7 @@ literals = ['(', ')', '{', '}', '.', ',', '+', '<', '>', '@', '-',
 t_DOTDOT = r'\.\.'
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
+t_ignore_CPP_COMMENT = r'//.*'
 
 
 def t_FUNCTIONAL_COMPLEXES(t):
