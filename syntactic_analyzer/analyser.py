@@ -522,21 +522,20 @@ def p_error(p):
         erros_sintaticos.append("Erro Sintático: Fim inesperado do arquivo! (Verifique se fechou todos os blocos com '}')")
         print("Erro Sintático: Fim inesperado do arquivo!")
 
-parser = yacc.yacc(debug=False) # Constrói o analisador sintático
+parser = yacc.yacc(debug=False) 
 
 def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tonto"):
     """
-    Função principal de entrada para a análise sintática.
-    1. Executa o parser.
-    2. Gera as tabelas.
-    5. Salva em arquivo.
+    Função principal de entrada para a análise sintática que 
+    executa o parser, gera as tabelas e salva em arquivo.
     """
     
     erros_sintaticos.clear()
     
-    lexer.lineno = 1
+    lexer.lineno = 1 
     resultado = parser.parse(texto_codigo, lexer=lexer)
     
+    # Dicionário para coletar estatísticas sobre o código analisado
     stats = {
         'pacote': "Desconhecido",
         'qtd_classes': 0,
@@ -550,12 +549,14 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
 
     pacote = "Desconhecido"
 
+    # Pega o pacote da AST (Árvore Sintática Abstrata)
     if resultado and resultado[2]:
         pacote = resultado[2][1]
         stats['pacote'] = pacote
 
     declaracoes = []
     
+    # Lista de declarações da AST
     if resultado and resultado[3]:
         declaracoes = resultado[3]
 
@@ -564,7 +565,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     print(f"\n=== Análise sintática do pacote: {pacote} ===\n")
     
     if declaracoes:
-    
+        # Itera sobre as declarações para podermos ter a tabela
         for decl in declaracoes:
             tipo_decl = decl[0]
             nome_classe = None
@@ -573,7 +574,8 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
             lista_relacoes = []
             detalhes = "-"
             corpo = None
-
+            
+            # Processamento de Classes
             if tipo_decl.startswith('classe'):
                 stats['qtd_classes'] += 1
                 
@@ -645,7 +647,8 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 
                 if nome_classe:
                     stats['classes_por_pacote'].append(nome_classe)
-
+            
+            #  Processamento de Datatypes
             elif tipo_decl.startswith('datatype'):
                 stats['qtd_datatypes'] += 1
                 
@@ -654,7 +657,8 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                     estereotipo = "datatype"
                     corpo = decl[2]
                     local_atributos = []
-                
+
+                    # Processa o corpo do datatype para extrair atributos
                     if corpo:
                         for membro in corpo:
                             if membro[0] == 'atributo':
@@ -675,6 +679,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 
                 continue
 
+            # Processamento de Enums
             elif tipo_decl == 'enum':
                 stats['qtd_enums'] += 1
                 nome_enum = decl[1]
@@ -683,7 +688,8 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 tabela_dados.append([nome_enum, "enum", valores_formatados, "-", "-"])
                 
                 continue
-
+            
+            # Processamento de Relações Externas
             elif tipo_decl.startswith('relacao_externa'):
                 stats['qtd_relacoes_externas'] += 1
                 estereotipo = decl[1]
@@ -722,6 +728,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 
                 continue
 
+            # Processamento de Gensets
             elif tipo_decl.startswith('genset'):
                 stats['qtd_gensets'] += 1
                 
@@ -744,9 +751,12 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 
                 continue
 
+            # Processamento do Corpo da Classe (Atributos e Relações Internas)
             if nome_classe:
                 if corpo: 
                     for membro in corpo:
+
+                        # Processa Atributos
                         if membro[0] == 'atributo':
                             card = f" {membro[3]}" if membro[3] else ""
                             meta = f" {{ {membro[4]} }}" if membro[4] else ""
@@ -754,6 +764,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                         
                             lista_atributos.append(attr_str)
                         
+                        # Processa Relações Internas
                         elif membro[0].startswith('relacao_interna'):
                             stats['qtd_relacoes_internas'] += 1
                             
@@ -797,15 +808,18 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                             if rel_str:
                                 lista_relacoes.append(rel_str)
 
-
+                # Formata as listas de atributos e relações para exibição
                 atributos_formatados = "\n".join(lista_atributos) if lista_atributos else "-"
                 relacoes_formatadas = "\n".join(lista_relacoes) if lista_relacoes else "-"
+
+                # Adiciona a linha da classe processada à tabela de dados
                 tabela_dados.append([nome_classe, estereotipo, atributos_formatados, relacoes_formatadas, detalhes])
 
-
+    # Tabela Detalhada
     headers_det = ["Classe/Entidade", "Estereótipo", "Atributos", "Relações", "Detalhes"]
     tabela_string_det = tabulate(tabela_dados, headers=headers_det, tablefmt="grid")
     
+    # Tabela de contagens
     sintese_dados = [
         ["Pacote", stats['pacote']],
         ["Total de Classes", stats['qtd_classes']],
@@ -817,7 +831,8 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     ]
     
     tabela_string_sum = tabulate(sintese_dados, tablefmt="grid")
-
+    
+    # Relatório de Erros
     relatorio_erros = ""
     if erros_sintaticos:
         relatorio_erros = "\n\n=== Relatório de Erros ===\n"
@@ -827,11 +842,13 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     else:
         relatorio_erros = "\n\n=== Nenhum erro sintático encontrado. ===\n"
 
+    # Imprime no console
     print(tabela_string_det)
     print("\n=== Tabela de Contagens ===")
     print(tabela_string_sum)
     print(relatorio_erros)
     
+    # Exportação para Arquivo
     diretorio_atual = os.path.dirname(__file__)  
     pasta_exports = os.path.join(diretorio_atual, 'exports')
     os.makedirs(pasta_exports, exist_ok=True)
