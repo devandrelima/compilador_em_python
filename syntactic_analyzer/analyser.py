@@ -187,8 +187,8 @@ def p_declaracao_enum(p):
     p[0] = ('enum', p[2], p[4]) 
 
 def p_lista_instancias_enum(p):
-    """lista_instancias_enum : CLASS_ID ',' lista_instancias_enum
-                             | CLASS_ID"""
+    """lista_instancias_enum : INSTANCE_ID ',' lista_instancias_enum
+                             | INSTANCE_ID"""
     if len(p) == 4:
         p[0] = [p[1]] + p[3]
     else:
@@ -740,7 +740,7 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
         ["Gensets", stats['qtd_gensets']]
     ]
     
-    tabela_string_sum = tabulate(sintese_dados, tablefmt="simple_grid")
+    tabela_string_sum = tabulate(sintese_dados, tablefmt="grid")
 
     relatorio_erros = ""
     if erros_sintaticos:

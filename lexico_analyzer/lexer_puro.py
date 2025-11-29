@@ -80,7 +80,7 @@ reserved = {
 
 tokens = [
     'COMPOSITION_L', 'COMPOSITION_R', 'COMPOSITION_LO', 'COMPOSITION_RO',
-    'ASSOCIATION', 'NEW_TYPE', 'CLASS_ID', 'RELATION_ID', 
+    'ASSOCIATION', 'NEW_TYPE', 'CLASS_ID', 'RELATION_ID', 'INSTANCE_ID', 
     'CARDINALITY', 'ERROR', 'functional_complexes', 'intrinsic_modes'
 ] + list(set(reserved.values())) 
 
@@ -127,6 +127,12 @@ def t_CARDINALITY(t):
 
 def t_NEW_TYPE(t):
     r'[a-zA-Z]+DataType'
+    return t
+
+def t_INSTANCE_ID(t):
+    r'[a-zA-Z][a-zA-Z0-9_]*\d+' 
+    
+    t.type = 'INSTANCE_ID' 
     return t
 
 def t_CLASS_ID(t):

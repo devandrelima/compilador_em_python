@@ -17,7 +17,7 @@ disjoint complete genset AgePhase {
     specifics Child, Teenager, Adult
 }
 
-disjoint complete genset LifeCicle {
+disjoint complete genset LifeStatus {
     general Person
     specifics DeceasedPerson, LivingPerson
 }
@@ -36,6 +36,7 @@ phase AvailableCar specializes Car
 phase UnderMaintenanceCar specializes Car
 
 role RentalCar specializes AvailableCar
+
 relator CarRental {
     @mediation
     -- involvesRental -- [1] RentalCar
