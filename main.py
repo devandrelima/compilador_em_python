@@ -1,8 +1,11 @@
 from pathlib import Path
-from lexico_analyzer.lexical_counter import main_analyser
+from lexico_analyzer.lexical_counter import lexical_counter_analyser
 from syntactic_analyzer.analyser import analisar_sintaxe
 
 def importar_codigo(caminho_codigo_fonte):
+    """
+    Lê o código presente no arquivo e retorna o texto
+    """
     try:
         with open(caminho_codigo_fonte, 'r', encoding='utf-8') as f:
             code_example = f.read()
@@ -46,7 +49,11 @@ def listar_e_mapear_exemplos(caminho_da_pasta: str):
     return mapa_de_arquivos
 
 if __name__ == "__main__":
-    
+    """
+    É a função que chama o analisador, provendo o código que será utilizado
+    ao importar dos arquivos .tonto, conectando saídas e entradas
+    """
+
     pasta_de_exemplos = './tonto_examples'
     
     mapa = listar_e_mapear_exemplos(pasta_de_exemplos)
@@ -61,11 +68,10 @@ if __name__ == "__main__":
         
         codigo_fonte = importar_codigo(caminho_do_arquivo_escolhido)
 
-        main_analyser(caminho_do_arquivo_escolhido, codigo_fonte)
+        lexical_counter_analyser(caminho_do_arquivo_escolhido, codigo_fonte)
         
         nome_exemplo = caminho_do_arquivo_escolhido.stem
         
-        analisar_sintaxe(codigo_fonte, nome_exemplo)
-
+        analisar_sintaxe(codigo_fonte, nome_exemplo) # O analisador léxico é chamado dentro do sintático
     else:
         print(f"ERRO: Opção '{escolha}' inválida.")

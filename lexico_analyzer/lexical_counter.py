@@ -297,7 +297,7 @@ lexer.instance_set = set()
 classification_count = {}
 
 
-def main_analyser(caminho_codigo_fonte: Path, code_example: str):
+def lexical_counter_analyser(caminho_codigo_fonte: Path, code_example: str):
     token_list = get_token_list(code_example)
     print_token_list(token_list)
 
