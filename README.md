@@ -12,8 +12,9 @@
     * [Usando uma IDE](#executar-ide)
     * [Entrada do sistema](#entrada-sistema)
     * [Saída do sistema](#saida-sistema)
-4. [Apresentação 1 no youtube (Analizador Léxico)](#apresentacao)
-5. [Criadores](#criadores)
+4. [Apresentação 1 no youtube (Analizador Léxico)](#apresentacao1)
+5. [Apresentação 2 no youtube (Analizador Sintático)](#apresentacao2)
+6. [Criadores](#criadores)
 
 
 # <a name="estrutura-do-projeto"></a> Estrutura do Projeto
@@ -60,7 +61,7 @@ COMPILADOR_EM_PYTHON/
 
   * `main.py`
 
-      * É o ponto de entrada principal do projeto. Ele atua como o "orquestrador" do compilador, responsável por chamar as diferentes fases da compilação (atualmente, apenas a análise léxica) e gerenciar o fluxo geral do programa.
+      * É o ponto de entrada principal do projeto. Ele atua como o "orquestrador" do compilador, responsável por chamar as diferentes fases da compilação e gerenciar o fluxo geral do programa.
 
   * `README.md`
 
@@ -121,7 +122,7 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-### <a name="instalacao-ply"></a> instalação do PLY para analisador léxico
+### <a name="instalacao-ply"></a> instalação do PLY para o funcionamento dos analisadores
 
 Observação: Esse comando só irá baixar normalmente se o venv estiver ativo
 
@@ -129,7 +130,7 @@ Observação: Esse comando só irá baixar normalmente se o venv estiver ativo
 pip install ply
 ```
 
-### <a name="instalacao-tabulate"></a> instalação do tabulate para mostrar tabela
+### <a name="instalacao-tabulate"></a> instalação do tabulate para mostrar tabelas
 
 Observação: Esse comando só irá baixar normalmente se o venv estiver ativo
 
@@ -184,7 +185,13 @@ Para executar o compilador no exemplo escolhido basta digitar o respectivo núme
 palavras reservadas e meta-atributos)
 
 - Tabela de contagem das classificações,
-- Tabela sintática mostrando as relaçõe,
+- Tabela sintática:
+
+    - mostrando as classes e entidade,
+    - atributos,
+    - relações,
+    - detalhes de generalização ou especificação
+
 - Tabela de contagem de classificações sintáticas, 
 
 ![exemplos_tabela_tokens](./images_documentation/saida_tabela_tokens.png)
@@ -193,7 +200,7 @@ palavras reservadas e meta-atributos)
 
 ![exemplos_classificacao_sintatico](./images_documentation/saida_sintatico.png)
 
-- Arquivo json no diretório lexico_analyzer/exports/
+- Arquivo .json no diretório lexico_analyzer/exports/
 
 
 ![exemplos_tabela_tokens_json](./images_documentation/json_tabela_tokens.png)
@@ -201,14 +208,18 @@ palavras reservadas e meta-atributos)
 ![exemplos_contagem_classificacao_json](./images_documentation/json_parte_das_contagens.png)
 
 
-- Arquivo txt no diretório syntatic_analyzer/exports/
+- Arquivo .txt no diretório syntatic_analyzer/exports/
 
 
 ![exemplos_contagem_sintatico](./images_documentation/export_sintatico.png)
 
-# <a name="apresentacao"></a> Apresentação 1 no youtube (Analizador Léxico)
+# <a name="apresentacao1"></a> Apresentação 1 no youtube (Analizador Léxico)
 
 https://www.youtube.com/watch?v=cwgRQqRoW5M
+
+# <a name="apresentacao2"></a> Apresentação 2 no youtube (Analizador Sintático)
+
+https://www.youtube.com/watch?v=FaPRFwai1do
 
 # <a name="criadores"></a> Criadores:
 
