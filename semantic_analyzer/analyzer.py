@@ -251,7 +251,8 @@ class AnalisadorSemantico:
                     self._registrar_padrao('Phase Pattern', nome_pai, status, msg)
 
     def _detectar_role_pattern(self):
-        permitidos_pai = self.RIGID_SORTALS + ['role', 'roleMixin']
+        permitidos_pai = self.RIGID_SORTALS + ['role', 'roleMixin', 'phase']
+        
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'role':
                 pais = dados['pais']
