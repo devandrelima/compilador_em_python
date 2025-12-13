@@ -1,11 +1,12 @@
 import ply.lex as lex
 import re
 
+# Palavras reservadas
 reserved = {
     'import': 'import',
     'relator': 'relator',
     'specializes': 'specializes',
-    'of':'of',
+    'of': 'of',
     'event': 'event',
     'situation': 'situation',
     'process': 'process',
@@ -72,7 +73,7 @@ reserved = {
     'subsets': 'subsets',
     'redefines': 'redefines',
     'relators': 'relators', 
-    'disjoint_complete': 'disjoint_complete',
+    # 'disjoint_complete': 'disjoint_complete', <-- REMOVIDO! Isso é só um nome agora.
     'inverseOf': 'inverseOf',
     'type': 'type',
     'collectives': 'collectives'
@@ -84,8 +85,7 @@ tokens = [
     'CARDINALITY', 'ERROR', 'functional_complexes', 'intrinsic_modes'
 ] + list(set(reserved.values())) 
 
-literals = ['(', ')', '{', '}', '.', ',', '+', '<', '>', '@', '-',
-             '*', ':']
+literals = ['(', ')', '{', '}', '.', ',', '+', '<', '>', '@', '-', '*', ':']
 
 t_ignore = ' \t'
 t_ignore_COMMENT = r'\#.*'
@@ -131,7 +131,6 @@ def t_NEW_TYPE(t):
 
 def t_INSTANCE_ID(t):
     r'[a-zA-Z][a-zA-Z0-9_]*\d+' 
-    
     t.type = 'INSTANCE_ID' 
     return t
 
@@ -151,14 +150,11 @@ def t_NEWLINE(t):
 
 def t_error(t):
     illegal_char = t.value[0]
-    print(f"Erro Léxico (Puro): Caractere '{illegal_char}' não reconhecido na linha {t.lexer.lineno}")
-    
     tok = lex.LexToken()
     tok.type = 'ERROR'
     tok.value = illegal_char
     tok.lineno = t.lexer.lineno
     tok.lexpos = t.lexer.lexpos
-    
     t.lexer.skip(1)
     return tok 
 

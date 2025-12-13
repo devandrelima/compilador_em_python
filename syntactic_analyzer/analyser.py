@@ -283,19 +283,15 @@ def p_declaracao_genset(p):
         p[0] = ('genset_completo', modifiers, name, general, specifics)
 
 def p_genset_modifiers_opt(p):
-    # Modificadores opcionais para genset: disjoint, complete ou ambos
     '''genset_modifiers_opt : disjoint complete 
-                            | disjoint_complete
                             | disjoint
                             | complete
                             | empty'''
+    
     if len(p) == 3: 
         p[0] = (p[1], p[2])
     elif len(p) == 2:
-        if p[1] == 'disjoint_complete':
-            p[0] = ('disjoint', 'complete')
-        else:
-            p[0] = p[1]
+        p[0] = p[1]
     else:
         p[0] = None
 
