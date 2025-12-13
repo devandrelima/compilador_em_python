@@ -32,7 +32,7 @@ def processar_arquivo_recursivo(caminho_arquivo: Path, pasta_base: Path, visitad
     if nome_modulo in visitados:
         return
     
-    print(f"\n{'='*10} Processando módulo: {nome_modulo} {'='*10}")
+    print(f"\n\n\n\n{'{'*20}  Processando: {nome_modulo}  {'}'*20}\n")
     visitados.add(nome_modulo)
 
     # Leitura do Código
@@ -63,7 +63,7 @@ def processar_arquivo_recursivo(caminho_arquivo: Path, pasta_base: Path, visitad
 
     if lista_imports:
         nomes_imports = [imp[1] for imp in lista_imports]
-        print(f"   > Imports detectados: {nomes_imports}")
+        print(f"\n> Imports detectados: {nomes_imports}")
         
         for imp in lista_imports:
             # Estrutura do import na AST: ('import', 'NomeDaClasse')
@@ -75,7 +75,7 @@ def processar_arquivo_recursivo(caminho_arquivo: Path, pasta_base: Path, visitad
                 # Chamada Recursiva
                 processar_arquivo_recursivo(caminho_import, pasta_base, visitados)
             else:
-                print(f"   [AVISO] Arquivo referente ao import '{nome_importado}' não encontrado na pasta.")
+                print(f"\n[AVISO] Arquivo referente ao import '{nome_importado}' não encontrado na pasta.")
 
 def listar_e_mapear_exemplos(caminho_da_pasta: str):
     """
@@ -123,7 +123,7 @@ if __name__ == "__main__":
             # Isso vai ler o arquivo escolhido E todos os arquivos que ele importar
             processar_arquivo_recursivo(caminho_principal, pasta_de_exemplos, conjunto_visitados)
             
-            print(f"ASTs carregadas na memória global: {list(ASTs_GLOBAIS.keys())}")
+            print(f"\n\nASTs carregadas na memória global: {list(ASTs_GLOBAIS.keys())}")
             
             # Aqui entraremos com a chamada do Analisador Semântico
             # semantic_analyzer.verificar(ASTs_GLOBAIS)
