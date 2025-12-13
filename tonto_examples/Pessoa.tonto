@@ -2,12 +2,12 @@ package Pessoa
 
 kind Pessoa {
     nome : string [1]
-    endereco : string [1]
+    endereco :
     cpf : string [1]
     data_nascimento : date [1]
 }
 
-phase Crianca specializes Pessoa
+Crianca specializes Pessoa
 phase Adolescente specializes Pessoa
-phase Adulto specializes Pessoa
+phase Adulto Pessoa
 phase Idoso specializes Pessoa

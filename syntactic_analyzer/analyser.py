@@ -51,8 +51,12 @@ def p_declaracao(p):
                   | declaracao_tipo_dado
                   | declaracao_enum
                   | declaracao_genset
-                  | declaracao_relacao_externa'''
-    p[0] = p[1]
+                  | declaracao_relacao_externa
+                  | error'''
+    if len(p) == 2 and not isinstance(p[1], tuple):
+        p[0] = None
+    else:
+        p[0] = p[1]
 
 def p_declaracao_pacote(p):
     # Define a declaração de pacote: 'package' seguido do nome
@@ -143,8 +147,12 @@ def p_lista_membros_classe(p):
 def p_membro_classe(p):
     # Um membro pode ser um atributo ou uma relação definida internamente
     '''membro_classe : declaracao_atributo
-                     | declaracao_relacao_interna'''
-    p[0] = p[1]
+                     | declaracao_relacao_interna
+                     | error'''
+    if len(p) == 2 and not isinstance(p[1], tuple):
+        p[0] = None
+    else:
+        p[0] = p[1]
 
 def p_cardinality_opt(p):
     # Cardinalidade é opcional em alguns contextos
@@ -489,38 +497,23 @@ def p_empty(p):
     pass
 
 def p_error(p):
-    # Função de tratamento de erro sintático
     if p:
         error_msg = f"Erro Sintático: Token inesperado '{p.value}' (Tipo: {p.type}) na linha {p.lineno}"
-        
         suggestion = "Erro de sintaxe geral."
 
         if p.type == 'CLASS_ID':
              if 'datatype' in str(p.value).lower() and not str(p.value).endswith('DataType'):
                  suggestion = f"Se isso for um Datatype, o nome '{p.value}' deve terminar com 'DataType'."
              else:
-                 suggestion = "Este nome apareceu em um lugar inesperado. Verifique pontuação anterior (hífens não são permitidos em nomes) ou se falta fechar chaves."
+                 suggestion = "Este nome apareceu em um lugar inesperado. Verifique pontuação ou chaves. Pode haver falta de palavra-chave (kind, phase, etc)."
 
         elif p.value == '-':
-             suggestion = "Hífens ('-') não são permitidos dentro de nomes de classes, atributos ou enums."
+             suggestion = "Hífens ('-') não são permitidos dentro de nomes de classes ou atributos (exceto em literais numéricos negativos)."
 
-        elif p.type in ['kind', 'phase', 'role', 'category', 'mixin', 'subkind', 'relator']:
-            suggestion = f"A palavra reservada '{p.value}' apareceu onde não devia. Verifique se você fechou '}}' da classe anterior."
-
-        elif p.value == '{':
-            suggestion = "Token '{' inesperado. Faltou o nome da classe ou a palavra reservada antes?"
-        elif p.value == '}':
-            suggestion = "Token '}' inesperado. Há chaves em excesso ou fora de lugar?"
-
-        elif p.value in ['--', '<>--', '--<>', '<o>--', '--<o>']:
-            suggestion = "Problema na definição da relação. Verifique cardinalidades [1..*] e a ordem dos elementos."
-
-        erros_sintaticos.append(f"{error_msg}\n -> Sugestão: {suggestion}")
-        print(error_msg)
+        erros_sintaticos.append(f"{error_msg}\n   -> Sugestão: {suggestion}")
 
     else:
-        erros_sintaticos.append("Erro Sintático: Fim inesperado do arquivo! (Verifique se fechou todos os blocos com '}')")
-        print("Erro Sintático: Fim inesperado do arquivo!")
+        erros_sintaticos.append("Erro Sintático: Fim inesperado do arquivo!")
 
 parser = yacc.yacc(debug=False) 
 
@@ -567,7 +560,11 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
     if declaracoes:
         # Itera sobre as declarações para podermos ter a tabela
         for decl in declaracoes:
+            if not decl:
+                continue
+
             tipo_decl = decl[0]
+            
             nome_classe = None
             estereotipo = None
             lista_atributos = []
@@ -756,6 +753,9 @@ def analisar_sintaxe(texto_codigo: str, nome_arquivo_origem: str = "exemplo_tont
                 if corpo: 
                     for membro in corpo:
 
+                        if not membro:
+                            continue
+                        
                         # Processa Atributos
                         if membro[0] == 'atributo':
                             card = f" {membro[3]}" if membro[3] else ""

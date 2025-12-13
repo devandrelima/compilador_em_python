@@ -1,0 +1,41 @@
+Análise sintática do pacote: Pessoa
+
+=== Visualização detalhada ===
++-------------------+---------------+----------------------------+------------+---------------------+
+| Classe/Entidade   | Estereótipo   | Atributos                  | Relações   | Detalhes            |
++===================+===============+============================+============+=====================+
+| Pessoa            | kind          | nome : string [1]          | -          | -                   |
+|                   |               | cpf : string [1]           |            |                     |
+|                   |               | data_nascimento : date [1] |            |                     |
++-------------------+---------------+----------------------------+------------+---------------------+
+| Adolescente       | phase         | -                          | -          | Specializes: Pessoa |
++-------------------+---------------+----------------------------+------------+---------------------+
+| Adulto            | phase         | -                          | -          | -                   |
++-------------------+---------------+----------------------------+------------+---------------------+
+| Idoso             | phase         | -                          | -          | Specializes: Pessoa |
++-------------------+---------------+----------------------------+------------+---------------------+
+
+=== Tabela de Contagens ===
++-------------------+--------+
+| Pacote            | Pessoa |
++-------------------+--------+
+| Total de Classes  | 4      |
++-------------------+--------+
+| Relações Internas | 0      |
++-------------------+--------+
+| Relações Externas | 0      |
++-------------------+--------+
+| Datatypes         | 0      |
++-------------------+--------+
+| Enums             | 0      |
++-------------------+--------+
+| Gensets           | 0      |
++-------------------+--------+
+
+=== Relatório de Erros ===
+1. Erro Sintático: Token inesperado 'cpf' (Tipo: RELATION_ID) na linha 6
+   -> Sugestão: Erro de sintaxe geral.
+2. Erro Sintático: Token inesperado 'Crianca' (Tipo: CLASS_ID) na linha 10
+   -> Sugestão: Este nome apareceu em um lugar inesperado. Verifique pontuação ou chaves. Pode haver falta de palavra-chave (kind, phase, etc).
+3. Erro Sintático: Token inesperado 'Pessoa' (Tipo: CLASS_ID) na linha 12
+   -> Sugestão: Este nome apareceu em um lugar inesperado. Verifique pontuação ou chaves. Pode haver falta de palavra-chave (kind, phase, etc).
