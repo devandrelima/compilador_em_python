@@ -319,14 +319,14 @@ class AnalisadorSemantico:
             for c in self.tabela.coencoes:
                 print(f"   - {c}")
 
+        print("\n⚠️  PADRÕES INCOMPLETOS:")
+        for p in [x for x in self.tabela.padroes if x['status'] == 'Incompleto']:
+            print(f"   - [{p['tipo']}] em '{p['classe']}': {p['msg']}")
+
         print("\n✅ PADRÕES COMPLETOS IDENTIFICADOS:")
         for p in [x for x in self.tabela.padroes if x['status'] == 'Completo']:
             print(f"   - [{p['tipo']}] em '{p['classe']}': {p['msg']}")
 
-        print("\n⚠️  PADRÕES INCOMPLETOS:")
-        for p in [x for x in self.tabela.padroes if x['status'] == 'Incompleto']:
-            print(f"   - [{p['tipo']}] em '{p['classe']}': {p['msg']}")
-        
         if self.tabela.erros:
             print("\n❌ ERROS ESTRUTURAIS FATAIS:")
             for e in self.tabela.erros:
