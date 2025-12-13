@@ -3,6 +3,7 @@ import os
 import sys
 from lexico_analyzer.lexical_counter import lexical_counter_analyser
 from syntactic_analyzer.analyser import analisar_sintaxe
+from semantic_analyzer.analyzer import AnalisadorSemantico
 
 # Dicionário global para armazenar as ASTs de todos os arquivos processados
 ASTs_GLOBAIS = {}
@@ -125,8 +126,11 @@ if __name__ == "__main__":
             
             print(f"\n\nASTs carregadas na memória global: {list(ASTs_GLOBAIS.keys())}")
             
-            # Aqui entraremos com a chamada do Analisador Semântico
-            # semantic_analyzer.verificar(ASTs_GLOBAIS)
+            if ASTs_GLOBAIS:
+                semantico = AnalisadorSemantico(ASTs_GLOBAIS)
+                semantico.analisar()
+            else:
+                print("Nenhuma AST foi gerada. A análise semântica foi cancelada")
             
         else:
             print(f"ERRO: Opção '{escolha}' inválida.")
