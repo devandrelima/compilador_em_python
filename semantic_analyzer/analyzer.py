@@ -58,9 +58,9 @@ class AnalisadorSemantico:
         self.tabela = TabelaDeSimbolos()
 
     def analisar(self):
-        print("\n" + "="*60)
-        print("   INICIANDO ANÁLISE SEMÂNTICA (ESTRITA)")
-        print("="*60)
+        print("\n" + "/"*60)
+        print("                INICIANDO ANÁLISE SEMÂNTICA")
+        print("/"*60)
         
         self._construir_visao_de_mundo()
         self.tabela.processar_hierarquia()
@@ -188,10 +188,17 @@ class AnalisadorSemantico:
 
     def _validar_genset_flex(self, pai, filhos_esperados, disjoint_obrigatorio=False, complete_obrigatorio=False):
         genset = next((g for g in self.tabela.gensets if g['geral'] == pai), None)
+        
+        # --- MELHORIA NA MENSAGEM DE ERRO AQUI ---
         if not genset:
-            if len(filhos_esperados) > 0: return "Incompleto", f"Falta 'genset' para os filhos {filhos_esperados}."
+            if len(filhos_esperados) > 0: 
+                # Mensagem antiga: "Falta 'genset' para os filhos {filhos_esperados}."
+                # Mensagem nova (mais clara):
+                filhos_str = ", ".join(filhos_esperados)
+                return "Incompleto", f"Falta um 'genset' do pai '{pai}' que agrupe o(s) filho(s): [{filhos_str}]."
             return "Ausente", "Sem filhos."
         
+        # (O resto do código continua igual...)
         mods = genset['modificadores']
         tokens_mods = []
         if isinstance(mods, str):
@@ -327,12 +334,6 @@ class AnalisadorSemantico:
             print("\n[INFO] Nenhuma estrutura ODP reconhecível encontrada.")
             return
 
-        # 1. Tabela de Coerções
-        if self.tabela.coencoes:
-            print("\n🔧 COERÇÕES / CORREÇÕES AUTOMÁTICAS APLICADAS:")
-            rows_coercao = [[c] for c in self.tabela.coencoes]
-            print(tabulate(rows_coercao, headers=["Descrição da Correção"], tablefmt="grid"))
-
         headers = ["Padrão", "Detalhes", "Arquivo", "Linha"]
         rows_complete = []
         rows_incomplete = []
@@ -351,17 +352,11 @@ class AnalisadorSemantico:
                 rows_incomplete.append(row)
 
         # 3. Imprime Tabela de Completos
-        if rows_complete:
-            print("\n✅ PADRÕES COMPLETOS IDENTIFICADOS:")
-            print(tabulate(rows_complete, headers=headers, tablefmt="grid"))
+        
+        print("\n✅ PADRÕES COMPLETOS IDENTIFICADOS:")
+        print(tabulate(rows_complete, headers=headers, tablefmt="grid"))
 
         # 4. Imprime Tabela de Incompletos
-        if rows_incomplete:
-            print("\n⚠️  PADRÕES INCOMPLETOS:")
-            print(tabulate(rows_incomplete, headers=headers, tablefmt="grid"))
         
-        # 5. Erros Fatais
-        if self.tabela.erros:
-            print("\n❌ ERROS ESTRUTURAIS FATAIS:")
-            rows_erros = [[e] for e in self.tabela.erros]
-            print(tabulate(rows_erros, headers=["Erro Fatal"], tablefmt="grid"))
+        print("\n⚠️  PADRÕES INCOMPLETOS:")
+        print(tabulate(rows_incomplete, headers=headers, tablefmt="grid"))
