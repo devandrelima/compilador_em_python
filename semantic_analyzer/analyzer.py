@@ -1,4 +1,6 @@
+# semantic_analyzer/analyzer.py
 import re
+from tabulate import tabulate
 
 class TabelaDeSimbolos:
     def __init__(self):
@@ -9,7 +11,7 @@ class TabelaDeSimbolos:
         self.padroes = []   
         self.coencoes = []  
 
-    def adicionar_classe(self, nome, estereotipo, pais, pacote, mediacoes=[], caracterizacoes=[]):
+    def adicionar_classe(self, nome, estereotipo, pais, pacote, mediacoes=[], caracterizacoes=[], arquivo="?", linha=0):
         if nome not in self.classes:
             self.classes[nome] = {
                 'estereotipo': estereotipo,
@@ -17,15 +19,19 @@ class TabelaDeSimbolos:
                 'pacote': pacote,
                 'filhos_diretos': [],
                 'mediacoes': mediacoes,
-                'caracterizacoes': caracterizacoes
+                'caracterizacoes': caracterizacoes,
+                'arquivo': arquivo,
+                'linha': linha
             }
 
-    def adicionar_genset(self, nome, geral, especificas, modificadores):
+    def adicionar_genset(self, nome, geral, especificas, modificadores, arquivo="?", linha=0):
         self.gensets.append({
             'nome': nome,
             'geral': geral,
             'especificas': especificas,
-            'modificadores': modificadores 
+            'modificadores': modificadores,
+            'arquivo': arquivo,
+            'linha': linha
         })
     
     def adicionar_material(self, origem, destino):
@@ -52,9 +58,9 @@ class AnalisadorSemantico:
         self.tabela = TabelaDeSimbolos()
 
     def analisar(self):
-        print("\n" + "="*50)
+        print("\n" + "="*60)
         print("   INICIANDO ANÁLISE SEMÂNTICA (ESTRITA)")
-        print("="*50)
+        print("="*60)
         
         self._construir_visao_de_mundo()
         self.tabela.processar_hierarquia()
@@ -87,6 +93,10 @@ class AnalisadorSemantico:
                     self._extrair_relacao(decl)
 
     def _extrair_classe(self, decl, pacote):
+        # Extração Segura de Arquivo e Linha (últimos 2 elementos)
+        arquivo = decl[-2] if len(decl) >= 2 else "?"
+        linha = decl[-1] if len(decl) >= 1 else 0
+        
         tipo_tupla = decl[0]
         estereotipo = decl[1]
         nome = decl[2]
@@ -133,22 +143,23 @@ class AnalisadorSemantico:
                     if 'characterization' in flat_str:
                         lista_caracterizacoes.append(tipo_alvo)
 
-        self.tabela.adicionar_classe(nome, estereotipo, lista_pais, pacote, lista_mediacoes, lista_caracterizacoes)
+        self.tabela.adicionar_classe(nome, estereotipo, lista_pais, pacote, lista_mediacoes, lista_caracterizacoes, arquivo, linha)
 
     def _extrair_genset(self, decl):
+        arquivo = decl[-2] if len(decl) >= 2 else "?"
+        linha = decl[-1] if len(decl) >= 1 else 0
+        
         if decl[0] == 'genset_completo':
-            self.tabela.adicionar_genset(decl[2], decl[3], decl[4], decl[1])
+            self.tabela.adicionar_genset(decl[2], decl[3], decl[4], decl[1], arquivo, linha)
         elif decl[0] == 'genset_where':
-            self.tabela.adicionar_genset(decl[2], decl[4], decl[3], decl[1])
+            self.tabela.adicionar_genset(decl[2], decl[4], decl[3], decl[1], arquivo, linha)
 
     def _extrair_relacao(self, decl):
         def flatten(x):
             if isinstance(x, (list, tuple)): return [a for i in x for a in flatten(i)]
             else: return [str(x)]
-        
         flattened = flatten(decl)
         flat_str = " ".join(flattened)
-        
         if '@material' in flat_str:
             try:
                 if len(decl) >= 5:
@@ -182,8 +193,6 @@ class AnalisadorSemantico:
             return "Ausente", "Sem filhos."
         
         mods = genset['modificadores']
-        
-        # LÓGICA DE TOKENIZAÇÃO EXATA (Corrige problemas de substring)
         tokens_mods = []
         if isinstance(mods, str):
             clean_str = mods.replace(',', ' ').replace(';', ' ')
@@ -191,7 +200,6 @@ class AnalisadorSemantico:
         elif isinstance(mods, (list, tuple)):
             tokens_mods = [str(m).strip() for m in mods]
         
-        # Verifica a PRESENÇA EXATA da palavra
         is_disjoint = 'disjoint' in tokens_mods
         is_complete = 'complete' in tokens_mods
         
@@ -302,23 +310,58 @@ class AnalisadorSemantico:
                 self._registrar_padrao('Category Pattern', nome, status, msg)
 
     def _registrar_padrao(self, tipo, classe, status, msg):
-        self.tabela.padroes.append({'tipo': tipo, 'classe': classe, 'status': status, 'msg': msg})
+        dados = self.tabela.classes.get(classe, {})
+        linha = dados.get('linha', '?')
+        arquivo = dados.get('arquivo', '?')
+        self.tabela.padroes.append({
+            'tipo': tipo, 
+            'classe': classe, 
+            'status': status, 
+            'msg': msg, 
+            'linha': linha,
+            'arquivo': arquivo
+        })
 
     def _imprimir_relatorio(self):
         if not self.tabela.padroes and not self.tabela.erros and not self.tabela.coencoes:
             print("\n[INFO] Nenhuma estrutura ODP reconhecível encontrada.")
             return
+
+        # 1. Tabela de Coerções
         if self.tabela.coencoes:
             print("\n🔧 COERÇÕES / CORREÇÕES AUTOMÁTICAS APLICADAS:")
-            for c in self.tabela.coencoes:
-                print(f"   - {c}")
-        print("\n✅ PADRÕES COMPLETOS IDENTIFICADOS:")
-        for p in [x for x in self.tabela.padroes if x['status'] == 'Completo']:
-            print(f"   - [{p['tipo']}] em '{p['classe']}': {p['msg']}")
-        print("\n⚠️  PADRÕES INCOMPLETOS:")
-        for p in [x for x in self.tabela.padroes if x['status'] == 'Incompleto']:
-            print(f"   - [{p['tipo']}] em '{p['classe']}': {p['msg']}")
+            rows_coercao = [[c] for c in self.tabela.coencoes]
+            print(tabulate(rows_coercao, headers=["Descrição da Correção"], tablefmt="grid"))
+
+        headers = ["Padrão", "Detalhes", "Arquivo", "Linha"]
+        rows_complete = []
+        rows_incomplete = []
+
+        # 2. Separa os dados
+        for p in self.tabela.padroes:
+            # Formata Detalhes: 'Classe': Mensagem
+            detalhes = f"'{p['classe']}': {p['msg']}"
+            
+            # Linha da tabela
+            row = [p['tipo'], detalhes, p['arquivo'], p['linha']]
+
+            if p['status'] == 'Completo':
+                rows_complete.append(row)
+            else:
+                rows_incomplete.append(row)
+
+        # 3. Imprime Tabela de Completos
+        if rows_complete:
+            print("\n✅ PADRÕES COMPLETOS IDENTIFICADOS:")
+            print(tabulate(rows_complete, headers=headers, tablefmt="grid"))
+
+        # 4. Imprime Tabela de Incompletos
+        if rows_incomplete:
+            print("\n⚠️  PADRÕES INCOMPLETOS:")
+            print(tabulate(rows_incomplete, headers=headers, tablefmt="grid"))
+        
+        # 5. Erros Fatais
         if self.tabela.erros:
             print("\n❌ ERROS ESTRUTURAIS FATAIS:")
-            for e in self.tabela.erros:
-                print(f"   - {e}")
+            rows_erros = [[e] for e in self.tabela.erros]
+            print(tabulate(rows_erros, headers=["Erro Fatal"], tablefmt="grid"))
