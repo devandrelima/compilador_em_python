@@ -3,7 +3,12 @@ import re
 from tabulate import tabulate
 
 class TabelaDeSimbolos:
+    
     def __init__(self):
+        """
+        Armazena todas as informações extraídas do código fonte (classes, gensets, relações) 
+        de forma organizada para facilitar a consulta durante a validação
+        """
         self.classes = {} 
         self.gensets = []
         self.materiais = [] 
@@ -12,6 +17,9 @@ class TabelaDeSimbolos:
         self.coencoes = []  
 
     def adicionar_classe(self, nome, estereotipo, pais, pacote, mediacoes=[], caracterizacoes=[], arquivo="?", linha=0):
+        """
+        Armazena metadados cruciais como arquivo e linha para o relatório de erros.
+        """
         if nome not in self.classes:
             self.classes[nome] = {
                 'estereotipo': estereotipo,
@@ -25,6 +33,9 @@ class TabelaDeSimbolos:
             }
 
     def adicionar_genset(self, nome, geral, especificas, modificadores, arquivo="?", linha=0):
+        """
+        Fundamental para validar regras de 'disjoint' e 'complete'
+        """
         self.gensets.append({
             'nome': nome,
             'geral': geral,
@@ -35,29 +46,50 @@ class TabelaDeSimbolos:
         })
     
     def adicionar_material(self, origem, destino):
+        """
+        Registra uma relação externa marcada com @material.
+        Isso é usado para validar se um Relator realmente deriva de uma relação material.
+        """
         self.materiais.append({
             'origem': origem,
             'destino': destino
         })
 
     def processar_hierarquia(self):
+        """
+        Esta função preenche a lista 'filhos_diretos' nos PAIS, facilitando
+        descobrir 'quais são os filhos de Pessoa?' sem ter que varrer tudo de novo.
+        """
         for nome_filho, dados in self.classes.items():
             for pai in dados['pais']:
                 if pai in self.classes:
                     self.classes[pai]['filhos_diretos'].append(nome_filho)
 
 class AnalisadorSemantico:
-    # Taxonomia UFO
+    """
+    Responsável por ler a AST, povoar a Tabela de Símbolos
+    e aplicar as regras de negócio da OntoUML/Tonto (os Patterns).
+    """
     IDENTITY_PROVIDERS = ['kind', 'collective', 'quantity', 'relator', 'mode', 'quality']
     RIGID_SORTALS = IDENTITY_PROVIDERS + ['subkind']
     ANTI_RIGID_SORTALS = ['role', 'phase']
     MIXINS = ['category', 'roleMixin', 'phaseMixin', 'mixin']
 
     def __init__(self, asts_globais):
-        self.asts = asts_globais
+        """
+        Dicionário com todas as ASTs dos arquivos importados
+        """
+        self.asts = asts_globais 
         self.tabela = TabelaDeSimbolos()
 
     def analisar(self):
+        """
+        Orquestra a execução passo a passo:
+        1. Extrai os dados.
+        2. Processa heranças.
+        3. Executa todos os detectores de padrões.
+        4. Imprime o relatório final.
+        """
         print("\n" + "/"*60)
         print("                INICIANDO ANÁLISE SEMÂNTICA")
         print("/"*60)
@@ -77,6 +109,11 @@ class AnalisadorSemantico:
         self._imprimir_relatorio()
 
     def _construir_visao_de_mundo(self):
+        """
+        Percorre a AST bruta gerada pelo analisador sintático.
+        Identifica o tipo de cada declaração (classe, genset, relação) e
+        encaminha para o método extrator correspondente
+        """
         for nome_modulo, ast in self.asts.items():
             pacote = ast[2][1] if ast[2] else "Desconhecido"
             declaracoes = ast[3]
@@ -93,6 +130,12 @@ class AnalisadorSemantico:
                     self._extrair_relacao(decl)
 
     def _extrair_classe(self, decl, pacote):
+        """
+        Desmonta a tupla complexa da AST que representa uma Classe.
+        - Identifica nome, estereótipo, pais.
+        - Varre o corpo da classe para achar relações internas (@mediation, @characterization).
+        - Salva tudo na Tabela de Símbolos.
+        """
         arquivo = decl[-2] if len(decl) >= 2 else "?"
         linha = decl[-1] if len(decl) >= 1 else 0
         
@@ -156,6 +199,9 @@ class AnalisadorSemantico:
         self.tabela.adicionar_classe(nome, estereotipo, lista_pais, pacote, lista_mediacoes, lista_caracterizacoes, arquivo, linha)
 
     def _extrair_genset(self, decl):
+        """
+        Extrai dados de um conjunto de generalização (genset) da AST e salva na tabela.
+        """
         arquivo = decl[-2] if len(decl) >= 2 else "?"
         linha = decl[-1] if len(decl) >= 1 else 0
         
@@ -165,17 +211,14 @@ class AnalisadorSemantico:
             self.tabela.adicionar_genset(decl[2], decl[4], decl[3], decl[1], arquivo, linha)
 
     def _extrair_relacao(self, decl):
-        # --- CORREÇÃO AQUI: Lógica exata baseada nos índices do Sintático ---
+        """
+        Foca especificamente em extrair relações externas marcadas com @material.
+        Importante para o Relator Pattern.
+        """
         tag = decl[0]
         
-        # Verifica se é uma relação material olhando o estereótipo (índice 1)
         if len(decl) > 1 and decl[1] == 'material':
             try:
-                # O parser sintático gera tuplas onde:
-                # decl[2] é a classe Origem
-                # decl[6] é a classe Destino (seja link simples ou link nomeado)
-                # Exemplo: ('relacao_externa_link', 'material', 'Paciente', '[1..*]', (...), '[1..*]', 'Medico', ...)
-                
                 if tag in ['relacao_externa', 'relacao_externa_link']:
                     origem = decl[2]
                     destino = decl[6] 
@@ -184,6 +227,10 @@ class AnalisadorSemantico:
                 pass
 
     def _aplicar_coercao_de_erros(self):
+        """
+        Verifica erros comuns de modelagem e tenta consertar.
+        Ex: Se um 'kind' herda de alguém, ele deveria ser 'subkind'. O sistema muda automaticamente e avisa.
+        """
         for nome, dados in self.tabela.classes.items():
             est_atual = dados['estereotipo']
             pais = dados['pais']
@@ -203,6 +250,12 @@ class AnalisadorSemantico:
                     self.tabela.coencoes.append(f"Classe '{nome}' (subkind) herda de '{pai_anti_rigido}'. Coagida para '{pai_anti_rigido}'.")
 
     def _validar_genset_flex(self, pai, filhos_esperados, disjoint_obrigatorio=False, complete_obrigatorio=False):
+        """
+        Verifica se existe um genset válido ligando o Pai aos Filhos Esperados.
+        1. Procura na tabela um genset que tenha o 'pai' como general.
+        2. Verifica se o 'filho' atual está na lista de specifics desse genset.
+        3. Se achar, verifica se os modificadores (disjoint/complete) estão presentes conforme exigido pelos argumentos.
+        """
         genset_encontrado = None
         filho_alvo_busca = filhos_esperados[0] if filhos_esperados else None
 
@@ -249,6 +302,9 @@ class AnalisadorSemantico:
         return "Completo", f"Genset '{genset_encontrado['nome']}' validado.{aviso}"
 
     def _detectar_mode_pattern(self):
+        """
+        Valida o padrão Mode. Um Mode deve caracterizar (@characterization) obrigatoriamente um Kind.
+        """
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'mode':
                 caracterizacoes = dados['caracterizacoes']
@@ -268,6 +324,10 @@ class AnalisadorSemantico:
                     self._registrar_padrao('Mode Pattern', nome, 'Completo', f"Caracteriza corretamente kinds: {', '.join(caracterizacoes)}.")
 
     def _detectar_relator_pattern(self):
+        """
+        Valida o padrão Relator. O Relator deve mediar (@mediation) pelo menos duas entidades e deve existir
+        uma relação material externa (@material) conectando essas entidades diretamente.
+        """
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'relator':
                 mediacoes = dados['mediacoes']
@@ -284,6 +344,10 @@ class AnalisadorSemantico:
                      self._registrar_padrao('Relator Pattern', nome, 'Completo', f"Relator conecta {mediacoes} e possui relação @material correspondente.")
 
     def _detectar_subkind_pattern(self):
+        """
+        Valida o padrão SubKind. Deve herdar de um tipo rígido. Precisa de genset disjoint.
+        Exceção: Se for filho único, o genset é opcional.
+        """
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'subkind':
                 pais = dados['pais']
@@ -309,6 +373,9 @@ class AnalisadorSemantico:
                     self._registrar_padrao('SubKind Pattern', nome, status, msg)
 
     def _detectar_phase_pattern(self):
+        """
+        Valida o padrão Phase. Deve herdar de um tipo permitido. Genset disjoint é OBRIGATÓRIO.
+        """
         permitidos_pai = self.RIGID_SORTALS + ['phase']
         for nome_pai, dados_pai in self.tabela.classes.items():
             if dados_pai['estereotipo'] in permitidos_pai:
@@ -319,6 +386,9 @@ class AnalisadorSemantico:
                     self._registrar_padrao('Phase Pattern', nome_pai, status, msg)
 
     def _detectar_role_pattern(self):
+        """
+        Valida o padrão Role. Genset é necessário se houver múltiplos irmãos.
+        """
         permitidos_pai = self.RIGID_SORTALS + ['role', 'roleMixin', 'phase']
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'role':
@@ -345,6 +415,9 @@ class AnalisadorSemantico:
                     self._registrar_padrao('Role Pattern', nome, status, msg)
 
     def _detectar_rolemixin_pattern(self):
+        """
+        Valida o padrão RoleMixin. Disjoint e Complete são obrigatórios no genset. Se filho único, dispensa.
+        """
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'roleMixin':
                 filhos_role = [f for f in dados['filhos_diretos'] 
@@ -359,12 +432,18 @@ class AnalisadorSemantico:
                     self._registrar_padrao('RoleMixin Pattern', nome, status, msg)
 
     def _detectar_category_pattern(self):
+        """
+        Valida o padrão Category. Validação básica de estrutura.
+        """
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'category':
                 status, msg = self._validar_genset_flex(nome, [], disjoint_obrigatorio=False, complete_obrigatorio=False)
                 self._registrar_padrao('Category Pattern', nome, status, msg)
 
     def _registrar_padrao(self, tipo, classe, status, msg):
+        """
+        Salva o resultado de uma validação na lista de padrões para impressão posterior.
+        """
         dados = self.tabela.classes.get(classe, {})
         linha = dados.get('linha', '?')
         arquivo = dados.get('arquivo', '?')
@@ -378,6 +457,9 @@ class AnalisadorSemantico:
         })
 
     def _imprimir_relatorio(self):
+        """
+        Usa a biblioteca 'tabulate' para gerar tabelas. Separa em Completos, Incompletos.
+        """
         if not self.tabela.padroes and not self.tabela.erros and not self.tabela.coencoes:
             print("\n[INFO] Nenhuma estrutura ODP reconhecível encontrada.")
             return
@@ -400,4 +482,3 @@ class AnalisadorSemantico:
 
         print("\n⚠️  PADRÕES INCOMPLETOS:")
         print(tabulate(rows_incomplete, headers=headers, tablefmt="grid"))
-        
