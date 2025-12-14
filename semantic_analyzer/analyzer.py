@@ -93,7 +93,6 @@ class AnalisadorSemantico:
                     self._extrair_relacao(decl)
 
     def _extrair_classe(self, decl, pacote):
-        # Extração Segura de Arquivo e Linha (últimos 2 elementos)
         arquivo = decl[-2] if len(decl) >= 2 else "?"
         linha = decl[-1] if len(decl) >= 1 else 0
         
@@ -187,19 +186,28 @@ class AnalisadorSemantico:
                     self.tabela.coencoes.append(f"Classe '{nome}' (subkind) herda de '{pai_anti_rigido}'. Coagida para '{pai_anti_rigido}'.")
 
     def _validar_genset_flex(self, pai, filhos_esperados, disjoint_obrigatorio=False, complete_obrigatorio=False):
-        genset = next((g for g in self.tabela.gensets if g['geral'] == pai), None)
+        genset_encontrado = None
+        # Pega o primeiro filho apenas para TENTAR achar o genset
+        filho_alvo_busca = filhos_esperados[0] if filhos_esperados else None
+
+        for g in self.tabela.gensets:
+            if g['geral'] == pai:
+                if filho_alvo_busca:
+                    if filho_alvo_busca in g['especificas']:
+                        genset_encontrado = g
+                        break
+                else:
+                    genset_encontrado = g
+                    break
         
-        # --- MELHORIA NA MENSAGEM DE ERRO AQUI ---
-        if not genset:
-            if len(filhos_esperados) > 0: 
-                # Mensagem antiga: "Falta 'genset' para os filhos {filhos_esperados}."
-                # Mensagem nova (mais clara):
-                filhos_str = ", ".join(filhos_esperados)
-                return "Incompleto", f"Falta um 'genset' do pai '{pai}' que agrupe o(s) filho(s): [{filhos_str}]."
+        if not genset_encontrado:
+            # CORREÇÃO AQUI: Lista TODOS os filhos esperados na mensagem, não apenas o primeiro.
+            if filhos_esperados:
+                lista_filhos = ", ".join(filhos_esperados)
+                return "Incompleto", f"Falta um 'genset' do pai '{pai}' que agrupe: [{lista_filhos}]."
             return "Ausente", "Sem filhos."
         
-        # (O resto do código continua igual...)
-        mods = genset['modificadores']
+        mods = genset_encontrado['modificadores']
         tokens_mods = []
         if isinstance(mods, str):
             clean_str = mods.replace(',', ' ').replace(';', ' ')
@@ -223,7 +231,7 @@ class AnalisadorSemantico:
             aviso = " (Nota: 'disjoint' não se aplica semanticamente a roles, mas o genset existe)."
 
         if msgs: return "Incompleto", f"Problemas: {', '.join(msgs)}"
-        return "Completo", f"Genset '{genset['nome']}' validado.{aviso}"
+        return "Completo", f"Genset '{genset_encontrado['nome']}' validado.{aviso}"
 
     def _detectar_mode_pattern(self):
         for nome, dados in self.tabela.classes.items():
@@ -265,6 +273,7 @@ class AnalisadorSemantico:
             if dados['estereotipo'] == 'subkind':
                 pais = dados['pais']
                 if not pais: continue 
+                
                 pai_rigido = None
                 for p in pais:
                     if p in self.tabela.classes and self.tabela.classes[p]['estereotipo'] in self.RIGID_SORTALS:
@@ -272,8 +281,15 @@ class AnalisadorSemantico:
                 if not pai_rigido:
                     self._registrar_padrao('SubKind Pattern', nome, 'Incompleto', f"Pai inválido.")
                     continue
-                status, msg = self._validar_genset_flex(pai_rigido, [nome], disjoint_obrigatorio=True, complete_obrigatorio=False)
-                self._registrar_padrao('SubKind Pattern', nome, status, msg)
+                
+                irmaos_subkind = [f for f in self.tabela.classes[pai_rigido]['filhos_diretos'] 
+                                  if self.tabela.classes.get(f, {}).get('estereotipo') == 'subkind']
+                
+                if len(irmaos_subkind) == 1:
+                    self._registrar_padrao('SubKind Pattern', nome, 'Completo', f"Especializa '{pai_rigido}'. Filho único, genset dispensado.")
+                else:
+                    status, msg = self._validar_genset_flex(pai_rigido, [nome], disjoint_obrigatorio=True, complete_obrigatorio=False)
+                    self._registrar_padrao('SubKind Pattern', nome, status, msg)
 
     def _detectar_phase_pattern(self):
         permitidos_pai = self.RIGID_SORTALS + ['phase']
@@ -299,16 +315,27 @@ class AnalisadorSemantico:
                 if not pai_valido:
                      self._registrar_padrao('Role Pattern', nome, 'Incompleto', f"Pai inválido.")
                      continue
-                status, msg = self._validar_genset_flex(pai_valido, [nome], disjoint_obrigatorio=False, complete_obrigatorio=False)
-                self._registrar_padrao('Role Pattern', nome, status, msg)
+                
+                irmaos_role = [f for f in self.tabela.classes[pai_valido]['filhos_diretos'] 
+                               if self.tabela.classes.get(f, {}).get('estereotipo') == 'role']
+
+                if len(irmaos_role) == 1:
+                    self._registrar_padrao('Role Pattern', nome, 'Completo', f"Especializa '{pai_valido}'. Filho único, genset dispensado.")
+                else:
+                    status, msg = self._validar_genset_flex(pai_valido, [nome], disjoint_obrigatorio=False, complete_obrigatorio=False)
+                    self._registrar_padrao('Role Pattern', nome, status, msg)
 
     def _detectar_rolemixin_pattern(self):
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'roleMixin':
                 filhos_role = [f for f in dados['filhos_diretos'] 
                                if self.tabela.classes.get(f, {}).get('estereotipo') == 'role']
-                status, msg = self._validar_genset_flex(nome, filhos_role, disjoint_obrigatorio=True, complete_obrigatorio=True)
-                self._registrar_padrao('RoleMixin Pattern', nome, status, msg)
+                
+                if len(filhos_role) == 1:
+                    self._registrar_padrao('RoleMixin Pattern', nome, 'Completo', f"RoleMixin com filho único '{filhos_role[0]}', genset dispensado.")
+                else:
+                    status, msg = self._validar_genset_flex(nome, filhos_role, disjoint_obrigatorio=True, complete_obrigatorio=True)
+                    self._registrar_padrao('RoleMixin Pattern', nome, status, msg)
 
     def _detectar_category_pattern(self):
         for nome, dados in self.tabela.classes.items():
@@ -333,17 +360,13 @@ class AnalisadorSemantico:
         if not self.tabela.padroes and not self.tabela.erros and not self.tabela.coencoes:
             print("\n[INFO] Nenhuma estrutura ODP reconhecível encontrada.")
             return
-
+        
         headers = ["Padrão", "Detalhes", "Arquivo", "Linha"]
         rows_complete = []
         rows_incomplete = []
 
-        # 2. Separa os dados
         for p in self.tabela.padroes:
-            # Formata Detalhes: 'Classe': Mensagem
             detalhes = f"'{p['classe']}': {p['msg']}"
-            
-            # Linha da tabela
             row = [p['tipo'], detalhes, p['arquivo'], p['linha']]
 
             if p['status'] == 'Completo':
@@ -351,12 +374,8 @@ class AnalisadorSemantico:
             else:
                 rows_incomplete.append(row)
 
-        # 3. Imprime Tabela de Completos
-        
         print("\n✅ PADRÕES COMPLETOS IDENTIFICADOS:")
         print(tabulate(rows_complete, headers=headers, tablefmt="grid"))
 
-        # 4. Imprime Tabela de Incompletos
-        
         print("\n⚠️  PADRÕES INCOMPLETOS:")
         print(tabulate(rows_incomplete, headers=headers, tablefmt="grid"))
