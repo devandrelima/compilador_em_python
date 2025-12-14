@@ -131,11 +131,22 @@ class AnalisadorSemantico:
                     flat_str = " ".join(flattened)
                     
                     tipo_alvo = "Desconhecido"
-                    if len(item) > 2:
-                        if item[0] == 'relacao_interna_tag_link' and len(item) > 4:
-                             tipo_alvo = item[4]
-                        else:
-                             tipo_alvo = item[2]
+                    tag = item[0]
+                    
+                    if tag == 'relacao_interna_padrao': 
+                        if len(item) > 5: tipo_alvo = item[5]
+                    elif tag == 'relacao_interna_tag_link':
+                        if len(item) > 4: tipo_alvo = item[4]
+                    elif tag == 'relacao_interna_link_simples':
+                        if len(item) > 3: tipo_alvo = item[3]
+                    elif tag == 'relacao_interna_link_duplo':
+                        if len(item) > 4: tipo_alvo = item[4]
+                    elif tag == 'relacao_interna_tag_link_duplo':
+                        if len(item) > 5: tipo_alvo = item[5]
+                    elif tag == 'relacao_interna_sem_tag':
+                        if len(item) > 4: tipo_alvo = item[4]
+                    else:
+                        if len(item) > 2: tipo_alvo = item[2]
 
                     if 'mediation' in flat_str:
                         lista_mediacoes.append(tipo_alvo)
@@ -154,17 +165,23 @@ class AnalisadorSemantico:
             self.tabela.adicionar_genset(decl[2], decl[4], decl[3], decl[1], arquivo, linha)
 
     def _extrair_relacao(self, decl):
-        def flatten(x):
-            if isinstance(x, (list, tuple)): return [a for i in x for a in flatten(i)]
-            else: return [str(x)]
-        flattened = flatten(decl)
-        flat_str = " ".join(flattened)
-        if '@material' in flat_str:
+        # --- CORREÇÃO AQUI: Lógica exata baseada nos índices do Sintático ---
+        tag = decl[0]
+        
+        # Verifica se é uma relação material olhando o estereótipo (índice 1)
+        if len(decl) > 1 and decl[1] == 'material':
             try:
-                if len(decl) >= 5:
-                    origem = decl[2]; destino = decl[4]
+                # O parser sintático gera tuplas onde:
+                # decl[2] é a classe Origem
+                # decl[6] é a classe Destino (seja link simples ou link nomeado)
+                # Exemplo: ('relacao_externa_link', 'material', 'Paciente', '[1..*]', (...), '[1..*]', 'Medico', ...)
+                
+                if tag in ['relacao_externa', 'relacao_externa_link']:
+                    origem = decl[2]
+                    destino = decl[6] 
                     self.tabela.adicionar_material(origem, destino)
-            except: pass
+            except:
+                pass
 
     def _aplicar_coercao_de_erros(self):
         for nome, dados in self.tabela.classes.items():
@@ -187,7 +204,6 @@ class AnalisadorSemantico:
 
     def _validar_genset_flex(self, pai, filhos_esperados, disjoint_obrigatorio=False, complete_obrigatorio=False):
         genset_encontrado = None
-        # Pega o primeiro filho apenas para TENTAR achar o genset
         filho_alvo_busca = filhos_esperados[0] if filhos_esperados else None
 
         for g in self.tabela.gensets:
@@ -201,7 +217,6 @@ class AnalisadorSemantico:
                     break
         
         if not genset_encontrado:
-            # CORREÇÃO AQUI: Lista TODOS os filhos esperados na mensagem, não apenas o primeiro.
             if filhos_esperados:
                 lista_filhos = ", ".join(filhos_esperados)
                 return "Incompleto", f"Falta um 'genset' do pai '{pai}' que agrupe: [{lista_filhos}]."
@@ -289,6 +304,8 @@ class AnalisadorSemantico:
                     self._registrar_padrao('SubKind Pattern', nome, 'Completo', f"Especializa '{pai_rigido}'. Filho único, genset dispensado.")
                 else:
                     status, msg = self._validar_genset_flex(pai_rigido, [nome], disjoint_obrigatorio=True, complete_obrigatorio=False)
+                    if status == 'Incompleto':
+                        msg += f" (Irmãos encontrados: {', '.join(irmaos_subkind)})"
                     self._registrar_padrao('SubKind Pattern', nome, status, msg)
 
     def _detectar_phase_pattern(self):
@@ -323,6 +340,8 @@ class AnalisadorSemantico:
                     self._registrar_padrao('Role Pattern', nome, 'Completo', f"Especializa '{pai_valido}'. Filho único, genset dispensado.")
                 else:
                     status, msg = self._validar_genset_flex(pai_valido, [nome], disjoint_obrigatorio=False, complete_obrigatorio=False)
+                    if status == 'Incompleto':
+                        msg += f" (Irmãos encontrados: {', '.join(irmaos_role)})"
                     self._registrar_padrao('Role Pattern', nome, status, msg)
 
     def _detectar_rolemixin_pattern(self):
@@ -335,6 +354,8 @@ class AnalisadorSemantico:
                     self._registrar_padrao('RoleMixin Pattern', nome, 'Completo', f"RoleMixin com filho único '{filhos_role[0]}', genset dispensado.")
                 else:
                     status, msg = self._validar_genset_flex(nome, filhos_role, disjoint_obrigatorio=True, complete_obrigatorio=True)
+                    if status == 'Incompleto':
+                        msg += f" (Irmãos encontrados: {', '.join(filhos_role)})"
                     self._registrar_padrao('RoleMixin Pattern', nome, status, msg)
 
     def _detectar_category_pattern(self):
@@ -360,7 +381,7 @@ class AnalisadorSemantico:
         if not self.tabela.padroes and not self.tabela.erros and not self.tabela.coencoes:
             print("\n[INFO] Nenhuma estrutura ODP reconhecível encontrada.")
             return
-        
+
         headers = ["Padrão", "Detalhes", "Arquivo", "Linha"]
         rows_complete = []
         rows_incomplete = []
@@ -379,3 +400,4 @@ class AnalisadorSemantico:
 
         print("\n⚠️  PADRÕES INCOMPLETOS:")
         print(tabulate(rows_incomplete, headers=headers, tablefmt="grid"))
+        
