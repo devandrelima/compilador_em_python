@@ -41,18 +41,18 @@ COMPILADOR_EM_PYTHON/
 │   ├── exports/      (arquivos .json exportados)
 │   └── __pycache__/  (arquivos de cache, desconsiderar)
 │
-├── semantic_analyzer/
-│   ├── __init__.py
-│   ├── analyzer.py (Lógica do analisador semântico)
-│   ├── exports/      (arquivos .txt exportados)
-│   └── __pycache__/  (arquivos de cache, desconsiderar)
-│
 ├── syntactic_analyzer/
 │   ├── __init__.py
 │   ├── analyser.py   (Lógica do Analisador Sintático)
 │   ├── parser.out    (Log de depuração da gramática gerado pelo PLY)
 │   ├── parsetab.py   (Tabela de otimização do parser gerada pelo PLY)
 │   ├── exports/      (relatórios .txt exportados)
+│   └── __pycache__/  (arquivos de cache, desconsiderar)
+│
+├── semantic_analyzer/
+│   ├── __init__.py
+│   ├── analyzer.py (Lógica do analisador semântico)
+│   ├── exports/      (arquivos .txt exportados)
 │   └── __pycache__/  (arquivos de cache, desconsiderar)
 │
 └── tonto_examples/
@@ -111,7 +111,7 @@ COMPILADOR_EM_PYTHON/
   * `tonto_examples/` (Diretório)
 
       * Este diretório armazena todos os arquivos de código-fonte na linguagem Tonto que servem como exemplos e casos de teste para o compilador.
-      * `alergiaalimentar.tonto`, `car.tonto`, `carRentail.tonto`, entre outros arquivos '.tonto': Cada um desses arquivos pode ser lido pelo `main.py` para testar o funcionamento do analisador léxico e sintático.
+      * `alergiaalimentar.tonto`, `car.tonto`, `carRentail.tonto`, entre outros arquivos '.tonto': Cada um desses arquivos pode ser lido pelo `main.py` para testar o funcionamento do compilador.
 
 # <a name="instalacoes-necessarias"></a> **Instalações necessárias para executar o projeto**:
 
