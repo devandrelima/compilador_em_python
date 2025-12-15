@@ -83,7 +83,7 @@ class AnalisadorSemantico:
         self.asts = asts_globais 
         self.tabela = TabelaDeSimbolos()
 
-    def analisar(self, nome_arquivo_origem):
+    def analisar(self, nome_arquivo_origem="analise_semantica"):
         """
         Orquestra a execução passo a passo:
         1. Extrai os dados.
@@ -358,8 +358,22 @@ class AnalisadorSemantico:
                 for p in pais:
                     if p in self.tabela.classes and self.tabela.classes[p]['estereotipo'] in self.RIGID_SORTALS:
                         pai_rigido = p; break
+                
                 if not pai_rigido:
-                    self._registrar_padrao('SubKind Pattern', nome, 'Incompleto', f"Pai inválido.")
+                    # --- MELHORIA AQUI: DICA INTELIGENTE ---
+                    msg = "Pai inválido."
+                    dicas = []
+                    for p in pais:
+                        if p in self.tabela.classes:
+                            est_p = self.tabela.classes[p]['estereotipo']
+                            # Se o pai for um Mixin (Category, Mixin, RoleMixin), damos a dica
+                            if est_p in self.MIXINS:
+                                dicas.append(f"O pai '{p}' é do tipo '{est_p}'. Considere mudar '{p}' para Kind.")
+                    
+                    if dicas:
+                        msg += " " + " ".join(dicas)
+                    
+                    self._registrar_padrao('SubKind Pattern', nome, 'Incompleto', msg)
                     continue
                 
                 irmaos_subkind = [f for f in self.tabela.classes[pai_rigido]['filhos_diretos'] 
@@ -497,7 +511,6 @@ class AnalisadorSemantico:
 
         # Remove a extensão .tonto ou .txt do nome original se houver
         nome_base = os.path.splitext(os.path.basename(nome_arquivo_origem))[0]
-        
         nome_arquivo_saida = f"tabela_semantica_{nome_base}.txt"
         caminho_completo = os.path.join(pasta_exports, nome_arquivo_saida)
         
