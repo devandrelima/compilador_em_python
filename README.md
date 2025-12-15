@@ -215,7 +215,7 @@ palavras reservadas e meta-atributos)
 
 ![exemplos_classificacao_sintatico](./images_documentation/saida_sintatico.png)
 
-![exemplos_semantico](./images_documentation/saida_semantico.png.png)
+![exemplos_semantico](./images_documentation/saida_semantico.png)
 
 - Arquivo .json no diretório lexico_analyzer/exports/
 
