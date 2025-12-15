@@ -69,7 +69,7 @@ class TabelaDeSimbolos:
 class AnalisadorSemantico:
     """
     Responsável por ler a AST, povoar a Tabela de Símbolos
-    e aplicar as regras de negócio da OntoUML/Tonto (os Patterns).
+    e aplicar as regras dos Patterns.
     """
     IDENTITY_PROVIDERS = ['kind', 'collective', 'quantity', 'relator', 'mode', 'quality']
     RIGID_SORTALS = IDENTITY_PROVIDERS + ['subkind']
