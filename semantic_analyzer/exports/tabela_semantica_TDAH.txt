@@ -1,0 +1,58 @@
+RELATÓRIO DE ANÁLISE SEMÂNTICA - TDAH
+============================================================
+
+✅ PADRÕES COMPLETOS IDENTIFICADOS:
++-----------------+---------------------------------------------------------------------------+-----------+---------+
+| Padrão          | Detalhes                                                                  | Arquivo   |   Linha |
++=================+===========================================================================+===========+=========+
+| SubKind Pattern | 'Methylphenidate_': Genset 'TypesOfMedicine' validado.                    | TDAH      |      25 |
++-----------------+---------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern | 'Dextroamphetamine_': Genset 'TypesOfMedicine' validado.                  | TDAH      |      27 |
++-----------------+---------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern | 'Criterion_A': Especializa 'Criterion_A'. Filho único, genset dispensado. | TDAH      |      91 |
++-----------------+---------------------------------------------------------------------------+-----------+---------+
+
+⚠️  PADRÕES INCOMPLETOS:
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Padrão           | Detalhes                                                                                                                                       | Arquivo   |   Linha |
++==================+================================================================================================================================================+===========+=========+
+| SubKind Pattern  | 'Criterion_Aa': Pai inválido. O pai 'Hyperactivity_Symptom' é do tipo 'category'. Considere mudar 'Hyperactivity_Symptom' para Kind.           | TDAH      |      53 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern  | 'Criterion_Ab': Pai inválido. O pai 'Hyperactivity_Symptom' é do tipo 'category'. Considere mudar 'Hyperactivity_Symptom' para Kind.           | TDAH      |      55 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern  | 'Criterion_Ac': Pai inválido. O pai 'Hyperactivity_Symptom' é do tipo 'category'. Considere mudar 'Hyperactivity_Symptom' para Kind.           | TDAH      |      57 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern  | 'Criterion_Ad': Pai inválido. O pai 'Hyperactivity_Symptom' é do tipo 'category'. Considere mudar 'Hyperactivity_Symptom' para Kind.           | TDAH      |      59 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern  | 'Criterion_Ae': Pai inválido. O pai 'Hyperactivity_Symptom' é do tipo 'category'. Considere mudar 'Hyperactivity_Symptom' para Kind.           | TDAH      |      61 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern  | 'Criterion_Af': Pai inválido. O pai 'Hyperactivity_Symptom' é do tipo 'category'. Considere mudar 'Hyperactivity_Symptom' para Kind.           | TDAH      |      63 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern  | 'Criterion_Ag': Pai inválido. O pai 'Hyperactivity_Symptom' é do tipo 'category'. Considere mudar 'Hyperactivity_Symptom' para Kind.           | TDAH      |      65 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern  | 'Criterion_Ah': Pai inválido. O pai 'Hyperactivity_Symptom' é do tipo 'category'. Considere mudar 'Hyperactivity_Symptom' para Kind.           | TDAH      |      67 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern  | 'Criterion_Ai': Pai inválido. O pai 'Hyperactivity_Symptom' é do tipo 'category'. Considere mudar 'Hyperactivity_Symptom' para Kind.           | TDAH      |      69 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| SubKind Pattern  | 'ADHD': Pai inválido. O pai 'Neurologically_Based_Condition' é do tipo 'category'. Considere mudar 'Neurologically_Based_Condition' para Kind. | TDAH      |      97 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Role Pattern     | 'Patient': Falta um 'genset' do pai 'Person' que agrupe: [Patient]. (Irmãos encontrados: Patient, Doctor, Psychologist)                        | TDAH      |      13 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Role Pattern     | 'Doctor': Falta um 'genset' do pai 'Person' que agrupe: [Doctor]. (Irmãos encontrados: Patient, Doctor, Psychologist)                          | TDAH      |      17 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Role Pattern     | 'Psychologist': Falta um 'genset' do pai 'Person' que agrupe: [Psychologist]. (Irmãos encontrados: Patient, Doctor, Psychologist)              | TDAH      |      43 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Category Pattern | 'Hyperactivity_Symptom': Sem filhos.                                                                                                           | TDAH      |       5 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Category Pattern | 'Neurologically_Based_Condition': Sem filhos.                                                                                                  | TDAH      |       7 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Category Pattern | 'Inattention_Symptom': Sem filhos.                                                                                                             | TDAH      |      11 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Relator Pattern  | 'Medical_Report': Falta definir as mediações (@mediation) no corpo.                                                                            | TDAH      |      15 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Relator Pattern  | 'Prescription': Falta definir as mediações (@mediation) no corpo.                                                                              | TDAH      |      29 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Mode Pattern     | 'Behavioral_Therapy': Falta definir a relação de caracterização (@characterization).                                                           | TDAH      |      21 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+
+| Mode Pattern     | 'Medication_Therapy': Falta definir a relação de caracterização (@characterization).                                                           | TDAH      |      23 |
++------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------+---------+

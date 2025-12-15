@@ -41,6 +41,7 @@ relator CarRental {
     @mediation
     -- involvesRental -- [1] RentalCar
     
+    @mediation
     -- involvesMediator -- [1] ResponsibleEmployee
     
     @mediation
