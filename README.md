@@ -40,6 +40,12 @@ COMPILADOR_EM_PYTHON/
 │   ├── exports/      (arquivos .json exportados)
 │   └── __pycache__/  (arquivos de cache, desconsiderar)
 │
+├── semantic_analyzer/
+│   ├── __init__.py
+│   ├── analyzer.py (Lógica do analisador semântico)
+│   ├── exports/      (arquivos .txt exportados)
+│   └── __pycache__/  (arquivos de cache, desconsiderar)
+│
 ├── syntactic_analyzer/
 │   ├── __init__.py
 │   ├── analyser.py   (Lógica do Analisador Sintático)
@@ -92,6 +98,14 @@ COMPILADOR_EM_PYTHON/
       * `parsetab.py`: Arquivo de cache gerado automaticamente pelo PLY para otimizar a execução da gramática. Pode ser excluído e regenerado automaticamente.
       * `parser.out`: Arquivo de log gerado automaticamente pelo PLY em modo de depuração. Ele detalha os estados do autômato e conflitos da gramática, útil para desenvolvimento.
       * `exports/`: Pasta onde são salvos os relatórios de análise sintática (arquivos `.txt`), contendo tabelas detalhadas das estruturas encontradas e relatórios de erros.
+
+
+  * `semantic_analyzer/` (Diretório)
+
+      * Este é um pacote Python que encapsula toda a lógica do Analisador Semântico.
+      * `__init__.py`: Arquivo que torna o diretório um módulo Python importável.
+      * `analyser.py`: Contém as regras para o reconhecimento dos Patterns pedidos pelo professor no pdf do trabalho.
+      * `exports/`: Pasta onde são salvos os relatórios de análise semântica (arquivos `.txt`), contendo tabelas detalhadas dos padrões encontrados e relatórios por coerção.
 
   * `tonto_examples/` (Diretório)
 
@@ -193,6 +207,7 @@ palavras reservadas e meta-atributos)
     - detalhes de generalização ou especificação
 
 - Tabela de contagem de classificações sintáticas, 
+- Tabelas de análise semântica (padrões completos e incompletos(use de coerção para tratamento de erros))
 
 ![exemplos_tabela_tokens](./images_documentation/saida_tabela_tokens.png)
 
@@ -200,8 +215,9 @@ palavras reservadas e meta-atributos)
 
 ![exemplos_classificacao_sintatico](./images_documentation/saida_sintatico.png)
 
-- Arquivo .json no diretório lexico_analyzer/exports/
+![exemplos_semantico](./images_documentation/saida_semantico.png.png)
 
+- Arquivo .json no diretório lexico_analyzer/exports/
 
 ![exemplos_tabela_tokens_json](./images_documentation/json_tabela_tokens.png)
 
@@ -210,8 +226,13 @@ palavras reservadas e meta-atributos)
 
 - Arquivo .txt no diretório syntatic_analyzer/exports/
 
-
 ![exemplos_contagem_sintatico](./images_documentation/export_sintatico.png)
+
+
+- Arquivo .txt no diretório semantic_analyzer/exports/
+
+![exemplos_semantico](./images_documentation/export_semantico.png.png)
+
 
 # <a name="apresentacao1"></a> Apresentação 1 no youtube (Analizador Léxico)
 
