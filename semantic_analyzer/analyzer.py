@@ -1,5 +1,6 @@
 # semantic_analyzer/analyzer.py
 import re
+import os
 from tabulate import tabulate
 
 class TabelaDeSimbolos:
@@ -82,13 +83,13 @@ class AnalisadorSemantico:
         self.asts = asts_globais 
         self.tabela = TabelaDeSimbolos()
 
-    def analisar(self):
+    def analisar(self, nome_arquivo_origem):
         """
         Orquestra a execução passo a passo:
         1. Extrai os dados.
         2. Processa heranças.
         3. Executa todos os detectores de padrões.
-        4. Imprime o relatório final.
+        4. Imprime o relatório final e exporta para TXT.
         """
         print("\n" + "/"*60)
         print("                INICIANDO ANÁLISE SEMÂNTICA")
@@ -106,7 +107,7 @@ class AnalisadorSemantico:
         self._detectar_relator_pattern()
         self._detectar_mode_pattern()
         
-        self._imprimir_relatorio()
+        self._imprimir_relatorio(nome_arquivo_origem)
 
     def _construir_visao_de_mundo(self):
         """
@@ -456,13 +457,17 @@ class AnalisadorSemantico:
             'arquivo': arquivo
         })
 
-    def _imprimir_relatorio(self):
+    def _imprimir_relatorio(self, nome_arquivo_origem):
         """
         Usa a biblioteca 'tabulate' para gerar tabelas. Separa em Completos, Incompletos.
+        Exporta o resultado para um arquivo .txt na pasta 'exports'.
         """
         if not self.tabela.padroes and not self.tabela.erros and not self.tabela.coencoes:
-            print("\n[INFO] Nenhuma estrutura ODP reconhecível encontrada.")
+            msg_vazio = "\n[INFO] Nenhuma estrutura ODP reconhecível encontrada."
+            print(msg_vazio)
             return
+
+        output_str = ""
 
         headers = ["Padrão", "Detalhes", "Arquivo", "Linha"]
         rows_complete = []
@@ -477,8 +482,30 @@ class AnalisadorSemantico:
             else:
                 rows_incomplete.append(row)
 
-        print("\n✅ PADRÕES COMPLETOS IDENTIFICADOS:")
-        print(tabulate(rows_complete, headers=headers, tablefmt="grid"))
+        output_str += "\n✅ PADRÕES COMPLETOS IDENTIFICADOS:\n"
+        output_str += tabulate(rows_complete, headers=headers, tablefmt="grid") + "\n"
 
-        print("\n⚠️  PADRÕES INCOMPLETOS:")
-        print(tabulate(rows_incomplete, headers=headers, tablefmt="grid"))
+        output_str += "\n⚠️  PADRÕES INCOMPLETOS:\n"
+        output_str += tabulate(rows_incomplete, headers=headers, tablefmt="grid") + "\n"
+        
+        print(output_str)
+
+        # Exportação para Arquivo
+        diretorio_atual = os.path.dirname(__file__)  
+        pasta_exports = os.path.join(diretorio_atual, 'exports')
+        os.makedirs(pasta_exports, exist_ok=True)
+
+        # Remove a extensão .tonto ou .txt do nome original se houver
+        nome_base = os.path.splitext(os.path.basename(nome_arquivo_origem))[0]
+        
+        nome_arquivo_saida = f"tabela_semantica_{nome_base}.txt"
+        caminho_completo = os.path.join(pasta_exports, nome_arquivo_saida)
+        
+        try:
+            with open(caminho_completo, "w", encoding="utf-8") as f:
+                f.write(f"RELATÓRIO DE ANÁLISE SEMÂNTICA - {nome_base}\n")
+                f.write("="*60 + "\n")
+                f.write(output_str)
+            print(f"\n[SUCESSO] Relatório exportado para: {caminho_completo}")
+        except Exception as e:
+            print(f"\n[ERRO] Não foi possível salvar o arquivo de exportação: {e}")

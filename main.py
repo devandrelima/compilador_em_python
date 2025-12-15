@@ -128,7 +128,7 @@ if __name__ == "__main__":
             
             if ASTs_GLOBAIS:
                 semantico = AnalisadorSemantico(ASTs_GLOBAIS)
-                semantico.analisar()
+                semantico.analisar(caminho_principal.name)
             else:
                 print("Nenhuma AST foi gerada. A análise semântica foi cancelada")
             
