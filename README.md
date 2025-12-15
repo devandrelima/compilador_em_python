@@ -14,6 +14,7 @@
     * [Saída do sistema](#saida-sistema)
 4. [Apresentação 1 no youtube (Analizador Léxico)](#apresentacao1)
 5. [Apresentação 2 no youtube (Analizador Sintático)](#apresentacao2)
+5. [Apresentação 3 no youtube (Analizador Semântico)](#apresentacao3)
 6. [Criadores](#criadores)
 
 
@@ -209,6 +210,12 @@ palavras reservadas e meta-atributos)
 - Tabela de contagem de classificações sintáticas, 
 - Tabelas de análise semântica (padrões completos e incompletos(use de coerção para tratamento de erros))
 
+    - mostrando os padrões usados,
+    - detalhes,
+    - arquivo,
+    - linha
+
+
 ![exemplos_tabela_tokens](./images_documentation/saida_tabela_tokens.png)
 
 ![exemplos_contagem_classificacao](./images_documentation/tabela_contagem_classificacao.png)
@@ -241,6 +248,10 @@ https://www.youtube.com/watch?v=cwgRQqRoW5M
 # <a name="apresentacao2"></a> Apresentação 2 no youtube (Analizador Sintático)
 
 https://www.youtube.com/watch?v=FaPRFwai1do
+
+# <a name="apresentacao3"></a> Apresentação 3 no youtube (Analizador Semântico)
+
+https://www.youtube.com/watch?v=giDHcsMpi6o
 
 # <a name="criadores"></a> Criadores:
 

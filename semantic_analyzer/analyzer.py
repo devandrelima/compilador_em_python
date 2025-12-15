@@ -97,7 +97,7 @@ class AnalisadorSemantico:
         
         self._construir_visao_de_mundo()
         self.tabela.processar_hierarquia()
-        self._aplicar_coercao_de_erros()
+        self._aplicar_sobrecarga_de_erros()
         self._detectar_subkind_pattern()
         self._detectar_phase_pattern()
         self._detectar_role_pattern()
@@ -235,7 +235,7 @@ class AnalisadorSemantico:
             except:
                 pass
 
-    def _aplicar_coercao_de_erros(self):
+    def _aplicar_sobrecarga_de_erros(self):
         """
         Verifica erros comuns de modelagem e tenta consertar.
         Ex: Se um 'kind' herda de alguém, ele deveria ser 'subkind'. O sistema muda automaticamente e avisa.
