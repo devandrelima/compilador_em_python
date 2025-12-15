@@ -231,7 +231,7 @@ palavras reservadas e meta-atributos)
 
 - Arquivo .txt no diretório semantic_analyzer/exports/
 
-![exemplos_semantico](./images_documentation/export_semantico.png.png)
+![exemplos_semantico](./images_documentation/export_semantico.png)
 
 
 # <a name="apresentacao1"></a> Apresentação 1 no youtube (Analizador Léxico)
