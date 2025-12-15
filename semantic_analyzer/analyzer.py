@@ -98,7 +98,6 @@ class AnalisadorSemantico:
         self._construir_visao_de_mundo()
         self.tabela.processar_hierarquia()
         self._aplicar_coercao_de_erros()
-
         self._detectar_subkind_pattern()
         self._detectar_phase_pattern()
         self._detectar_role_pattern()
@@ -118,15 +117,19 @@ class AnalisadorSemantico:
         for nome_modulo, ast in self.asts.items():
             pacote = ast[2][1] if ast[2] else "Desconhecido"
             declaracoes = ast[3]
+
             if not declaracoes: continue
+
             for decl in declaracoes:
                 if not decl: continue
                 tipo = decl[0]
                 
                 if tipo.startswith('classe'): 
                     self._extrair_classe(decl, pacote)
+
                 elif tipo.startswith('genset'): 
                     self._extrair_genset(decl)
+
                 elif 'relacao' in tipo or 'link' in tipo:
                     self._extrair_relacao(decl)
 
@@ -139,7 +142,6 @@ class AnalisadorSemantico:
         """
         arquivo = decl[-2] if len(decl) >= 2 else "?"
         linha = decl[-1] if len(decl) >= 1 else 0
-        
         tipo_tupla = decl[0]
         estereotipo = decl[1]
         nome = decl[2]
@@ -158,6 +160,7 @@ class AnalisadorSemantico:
             corpo = decl[3]
         
         lista_pais = []
+
         if isinstance(pais_obj, list): lista_pais = pais_obj
         elif isinstance(pais_obj, str): lista_pais = [p.strip() for p in pais_obj.split(',')]
 
@@ -167,10 +170,13 @@ class AnalisadorSemantico:
         if corpo:
             for item in corpo:
                 if not item: continue
+
                 if isinstance(item, (tuple, list)):
                     def flatten(x):
+
                         if isinstance(x, (list, tuple)): return [a for i in x for a in flatten(i)]
                         else: return [str(x)]
+
                     flattened = flatten(item)
                     flat_str = " ".join(flattened)
                     
@@ -194,6 +200,7 @@ class AnalisadorSemantico:
 
                     if 'mediation' in flat_str:
                         lista_mediacoes.append(tipo_alvo)
+
                     if 'characterization' in flat_str:
                         lista_caracterizacoes.append(tipo_alvo)
 
@@ -208,6 +215,7 @@ class AnalisadorSemantico:
         
         if decl[0] == 'genset_completo':
             self.tabela.adicionar_genset(decl[2], decl[3], decl[4], decl[1], arquivo, linha)
+
         elif decl[0] == 'genset_where':
             self.tabela.adicionar_genset(decl[2], decl[4], decl[3], decl[1], arquivo, linha)
 
@@ -235,17 +243,21 @@ class AnalisadorSemantico:
         for nome, dados in self.tabela.classes.items():
             est_atual = dados['estereotipo']
             pais = dados['pais']
+
             if est_atual == 'kind' and pais:
                 dados['estereotipo'] = 'subkind'
                 self.tabela.coencoes.append(f"Classe '{nome}' era 'kind' mas tem pais. Coagida para 'subkind'.")
                 continue
+
             if est_atual == 'subkind' and pais:
                 pai_anti_rigido = None
+
                 for p in pais:
                     if p in self.tabela.classes:
                         if self.tabela.classes[p]['estereotipo'] in self.ANTI_RIGID_SORTALS:
                             pai_anti_rigido = self.tabela.classes[p]['estereotipo']
                             break
+
                 if pai_anti_rigido:
                     dados['estereotipo'] = pai_anti_rigido
                     self.tabela.coencoes.append(f"Classe '{nome}' (subkind) herda de '{pai_anti_rigido}'. Coagida para '{pai_anti_rigido}'.")
@@ -255,14 +267,16 @@ class AnalisadorSemantico:
         Verifica se existe um genset válido ligando o Pai aos Filhos Esperados.
         1. Procura na tabela um genset que tenha o 'pai' como general.
         2. Verifica se o 'filho' atual está na lista de specifics desse genset.
-        3. Se achar, verifica se os modificadores (disjoint/complete) estão presentes conforme exigido pelos argumentos.
+        3. Se achar, verifica se os modificadores (disjoint/complete) estão presentes.
         """
         genset_encontrado = None
         filho_alvo_busca = filhos_esperados[0] if filhos_esperados else None
 
         for g in self.tabela.gensets:
             if g['geral'] == pai:
+
                 if filho_alvo_busca:
+
                     if filho_alvo_busca in g['especificas']:
                         genset_encontrado = g
                         break
@@ -271,16 +285,21 @@ class AnalisadorSemantico:
                     break
         
         if not genset_encontrado:
+
             if filhos_esperados:
                 lista_filhos = ", ".join(filhos_esperados)
+
                 return "Incompleto", f"Falta um 'genset' do pai '{pai}' que agrupe: [{lista_filhos}]."
+            
             return "Ausente", "Sem filhos."
         
         mods = genset_encontrado['modificadores']
         tokens_mods = []
+
         if isinstance(mods, str):
             clean_str = mods.replace(',', ' ').replace(';', ' ')
             tokens_mods = clean_str.split()
+
         elif isinstance(mods, (list, tuple)):
             tokens_mods = [str(m).strip() for m in mods]
         
@@ -300,6 +319,7 @@ class AnalisadorSemantico:
             aviso = " (Nota: 'disjoint' não se aplica semanticamente a roles, mas o genset existe)."
 
         if msgs: return "Incompleto", f"Problemas: {', '.join(msgs)}"
+
         return "Completo", f"Genset '{genset_encontrado['nome']}' validado.{aviso}"
 
     def _detectar_mode_pattern(self):
@@ -309,18 +329,25 @@ class AnalisadorSemantico:
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'mode':
                 caracterizacoes = dados['caracterizacoes']
+
                 if not caracterizacoes:
                     self._registrar_padrao('Mode Pattern', nome, 'Incompleto', "Falta definir a relação de caracterização (@characterization).")
                     continue
+
                 erros_tipo = []
+
                 for alvo in caracterizacoes:
                     if alvo in self.tabela.classes:
                         est_alvo = self.tabela.classes[alvo]['estereotipo']
+
                         if est_alvo != 'kind':
                             erros_tipo.append(f"'{alvo}' é '{est_alvo}' (Esperado: 'kind')")
+
                     else: erros_tipo.append(f"'{alvo}' não encontrado")
+
                 if erros_tipo:
                     self._registrar_padrao('Mode Pattern', nome, 'Incompleto', f"Erro de Tipagem no alvo: {', '.join(erros_tipo)}")
+
                 else:
                     self._registrar_padrao('Mode Pattern', nome, 'Completo', f"Caracteriza corretamente kinds: {', '.join(caracterizacoes)}.")
 
@@ -332,15 +359,20 @@ class AnalisadorSemantico:
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'relator':
                 mediacoes = dados['mediacoes']
+
                 if not mediacoes:
                     self._registrar_padrao('Relator Pattern', nome, 'Incompleto', "Falta definir as mediações (@mediation) no corpo.")
                     continue
+
                 tem_material = False
+
                 for mat in self.tabela.materiais:
                     if mat['origem'] in mediacoes and mat['destino'] in mediacoes:
                         tem_material = True; break
+                    
                 if not tem_material:
                      self._registrar_padrao('Relator Pattern', nome, 'Incompleto', f"Mediações ok {mediacoes}, mas falta a relação externa '@material' conectando esses papéis.")
+
                 else:
                      self._registrar_padrao('Relator Pattern', nome, 'Completo', f"Relator conecta {mediacoes} e possui relação @material correspondente.")
 
@@ -350,8 +382,10 @@ class AnalisadorSemantico:
         Exceção: Se for filho único, o genset é opcional.
         """
         for nome, dados in self.tabela.classes.items():
+
             if dados['estereotipo'] == 'subkind':
                 pais = dados['pais']
+
                 if not pais: continue 
                 
                 pai_rigido = None
@@ -360,13 +394,13 @@ class AnalisadorSemantico:
                         pai_rigido = p; break
                 
                 if not pai_rigido:
-                    # --- MELHORIA AQUI: DICA INTELIGENTE ---
                     msg = "Pai inválido."
                     dicas = []
+
                     for p in pais:
                         if p in self.tabela.classes:
                             est_p = self.tabela.classes[p]['estereotipo']
-                            # Se o pai for um Mixin (Category, Mixin, RoleMixin), damos a dica
+
                             if est_p in self.MIXINS:
                                 dicas.append(f"O pai '{p}' é do tipo '{est_p}'. Considere mudar '{p}' para Kind.")
                     
@@ -381,10 +415,13 @@ class AnalisadorSemantico:
                 
                 if len(irmaos_subkind) == 1:
                     self._registrar_padrao('SubKind Pattern', nome, 'Completo', f"Especializa '{pai_rigido}'. Filho único, genset dispensado.")
+
                 else:
                     status, msg = self._validar_genset_flex(pai_rigido, [nome], disjoint_obrigatorio=True, complete_obrigatorio=False)
+
                     if status == 'Incompleto':
                         msg += f" (Irmãos encontrados: {', '.join(irmaos_subkind)})"
+
                     self._registrar_padrao('SubKind Pattern', nome, status, msg)
 
     def _detectar_phase_pattern(self):
@@ -392,7 +429,9 @@ class AnalisadorSemantico:
         Valida o padrão Phase. Deve herdar de um tipo permitido. Genset disjoint é OBRIGATÓRIO.
         """
         permitidos_pai = self.RIGID_SORTALS + ['phase']
+
         for nome_pai, dados_pai in self.tabela.classes.items():
+
             if dados_pai['estereotipo'] in permitidos_pai:
                 filhos_phase = [f for f in dados_pai['filhos_diretos'] 
                                 if self.tabela.classes.get(f, {}).get('estereotipo') == 'phase']
@@ -408,12 +447,17 @@ class AnalisadorSemantico:
         for nome, dados in self.tabela.classes.items():
             if dados['estereotipo'] == 'role':
                 pais = dados['pais']
+
                 if not pais: continue
+
                 pai_valido = None
+
                 for p in pais:
                     if p in self.tabela.classes:
                          est_p = self.tabela.classes[p]['estereotipo']
+
                          if est_p in permitidos_pai: pai_valido = p; break
+
                 if not pai_valido:
                      self._registrar_padrao('Role Pattern', nome, 'Incompleto', f"Pai inválido.")
                      continue
@@ -423,10 +467,13 @@ class AnalisadorSemantico:
 
                 if len(irmaos_role) == 1:
                     self._registrar_padrao('Role Pattern', nome, 'Completo', f"Especializa '{pai_valido}'. Filho único, genset dispensado.")
+
                 else:
                     status, msg = self._validar_genset_flex(pai_valido, [nome], disjoint_obrigatorio=False, complete_obrigatorio=False)
+
                     if status == 'Incompleto':
                         msg += f" (Irmãos encontrados: {', '.join(irmaos_role)})"
+
                     self._registrar_padrao('Role Pattern', nome, status, msg)
 
     def _detectar_rolemixin_pattern(self):
@@ -440,10 +487,13 @@ class AnalisadorSemantico:
                 
                 if len(filhos_role) == 1:
                     self._registrar_padrao('RoleMixin Pattern', nome, 'Completo', f"RoleMixin com filho único '{filhos_role[0]}', genset dispensado.")
+
                 else:
                     status, msg = self._validar_genset_flex(nome, filhos_role, disjoint_obrigatorio=True, complete_obrigatorio=True)
+
                     if status == 'Incompleto':
                         msg += f" (Irmãos encontrados: {', '.join(filhos_role)})"
+
                     self._registrar_padrao('RoleMixin Pattern', nome, status, msg)
 
     def _detectar_category_pattern(self):
@@ -462,6 +512,7 @@ class AnalisadorSemantico:
         dados = self.tabela.classes.get(classe, {})
         linha = dados.get('linha', '?')
         arquivo = dados.get('arquivo', '?')
+
         self.tabela.padroes.append({
             'tipo': tipo, 
             'classe': classe, 
@@ -519,6 +570,8 @@ class AnalisadorSemantico:
                 f.write(f"RELATÓRIO DE ANÁLISE SEMÂNTICA - {nome_base}\n")
                 f.write("="*60 + "\n")
                 f.write(output_str)
+
             print(f"\n[SUCESSO] Relatório exportado para: {caminho_completo}")
+
         except Exception as e:
             print(f"\n[ERRO] Não foi possível salvar o arquivo de exportação: {e}")
